@@ -1,4 +1,16 @@
+#!/usr/bin/env python3
+import json
+import os
 import random
+
+SAVE_FILE = "savegame.json"
+SCORE_FILE = "scores.json"
+ANNOUNCER_LINES = [
+    "Look at that move!",
+    "The crowd goes wild!",
+    "That's going to leave a mark.",
+    "Someone clip that for the highlight reel!",
+]
 
 # --- Entity Classes ---
 
@@ -18,6 +30,7 @@ class Player(Entity):
         self.gold = 0
         self.inventory = []
         self.weapon = None
+        self.companions = []
         self.status_effects = {}  # Tracks status effects like poison, burn, and freeze
         self.x = 0
         self.y = 0
@@ -116,6 +129,7 @@ class Player(Entity):
         print(f"\nYou leveled up to level {self.level}!")
         print(f"Max Health increased to {self.max_health}")
         print(f"Attack Power increased to {self.attack_power}")
+        print(random.choice(ANNOUNCER_LINES))
 
         if self.level == 3:
             print("You've unlocked Gold Finder: +5 gold after each kill.")
@@ -188,6 +202,11 @@ class Weapon(Item):
         self.price = price
         self.effect = None
 
+class Companion(Entity):
+    def __init__(self, name, effect):
+        super().__init__(name, "A questionably helpful ally")
+        self.effect = effect
+
 # --- Dungeon System ---
 
 class DungeonBase:
@@ -208,6 +227,57 @@ class DungeonBase:
             Weapon("Rapier", "A slender, piercing blade", 9, 17, 50),
             Weapon("Flame Blade", "Glows with searing heat", 13, 20, 95)
         ]
+        self.comedic_loot = [
+            Weapon("Exploding Rubber Ducky", "Quack and kaboom!", 15, 25, 0),
+            Item("Bag of Infinite Glitter", "Because everyone loves sparkle")
+        ]
+
+    def announce(self, msg):
+        print(f"[Announcer] {random.choice(ANNOUNCER_LINES)} {msg}")
+
+    def save_game(self, floor):
+        data = {
+            "floor": floor,
+            "player": {
+                "name": self.player.name,
+                "level": self.player.level,
+                "health": self.player.health,
+                "max_health": self.player.max_health,
+                "attack_power": self.player.attack_power,
+                "xp": self.player.xp,
+                "gold": self.player.gold,
+            }
+        }
+        with open(SAVE_FILE, "w") as f:
+            json.dump(data, f)
+
+    def load_game(self):
+        if os.path.exists(SAVE_FILE):
+            with open(SAVE_FILE) as f:
+                data = json.load(f)
+            self.player = Player(data["player"]["name"])
+            p = data["player"]
+            self.player.level = p["level"]
+            self.player.health = p["health"]
+            self.player.max_health = p["max_health"]
+            self.player.attack_power = p["attack_power"]
+            self.player.xp = p["xp"]
+            self.player.gold = p["gold"]
+            return data.get("floor", 1)
+        return 1
+
+    def record_score(self):
+        records = []
+        if os.path.exists(SCORE_FILE):
+            with open(SCORE_FILE) as f:
+                records = json.load(f)
+        records.append({"name": self.player.name, "score": self.player.get_score()})
+        records = sorted(records, key=lambda x: x["score"], reverse=True)[:10]
+        with open(SCORE_FILE, "w") as f:
+            json.dump(records, f, indent=2)
+        print("-- Leaderboard --")
+        for r in records:
+            print(f"{r['name']}: {r['score']}")
 
     def generate_room_name(self, room_type=None):
         lore = {
@@ -256,7 +326,9 @@ class DungeonBase:
         for (x, y) in visited:
             self.rooms[y][x] = "Empty"
 
-        self.player = Player(input("Enter your name: "))
+        if self.player is None:
+            self.player = Player(input("Enter your name: "))
+            print("Welcome contestant! Try not to die horribly.")
         self.rooms[start[1]][start[0]] = self.player
         self.player.x, self.player.y = start
         self.visited_rooms.add(start)
@@ -372,6 +444,11 @@ class DungeonBase:
             place(loot)
             
             place(Item("Key", "A magical key dropped by the boss"))
+        companion_options = [
+            Companion("Princess Donut", "heal"),
+            Companion("Kevin the Disposable", "attack"),
+        ]
+        place(random.choice(companion_options))
         for _ in range(3):
             place("Trap")
         for _ in range(3):
@@ -382,7 +459,13 @@ class DungeonBase:
         # Key is now tied to boss drop; don't place it separately
 
     def play_game(self):
-        floor = 1
+        floor = self.load_game()
+        if self.player:
+            cont = input("Continue your last adventure? (y/n): ")
+            if cont.lower() != "y":
+                self.player = None
+                floor = 1
+        print("Welcome to Dungeon Crawler!")
         while (self.player is None or self.player.is_alive()) and floor <= 18:
             print(f"===== Entering Floor {floor} =====")
             self.generate_dungeon(floor)
@@ -410,14 +493,21 @@ class DungeonBase:
                     proceed = input("Would you like to descend to the next floor? (y/n): ").lower()
                     if proceed == "y":
                         floor += 1
+                        self.save_game(floor)
                         break
                     else:
                         print("You chose to exit the dungeon.")
                         print(f"Final Score: {self.player.get_score()}")
+                        self.record_score()
+                        if os.path.exists(SAVE_FILE):
+                            os.remove(SAVE_FILE)
                         return
 
         print("You have died. Game Over!")
         print(f"Final Score: {self.player.get_score()}")
+        self.record_score()
+        if os.path.exists(SAVE_FILE):
+            os.remove(SAVE_FILE)
 
     def move_player(self, direction):
         dx, dy = {"left": (-1,0), "right": (1,0), "up": (0,-1), "down": (0,1)}.get(direction, (0,0))
@@ -445,6 +535,18 @@ class DungeonBase:
             self.battle(room)
             if not room.is_alive():
                 self.rooms[y][x] = None
+        elif isinstance(room, Companion):
+            print(f"You meet {room.name}. {room.description}")
+            recruit = input("Recruit this companion? (y/n): ")
+            if recruit.lower() == "y":
+                self.player.companions.append(room)
+                if room.effect == "attack":
+                    self.player.attack_power += 2
+                elif room.effect == "heal":
+                    self.player.max_health += 5
+                    self.player.health += 5
+                self.announce(f"{self.player.name} gains a companion!")
+            self.rooms[y][x] = None
         elif isinstance(room, Item):
             print(f"You found a {room.name}!")
             self.player.collect_item(room)
@@ -455,6 +557,10 @@ class DungeonBase:
             gold = random.randint(20, 50)
             self.player.gold += gold
             print(f"You found a treasure chest with {gold} gold!")
+            if random.random() < 0.3:
+                loot = random.choice(self.comedic_loot)
+                print(f"Inside you also discover {loot.name}!")
+                self.player.collect_item(loot)
             self.rooms[y][x] = None
             self.room_names[y][x] = "Glittering Vault"
         elif room == "Enchantment":
