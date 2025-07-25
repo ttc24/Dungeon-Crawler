@@ -30,9 +30,3 @@ Progress is automatically saved whenever you clear a floor. On the next launch y
 - Unlock new playable races when reaching the third floor.
 - Choose from additional classes like Cleric, Paladin and Bard.
 - Special floor events add variety as you progress deeper.
-
-## Inspirations
-
-The design nods to Matt Dinniman's *Dungeon Crawler Carl* series but focuses on gameplay elements like guilds and race unlocks rather than parody.
-
-Enjoy and feel free to open issues or submit pull requests with new ideas!
