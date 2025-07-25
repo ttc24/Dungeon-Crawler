@@ -144,6 +144,13 @@ class Player(Entity):
                 self.status_effects['freeze'] -= 1
             if self.status_effects['freeze'] <= 0:
                 del self.status_effects['freeze']
+        if 'inspire' in self.status_effects:
+            if self.status_effects['inspire'] == 3:
+                self.attack_power += 3
+            self.status_effects['inspire'] -= 1
+            if self.status_effects['inspire'] <= 0:
+                self.attack_power -= 3
+                del self.status_effects['inspire']
 
     def decrement_cooldowns(self):
         if self.skill_cooldown > 0:
@@ -167,6 +174,21 @@ class Player(Entity):
             damage = self.attack_power + random.randint(5, 10)
             print(f"You perform a sneaky Backstab for {damage} damage!")
             enemy.take_damage(damage)
+        elif self.class_type == "Cleric":
+            heal = min(20, self.max_health - self.health)
+            self.health += heal
+            print(f"You invoke Healing Light and recover {heal} health!")
+        elif self.class_type == "Paladin":
+            damage = self.attack_power + random.randint(5, 12)
+            print(f"You smite the {enemy.name} for {damage} holy damage!")
+            enemy.take_damage(damage)
+            heal = min(10, self.max_health - self.health)
+            if heal:
+                self.health += heal
+                print(f"Divine power heals you for {heal} HP!")
+        elif self.class_type == "Bard":
+            print("You play an inspiring tune, bolstering your spirit!")
+            self.status_effects['inspire'] = 3
         else:
             print("You don't have a special skill.")
             return
