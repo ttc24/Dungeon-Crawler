@@ -30,3 +30,5 @@ Progress is automatically saved whenever you clear a floor. On the next launch y
 - Unlock new playable races when reaching the third floor.
 - Choose from additional classes like Cleric, Paladin and Bard.
 - Special floor events add variety as you progress deeper.
+- Floors grow in size and feature unique enemy and boss sets.
+- Battle through 18 floors of escalating challenge.

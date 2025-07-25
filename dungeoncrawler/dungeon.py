@@ -6,6 +6,190 @@ from .constants import SAVE_FILE, SCORE_FILE, ANNOUNCER_LINES, RIDDLES
 from .entities import Player, Enemy, Companion
 from .items import Item, Weapon
 
+# Enemy stats keyed by name so floor configs can easily reference them
+ENEMY_STATS = {
+    "Goblin": (40, 70, 5, 12, 2),
+    "Skeleton": (60, 90, 7, 14, 3),
+    "Orc": (80, 110, 10, 18, 4),
+    "Wraith": (100, 140, 12, 22, 6),
+    "Demon": (120, 160, 15, 26, 8),
+    "Bandit": (50, 80, 6, 14, 3),
+    "Cultist": (65, 95, 9, 16, 3),
+    "Ghoul": (70, 100, 8, 15, 4),
+    "Vampire": (90, 130, 10, 20, 5),
+    "Troll": (110, 150, 13, 23, 6),
+    "Lich": (130, 170, 14, 26, 7),
+    "Minotaur": (140, 180, 16, 28, 8),
+    "Harpy": (70, 110, 10, 18, 4),
+    "Werewolf": (100, 140, 12, 20, 5),
+    "Gargoyle": (90, 130, 10, 22, 6),
+    "Basilisk": (120, 160, 14, 24, 7),
+    "Shade": (80, 120, 11, 19, 4),
+    "Warlock": (110, 150, 15, 25, 6),
+    "Zombie": (60, 100, 6, 14, 3),
+    "Revenant": (150, 190, 18, 28, 9),
+    "Phoenix": (160, 200, 20, 30, 10),
+    "Giant Spider": (70, 110, 9, 17, 4),
+    "Slime King": (130, 170, 13, 21, 6),
+    "Hydra": (180, 220, 22, 32, 11),
+    "Dark Knight": (170, 210, 21, 29, 10),
+    "Cyclops": (190, 230, 24, 34, 12),
+    "Beholder": (200, 240, 26, 36, 13),
+    "Astral Dragon": (220, 260, 30, 40, 15),
+}
+
+# Special abilities for certain enemies
+ENEMY_ABILITIES = {
+    "Vampire": "lifesteal",
+    "Wraith": "poison",
+    "Dark Knight": "double_strike",
+    "Lich": "lifesteal",
+    "Warlock": "burn",
+    "Werewolf": "double_strike",
+    "Basilisk": "freeze",
+    "Phoenix": "burn",
+    "Hydra": "poison",
+}
+
+# Boss stats and loot tables keyed by name
+BOSS_STATS = {
+    "Bone Tyrant": (250, 30, 12, 120, "lifesteal"),
+    "Inferno Golem": (270, 35, 14, 140, "burn"),
+    "Frost Warden": (260, 28, 13, 130, "freeze"),
+    "Shadow Reaver": (280, 33, 15, 150, "poison"),
+    "Doom Bringer": (300, 38, 16, 160, "double_strike"),
+    "Void Serpent": (290, 36, 17, 155, "poison"),
+    "Ember Lord": (295, 37, 16, 158, "burn"),
+    "Glacier Fiend": (265, 29, 14, 133, "freeze"),
+    "Grave Monarch": (275, 32, 15, 138, "lifesteal"),
+    "Storm Reaper": (285, 34, 15, 145, "double_strike"),
+}
+
+BOSS_LOOT = {
+    "Bone Tyrant": [Weapon("Skullcrusher", "A mace adorned with bone fragments.", 24, 32, 0)],
+    "Inferno Golem": [Weapon("Molten Blade", "Red-hot sword that scorches foes.", 26, 34, 0)],
+    "Frost Warden": [Weapon("Glacier Edge", "Chilling blade that slows enemies.", 23, 31, 0)],
+    "Shadow Reaver": [Weapon("Nightfang", "A dagger that thrives in shadows.", 22, 30, 0)],
+    "Doom Bringer": [Weapon("Cataclysm", "Heavy axe with devastating power.", 28, 36, 0)],
+    "Void Serpent": [Weapon("Venom Spire", "Spear coated in lethal toxins.", 24, 32, 0)],
+    "Ember Lord": [Weapon("Flame Lash", "Whip of living fire.", 25, 33, 0)],
+    "Glacier Fiend": [Weapon("Frozen Talon", "Ice-forged claw that freezes.", 24, 31, 0)],
+    "Grave Monarch": [Weapon("Cryptblade", "Blade of necrotic energy.", 25, 34, 0)],
+    "Storm Reaper": [Weapon("Thunder Cleaver", "Sword crackling with lightning.", 26, 35, 0)],
+}
+
+# Floor specific configuration
+FLOOR_CONFIGS = {
+    1: {
+        "size": (8, 8),
+        "enemies": ["Goblin", "Skeleton", "Bandit"],
+        "bosses": ["Bone Tyrant"],
+        "places": {"Trap": 2, "Treasure": 2, "Enchantment": 1, "Sanctuary": 1, "Blacksmith": 1},
+    },
+    2: {
+        "size": (9, 9),
+        "enemies": ["Orc", "Cultist", "Ghoul", "Bandit"],
+        "bosses": ["Inferno Golem", "Frost Warden"],
+        "places": {"Trap": 3, "Treasure": 3, "Enchantment": 1, "Sanctuary": 1, "Blacksmith": 1},
+    },
+    3: {
+        "size": (10, 10),
+        "enemies": ["Vampire", "Warlock", "Wraith", "Werewolf"],
+        "bosses": ["Shadow Reaver", "Doom Bringer"],
+        "places": {"Trap": 3, "Treasure": 4, "Enchantment": 2, "Sanctuary": 2, "Blacksmith": 1},
+    },
+    4: {
+        "size": (11, 11),
+        "enemies": ["Basilisk", "Gargoyle", "Troll", "Lich"],
+        "bosses": ["Void Serpent", "Ember Lord", "Glacier Fiend"],
+        "places": {"Trap": 4, "Treasure": 4, "Enchantment": 2, "Sanctuary": 2, "Blacksmith": 1},
+    },
+    5: {
+        "size": (12, 12),
+        "enemies": ["Phoenix", "Hydra", "Revenant", "Beholder"],
+        "bosses": ["Grave Monarch", "Storm Reaper"],
+        "places": {"Trap": 4, "Treasure": 5, "Enchantment": 2, "Sanctuary": 2, "Blacksmith": 1},
+    },
+    6: {
+        "size": (13, 13),
+        "enemies": ["Minotaur", "Demon", "Harpy", "Shade"],
+        "bosses": ["Bone Tyrant", "Inferno Golem"],
+        "places": {"Trap": 5, "Treasure": 5, "Enchantment": 2, "Sanctuary": 2, "Blacksmith": 1},
+    },
+    7: {
+        "size": (14, 14),
+        "enemies": ["Giant Spider", "Slime King", "Zombie", "Gargoyle"],
+        "bosses": ["Frost Warden", "Shadow Reaver"],
+        "places": {"Trap": 5, "Treasure": 6, "Enchantment": 2, "Sanctuary": 2, "Blacksmith": 1},
+    },
+    8: {
+        "size": (15, 15),
+        "enemies": ["Dark Knight", "Cyclops", "Basilisk", "Werewolf"],
+        "bosses": ["Doom Bringer", "Void Serpent"],
+        "places": {"Trap": 5, "Treasure": 6, "Enchantment": 3, "Sanctuary": 2, "Blacksmith": 1},
+    },
+    9: {
+        "size": (15, 15),
+        "enemies": ["Hydra", "Beholder", "Revenant", "Warlock"],
+        "bosses": ["Ember Lord", "Glacier Fiend"],
+        "places": {"Trap": 6, "Treasure": 6, "Enchantment": 3, "Sanctuary": 2, "Blacksmith": 1},
+    },
+    10: {
+        "size": (15, 15),
+        "enemies": ["Phoenix", "Dark Knight", "Cyclops", "Minotaur"],
+        "bosses": ["Grave Monarch", "Storm Reaper"],
+        "places": {"Trap": 6, "Treasure": 7, "Enchantment": 3, "Sanctuary": 3, "Blacksmith": 1},
+    },
+    11: {
+        "size": (15, 15),
+        "enemies": ["Astral Dragon", "Demon", "Harpy", "Shade"],
+        "bosses": ["Bone Tyrant", "Inferno Golem", "Frost Warden"],
+        "places": {"Trap": 7, "Treasure": 7, "Enchantment": 3, "Sanctuary": 3, "Blacksmith": 1},
+    },
+    12: {
+        "size": (15, 15),
+        "enemies": ["Giant Spider", "Slime King", "Zombie", "Warlock"],
+        "bosses": ["Shadow Reaver", "Doom Bringer", "Void Serpent"],
+        "places": {"Trap": 7, "Treasure": 8, "Enchantment": 4, "Sanctuary": 3, "Blacksmith": 1},
+    },
+    13: {
+        "size": (15, 15),
+        "enemies": ["Basilisk", "Gargoyle", "Troll", "Lich"],
+        "bosses": ["Ember Lord", "Glacier Fiend", "Grave Monarch"],
+        "places": {"Trap": 8, "Treasure": 8, "Enchantment": 4, "Sanctuary": 3, "Blacksmith": 1},
+    },
+    14: {
+        "size": (15, 15),
+        "enemies": ["Hydra", "Beholder", "Revenant", "Dark Knight"],
+        "bosses": ["Storm Reaper"],
+        "places": {"Trap": 8, "Treasure": 9, "Enchantment": 4, "Sanctuary": 3, "Blacksmith": 1},
+    },
+    15: {
+        "size": (15, 15),
+        "enemies": ["Cyclops", "Astral Dragon", "Phoenix", "Minotaur"],
+        "bosses": ["Doom Bringer", "Void Serpent"],
+        "places": {"Trap": 9, "Treasure": 9, "Enchantment": 5, "Sanctuary": 3, "Blacksmith": 1},
+    },
+    16: {
+        "size": (15, 15),
+        "enemies": ["Demon", "Harpy", "Shade", "Giant Spider"],
+        "bosses": ["Ember Lord", "Glacier Fiend"],
+        "places": {"Trap": 9, "Treasure": 10, "Enchantment": 5, "Sanctuary": 3, "Blacksmith": 1},
+    },
+    17: {
+        "size": (15, 15),
+        "enemies": ["Slime King", "Zombie", "Gargoyle", "Warlock"],
+        "bosses": ["Grave Monarch", "Storm Reaper"],
+        "places": {"Trap": 9, "Treasure": 10, "Enchantment": 5, "Sanctuary": 4, "Blacksmith": 1},
+    },
+    18: {
+        "size": (15, 15),
+        "enemies": ["Hydra", "Beholder", "Astral Dragon", "Dark Knight"],
+        "bosses": ["Bone Tyrant", "Doom Bringer", "Void Serpent"],
+        "places": {"Trap": 10, "Treasure": 10, "Enchantment": 6, "Sanctuary": 4, "Blacksmith": 1},
+    },
+}
+
 
 class DungeonBase:
     """Core engine for running the dungeon crawler game.
@@ -152,7 +336,9 @@ class DungeonBase:
         return f"{random.choice(adjectives)} {random.choice(nouns)}"
 
     def generate_dungeon(self, floor=1):
-        enchantment_rooms = ["Enchantment Chamber", "Alchemist's Forge"]
+        cfg = FLOOR_CONFIGS.get(floor, {})
+        size = cfg.get("size", (min(15, 8 + floor), min(15, 8 + floor)))
+        self.width, self.height = size
         self.rooms = [[None for _ in range(self.width)] for _ in range(self.height)]
         self.room_names = [[self.generate_room_name() for _ in range(self.width)] for _ in range(self.height)]
         visited = set()
@@ -206,44 +392,11 @@ class DungeonBase:
         self.exit_coords = place("Exit")
         place(Item("Key", "Opens the dungeon exit"))
 
-        enemy_types = [
-            ("Goblin", 40, 70, 5, 12, 2),
-            ("Skeleton", 60, 90, 7, 14, 3),
-            ("Orc", 80, 110, 10, 18, 4),
-            ("Wraith", 100, 140, 12, 22, 6),
-            ("Demon", 120, 160, 15, 26, 8),
-            ("Bandit", 50, 80, 6, 14, 3),
-            ("Cultist", 65, 95, 9, 16, 3),
-            ("Ghoul", 70, 100, 8, 15, 4),
-            ("Vampire", 90, 130, 10, 20, 5),
-            ("Troll", 110, 150, 13, 23, 6),
-            ("Lich", 130, 170, 14, 26, 7),
-            ("Minotaur", 140, 180, 16, 28, 8),
-            ("Harpy", 70, 110, 10, 18, 4),
-            ("Werewolf", 100, 140, 12, 20, 5),
-            ("Gargoyle", 90, 130, 10, 22, 6),
-            ("Basilisk", 120, 160, 14, 24, 7),
-            ("Shade", 80, 120, 11, 19, 4),
-            ("Warlock", 110, 150, 15, 25, 6),
-            ("Zombie", 60, 100, 6, 14, 3),
-            ("Revenant", 150, 190, 18, 28, 9),
-            ("Phoenix", 160, 200, 20, 30, 10),
-            ("Giant Spider", 70, 110, 9, 17, 4),
-            ("Slime King", 130, 170, 13, 21, 6),
-            ("Hydra", 180, 220, 22, 32, 11),
-            ("Dark Knight", 170, 210, 21, 29, 10),
-            ("Cyclops", 190, 230, 24, 34, 12),
-            ("Beholder", 200, 240, 26, 36, 13),
-            ("Astral Dragon", 220, 260, 30, 40, 15)
-        ]
-
+        enemy_names = cfg.get("enemies", list(ENEMY_STATS.keys()))
         early_game_bonus = 5 if floor <= 3 else 0
         for _ in range(5 + floor):
-            if floor >= 14:
-                name, hp_min, hp_max, atk_min, atk_max, defense = enemy_types[-1]
-            else:
-                idx = min((floor - 1) // 3, len(enemy_types) - 2)
-                name, hp_min, hp_max, atk_min, atk_max, defense = enemy_types[idx]
+            name = random.choice(enemy_names)
+            hp_min, hp_max, atk_min, atk_max, defense = ENEMY_STATS[name]
 
             hp_scale = 1 if floor <= 3 else 2
             atk_scale = 1 if floor <= 3 else 2
@@ -254,53 +407,19 @@ class DungeonBase:
             attack = random.randint(atk_min + atk_scale, atk_max + atk_scale)
             gold = random.randint(15 + early_game_bonus + floor, 30 + floor * 2)
 
-            special_abilities = {
-                "Vampire": "lifesteal",
-                "Wraith": "poison",
-                "Dark Knight": "double_strike",
-                "Lich": "lifesteal",
-                "Warlock": "burn",
-                "Werewolf": "double_strike",
-                "Basilisk": "freeze",
-                "Phoenix": "burn",
-                "Hydra": "poison"
-            }
-            ability = special_abilities.get(name)
+            ability = ENEMY_ABILITIES.get(name)
             enemy = Enemy(name, health, attack, defense, gold, ability)
             enemy.xp = max(5, (health + attack + defense) // 15)
 
             place(enemy)
 
-        boss_options = [
-            ("Bone Tyrant", 250, 30, 12, 120, "lifesteal"),
-            ("Inferno Golem", 270, 35, 14, 140, "burn"),
-            ("Frost Warden", 260, 28, 13, 130, "freeze"),
-            ("Shadow Reaver", 280, 33, 15, 150, "poison"),
-            ("Doom Bringer", 300, 38, 16, 160, "double_strike"),
-            ("Void Serpent", 290, 36, 17, 155, "poison"),
-            ("Ember Lord", 295, 37, 16, 158, "burn"),
-            ("Glacier Fiend", 265, 29, 14, 133, "freeze"),
-            ("Grave Monarch", 275, 32, 15, 138, "lifesteal"),
-            ("Storm Reaper", 285, 34, 15, 145, "double_strike")
-        ]
-        boss_choice = random.choice(boss_options)
-        name, hp, atk, dfs, gold, ability = boss_choice
+        boss_names = cfg.get("bosses", list(BOSS_STATS.keys()))
+        name = random.choice(boss_names)
+        hp, atk, dfs, gold, ability = BOSS_STATS[name]
         print(f"A powerful boss guards this floor! The {name} lurks nearby...")
         boss = Enemy(name, hp + floor * 10, atk + floor, dfs + floor // 2, gold + floor * 5, ability=ability)
         place(boss)
-        boss_loot_tables = {
-            "Bone Tyrant": [Weapon("Skullcrusher", "A mace adorned with bone fragments.", 24, 32, 0)],
-            "Inferno Golem": [Weapon("Molten Blade", "Red-hot sword that scorches foes.", 26, 34, 0)],
-            "Frost Warden": [Weapon("Glacier Edge", "Chilling blade that slows enemies.", 23, 31, 0)],
-            "Shadow Reaver": [Weapon("Nightfang", "A dagger that thrives in shadows.", 22, 30, 0)],
-            "Doom Bringer": [Weapon("Cataclysm", "Heavy axe with devastating power.", 28, 36, 0)],
-            "Void Serpent": [Weapon("Venom Spire", "Spear coated in lethal toxins.", 24, 32, 0)],
-            "Ember Lord": [Weapon("Flame Lash", "Whip of living fire.", 25, 33, 0)],
-            "Glacier Fiend": [Weapon("Frozen Talon", "Ice-forged claw that freezes.", 24, 31, 0)],
-            "Grave Monarch": [Weapon("Cryptblade", "Blade of necrotic energy.", 25, 34, 0)],
-            "Storm Reaper": [Weapon("Thunder Cleaver", "Sword crackling with lightning.", 26, 35, 0)]
-        }
-        boss_drop = boss_loot_tables.get(name, [])
+        boss_drop = BOSS_LOOT.get(name, [])
         if boss_drop and random.random() < 0.5:
             loot = random.choice(boss_drop)
             print(f"✨ The boss dropped a unique weapon: {loot.name}!")
@@ -312,15 +431,12 @@ class DungeonBase:
             Companion("Hired Blade", "attack"),
         ]
         place(random.choice(companion_options))
-        for _ in range(3):
-            place("Trap")
-        for _ in range(3):
-            place("Treasure")
-        for _ in range(2):
-            place("Enchantment")
-        for _ in range(2):
-            place("Sanctuary")
-        place("Blacksmith")
+        default_places = {"Trap": 3, "Treasure": 3, "Enchantment": 2, "Sanctuary": 2, "Blacksmith": 1}
+        place_counts = default_places.copy()
+        place_counts.update(cfg.get("places", {}))
+        for pname, count in place_counts.items():
+            for _ in range(count):
+                place(pname)
         # Key is now tied to boss drop; don't place it separately
 
     def play_game(self):
