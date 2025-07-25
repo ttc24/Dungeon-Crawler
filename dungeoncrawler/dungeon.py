@@ -537,20 +537,28 @@ class DungeonBase:
                 self.player.attack(enemy)
                 self.announce("A fierce attack lands!")
                 if enemy.is_alive():
-                    enemy.attack(self.player)
+                    skip = enemy.apply_status_effects()
+                    if enemy.is_alive() and not skip:
+                        enemy.attack(self.player)
             elif choice == "2":
                 self.player.defend(enemy)
                 if enemy.is_alive():
-                    enemy.attack(self.player)
+                    skip = enemy.apply_status_effects()
+                    if enemy.is_alive() and not skip:
+                        enemy.attack(self.player)
             elif choice == "3":
                 self.player.use_health_potion()
                 if enemy.is_alive():
-                    enemy.attack(self.player)
+                    skip = enemy.apply_status_effects()
+                    if enemy.is_alive() and not skip:
+                        enemy.attack(self.player)
             elif choice == "4":
                 self.player.use_skill(enemy)
                 self.announce("Special skill unleashed!")
                 if enemy.is_alive():
-                    enemy.attack(self.player)
+                    skip = enemy.apply_status_effects()
+                    if enemy.is_alive() and not skip:
+                        enemy.attack(self.player)
             else:
                 print("Invalid choice!")
             self.player.decrement_cooldowns()
