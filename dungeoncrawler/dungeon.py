@@ -472,7 +472,9 @@ class DungeonBase:
         return f"{random.choice(adjectives)} {random.choice(nouns)}"
 
     def generate_dungeon(self, floor=1):
-        cfg = FLOOR_CONFIGS.get(floor, {})
+        cfg = FLOOR_CONFIGS.get(floor)
+        if cfg is None:
+            raise ValueError(f"Floor {floor} is not configured")
         size = cfg.get("size", (min(15, 8 + floor), min(15, 8 + floor)))
         self.width, self.height = size
         self.rooms = [[None for _ in range(self.width)] for _ in range(self.height)]
@@ -528,7 +530,7 @@ class DungeonBase:
         self.exit_coords = place("Exit")
         place(Item("Key", "Opens the dungeon exit"))
 
-        enemy_names = cfg.get("enemies", list(ENEMY_STATS.keys()))
+        enemy_names = cfg["enemies"]
         early_game_bonus = 5 if floor <= 3 else 0
         for _ in range(5 + floor):
             name = random.choice(enemy_names)
@@ -540,7 +542,10 @@ class DungeonBase:
             defense = max(1, defense + floor // 3)
 
             health = random.randint(hp_min + floor * hp_scale, hp_max + floor * hp_scale)
-            attack = random.randint(atk_min + atk_scale, atk_max + atk_scale)
+            attack = random.randint(
+                atk_min + floor * atk_scale,
+                atk_max + floor * atk_scale,
+            )
             gold = random.randint(15 + early_game_bonus + floor, 30 + floor * 2)
 
             ability = ENEMY_ABILITIES.get(name)
@@ -549,7 +554,7 @@ class DungeonBase:
 
             place(enemy)
 
-        boss_names = cfg.get("bosses", list(BOSS_STATS.keys()))
+        boss_names = cfg["bosses"]
         name = random.choice(boss_names)
         hp, atk, dfs, gold, ability = BOSS_STATS[name]
         print(f"A powerful boss guards this floor! The {name} lurks nearby...")
