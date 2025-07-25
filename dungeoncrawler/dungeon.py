@@ -103,9 +103,18 @@ class DungeonBase:
         if self.player.race:
             return
         print("New races are available to you!")
-        print("1. Human 2. Elf 3. Dwarf 4. Orc")
+        print("1. Human 2. Elf 3. Dwarf 4. Orc 5. Gnome 6. Halfling 7. Catfolk 8. Lizardfolk")
         choice = input("Choose your race: ")
-        races = {"1": "Human", "2": "Elf", "3": "Dwarf", "4": "Orc"}
+        races = {
+            "1": "Human",
+            "2": "Elf",
+            "3": "Dwarf",
+            "4": "Orc",
+            "5": "Gnome",
+            "6": "Halfling",
+            "7": "Catfolk",
+            "8": "Lizardfolk",
+        }
         race = races.get(choice, "Human")
         self.player.choose_race(race)
 
@@ -159,9 +168,16 @@ class DungeonBase:
 
         if self.player is None:
             name = input("Enter your name: ")
-            print("Choose your class: 1. Warrior 2. Mage 3. Rogue")
+            print("Choose your class: 1. Warrior 2. Mage 3. Rogue 4. Cleric 5. Paladin 6. Bard")
             choice = input("Class: ")
-            classes = {"1": "Warrior", "2": "Mage", "3": "Rogue"}
+            classes = {
+                "1": "Warrior",
+                "2": "Mage",
+                "3": "Rogue",
+                "4": "Cleric",
+                "5": "Paladin",
+                "6": "Bard",
+            }
             class_type = classes.get(choice, "Warrior")
             self.player = Player(name, class_type)
             print(f"Welcome {self.player.name} the {class_type}! Try not to die horribly.")
@@ -207,7 +223,10 @@ class DungeonBase:
             ("Giant Spider", 70, 110, 9, 17, 4),
             ("Slime King", 130, 170, 13, 21, 6),
             ("Hydra", 180, 220, 22, 32, 11),
-            ("Dark Knight", 170, 210, 21, 29, 10)
+            ("Dark Knight", 170, 210, 21, 29, 10),
+            ("Cyclops", 190, 230, 24, 34, 12),
+            ("Beholder", 200, 240, 26, 36, 13),
+            ("Astral Dragon", 220, 260, 30, 40, 15)
         ]
 
         early_game_bonus = 5 if floor <= 3 else 0
@@ -307,10 +326,7 @@ class DungeonBase:
         while (self.player is None or self.player.is_alive()) and floor <= 18:
             print(f"===== Entering Floor {floor} =====")
             self.generate_dungeon(floor)
-            if floor == 2:
-                self.offer_guild()
-            if floor == 3:
-                self.offer_race()
+            self.trigger_floor_event(floor)
 
             while self.player.is_alive():
                 print(f"Position: ({self.player.x}, {self.player.y}) - {self.room_names[self.player.y][self.player.x]}")
@@ -604,3 +620,27 @@ class DungeonBase:
                     print("You can only equip weapons.")
             else:
                 print("Invalid selection.")
+
+    # Floor-specific events keep gameplay varied without hardcoding logic in
+    # play_game. Additional floors can be added here easily.
+    def trigger_floor_event(self, floor):
+        events = {
+            1: self._floor_one_event,
+            2: self._floor_two_event,
+            3: self._floor_three_event,
+            5: self._floor_five_event,
+        }
+        if floor in events:
+            events[floor]()
+
+    def _floor_one_event(self):
+        print("The crowd roars as you step into the arena for the first time.")
+
+    def _floor_two_event(self):
+        self.offer_guild()
+
+    def _floor_three_event(self):
+        self.offer_race()
+
+    def _floor_five_event(self):
+        print("A mysterious merchant sets up shop, selling exotic wares.")

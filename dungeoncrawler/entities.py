@@ -21,7 +21,23 @@ class Player(Entity):
             self.health = 90
             self.max_health = 90
             self.attack_power = 12
+        elif class_type == "Cleric":
+            self.level = 1
+            self.health = 110
+            self.max_health = 110
+            self.attack_power = 9
+        elif class_type == "Paladin":
+            self.level = 1
+            self.health = 120
+            self.max_health = 120
+            self.attack_power = 11
+        elif class_type == "Bard":
+            self.level = 1
+            self.health = 90
+            self.max_health = 90
+            self.attack_power = 10
         else:
+            # Default to Warrior stats
             self.level = 1
             self.health = 100
             self.max_health = 100
@@ -187,6 +203,16 @@ class Player(Entity):
             self.attack_power += 1
             self.max_health += 3
             self.health += 3
+        elif race == "Gnome":
+            self.max_health += 2
+            self.health += 2
+        elif race == "Halfling":
+            self.skill_cooldown = max(0, self.skill_cooldown - 1)
+        elif race == "Catfolk":
+            self.attack_power += 1
+        elif race == "Lizardfolk":
+            self.max_health += 4
+            self.health += 4
         print(f"Race selected: {race}.")
 
     def equip_weapon(self, weapon):

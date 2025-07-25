@@ -28,6 +28,8 @@ Progress is automatically saved whenever you clear a floor. On the next launch y
 
 - Join a guild starting on the second floor to gain unique bonuses.
 - Unlock new playable races when reaching the third floor.
+- Choose from additional classes like Cleric, Paladin and Bard.
+- Special floor events add variety as you progress deeper.
 
 ## Inspirations
 
