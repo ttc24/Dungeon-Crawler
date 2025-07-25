@@ -2,7 +2,7 @@ import json
 import os
 import random
 
-from .constants import SAVE_FILE, SCORE_FILE, ANNOUNCER_LINES
+from .constants import SAVE_FILE, SCORE_FILE, ANNOUNCER_LINES, RIDDLES
 from .entities import Player, Enemy, Companion
 from .items import Item, Weapon
 
@@ -74,18 +74,18 @@ class DungeonBase:
             return data.get("floor", 1)
         return 1
 
-    def record_score(self):
+    def record_score(self, floor):
         records = []
         if os.path.exists(SCORE_FILE):
             with open(SCORE_FILE) as f:
                 records = json.load(f)
-        records.append({"name": self.player.name, "score": self.player.get_score()})
+        records.append({"name": self.player.name, "score": self.player.get_score(), "floor": floor})
         records = sorted(records, key=lambda x: x["score"], reverse=True)[:10]
         with open(SCORE_FILE, "w") as f:
             json.dump(records, f, indent=2)
         print("-- Leaderboard --")
         for r in records:
-            print(f"{r['name']}: {r['score']}")
+            print(f"{r['name']}: {r['score']} (Floor {r.get('floor', '?')})")
 
     def offer_guild(self):
         if self.player.guild:
@@ -353,14 +353,14 @@ class DungeonBase:
                     else:
                         print("You chose to exit the dungeon.")
                         print(f"Final Score: {self.player.get_score()}")
-                        self.record_score()
+                        self.record_score(floor)
                         if os.path.exists(SAVE_FILE):
                             os.remove(SAVE_FILE)
                         return
 
         print("You have died. Game Over!")
         print(f"Final Score: {self.player.get_score()}")
-        self.record_score()
+        self.record_score(floor)
         if os.path.exists(SAVE_FILE):
             os.remove(SAVE_FILE)
 
@@ -406,6 +406,7 @@ class DungeonBase:
         elif isinstance(room, Item):
             print(f"You found a {room.name}!")
             self.player.collect_item(room)
+            self.announce(f"{self.player.name} obtained {room.name}!")
             self.rooms[y][x] = None
             if room.name == "Key":
                 self.room_names[y][x] = "Hidden Niche"
@@ -417,6 +418,7 @@ class DungeonBase:
                 loot = random.choice(self.rare_loot)
                 print(f"Inside you also discover {loot.name}!")
                 self.player.collect_item(loot)
+                self.announce(f"{self.player.name} picks up {loot.name}!")
             self.rooms[y][x] = None
             self.room_names[y][x] = "Glittering Vault"
         elif room == "Enchantment":
@@ -469,9 +471,17 @@ class DungeonBase:
             self.room_names[y][x] = "Sacred Sanctuary"
 
         elif room == "Trap":
-            damage = random.randint(10, 30)
-            self.player.take_damage(damage)
-            print(f"It's a trap! You took {damage} damage.")
+            riddle, answer = random.choice(RIDDLES)
+            print("A trap springs! Solve this riddle to escape unharmed:")
+            print(riddle)
+            response = input("Answer: ").strip().lower()
+            if response == answer:
+                print("The mechanism clicks harmlessly. You solved it!")
+                self.announce("Brilliant puzzle solving!")
+            else:
+                damage = random.randint(10, 30)
+                self.player.take_damage(damage)
+                print(f"Wrong answer! You take {damage} damage.")
             self.rooms[y][x] = None
             self.room_names[y][x] = "Booby-Trapped Passage"
         elif room == "Exit":
@@ -487,9 +497,11 @@ class DungeonBase:
         self.player.x, self.player.y = x, y
         self.rooms[y][x] = self.player
         self.visited_rooms.add((x, y))
+        self.audience_gift()
 
     def battle(self, enemy):
         print(f"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability else ''} Boss incoming!")
+        self.announce(f"{self.player.name} engages {enemy.name}!")
         self.player.apply_status_effects()
         if 'freeze' in self.player.status_effects:
             print("\u2744\ufe0f You are frozen and skip this turn!")
@@ -507,6 +519,7 @@ class DungeonBase:
             choice = input("Choose action: ")
             if choice == "1":
                 self.player.attack(enemy)
+                self.announce("A fierce attack lands!")
                 if enemy.is_alive():
                     enemy.attack(self.player)
             elif choice == "2":
@@ -519,11 +532,29 @@ class DungeonBase:
                     enemy.attack(self.player)
             elif choice == "4":
                 self.player.use_skill(enemy)
+                self.announce("Special skill unleashed!")
                 if enemy.is_alive():
                     enemy.attack(self.player)
             else:
                 print("Invalid choice!")
             self.player.decrement_cooldowns()
+
+        if not enemy.is_alive():
+            self.announce(f"{enemy.name} has been defeated!")
+
+    def audience_gift(self):
+        if random.random() < 0.1:
+            print("A package falls from above! It's a gift from the audience.")
+            if random.random() < 0.5:
+                item = Item("Health Potion", "Restores 20 health")
+                self.player.collect_item(item)
+                print(f"You received a {item.name}.")
+                self.announce(f"{self.player.name} gains a helpful item!")
+            else:
+                damage = random.randint(5, 15)
+                self.player.take_damage(damage)
+                print(f"Uh-oh! It explodes and deals {damage} damage.")
+                self.announce("The crowd loves a good prank!")
 
     def shop(self):
         print("Welcome to the Shop!")
