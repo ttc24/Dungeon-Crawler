@@ -250,6 +250,7 @@ class Enemy(Entity):
         self.gold = gold
         self.ability = ability
         self.xp = 10
+        self.status_effects = {}
 
     def is_alive(self):
         return self.health > 0
@@ -259,6 +260,32 @@ class Enemy(Entity):
 
     def drop_gold(self):
         return self.gold
+
+    def apply_status_effects(self):
+        """Apply ongoing status effects and decrement their duration."""
+        skip_turn = False
+        if 'poison' in self.status_effects:
+            if self.status_effects['poison'] > 0:
+                self.health -= 3
+                print(f"The {self.name} takes 3 poison damage!")
+                self.status_effects['poison'] -= 1
+            if self.status_effects['poison'] <= 0:
+                del self.status_effects['poison']
+        if 'burn' in self.status_effects:
+            if self.status_effects['burn'] > 0:
+                self.health -= 4
+                print(f"The {self.name} suffers 4 burn damage!")
+                self.status_effects['burn'] -= 1
+            if self.status_effects['burn'] <= 0:
+                del self.status_effects['burn']
+        if 'freeze' in self.status_effects:
+            if self.status_effects['freeze'] > 0:
+                print(f"The {self.name} is frozen and can't move!")
+                self.status_effects['freeze'] -= 1
+                skip_turn = True
+            if self.status_effects['freeze'] <= 0:
+                del self.status_effects['freeze']
+        return skip_turn
 
     def attack(self, player):
         damage = random.randint(self.attack_power // 2, self.attack_power)
