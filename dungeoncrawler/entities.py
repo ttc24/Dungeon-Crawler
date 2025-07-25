@@ -8,6 +8,13 @@ class Entity:
         self.description = description
 
 class Player(Entity):
+    """Represents the hero controlled by the player.
+
+    Tracks stats, inventory and equipped weapon while providing combat
+    actions such as :meth:`attack`, :meth:`defend`, :meth:`use_health_potion`
+    and :meth:`use_skill`. Leveling and character progression are handled via
+    :meth:`level_up`, :meth:`join_guild` and :meth:`choose_race`.
+    """
     def __init__(self, name, class_type="Warrior"):
         super().__init__(name, "The player")
         self.class_type = class_type
@@ -230,6 +237,11 @@ class Player(Entity):
         return self.level * 100 + len(self.inventory) * 10 + self.gold
 
 class Enemy(Entity):
+    """Adversary encountered within the dungeon.
+
+    Holds combat statistics and may wield a special ability. The
+    :meth:`attack` method applies damage and effects to the player.
+    """
     def __init__(self, name, health, attack_power, defense, gold, ability=None):
         super().__init__(name, "")
         self.health = health
@@ -267,6 +279,8 @@ class Enemy(Entity):
         print(f"The {self.name} attacked you and dealt {damage} damage.")
 
 class Companion(Entity):
+    """NPC ally that grants a minor permanent bonus when recruited."""
+
     def __init__(self, name, effect):
         super().__init__(name, "A loyal companion")
         self.effect = effect

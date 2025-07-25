@@ -8,6 +8,14 @@ from .items import Item, Weapon
 
 
 class DungeonBase:
+    """Core engine for running the dungeon crawler game.
+
+    The class manages dungeon generation, room handling and turn based
+    combat.  High level methods like :meth:`generate_dungeon`,
+    :meth:`move_player`, :meth:`battle` and :meth:`play_game` orchestrate the
+    flow of a game session while utility helpers handle saving progress and
+    shop interactions.
+    """
     def __init__(self, width, height):
         self.width = width
         self.height = height
