@@ -518,17 +518,17 @@ class DungeonBase:
     def battle(self, enemy):
         print(f"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability else ''} Boss incoming!")
         self.announce(f"{self.player.name} engages {enemy.name}!")
-        self.player.apply_status_effects()
-        if 'freeze' in self.player.status_effects:
-            print("\u2744\ufe0f You are frozen and skip this turn!")
-            self.player.status_effects['freeze'] -= 1
-            if self.player.status_effects['freeze'] <= 0:
-                del self.player.status_effects['freeze']
-            if enemy.is_alive():
-                enemy.attack(self.player)
-            return
-
         while self.player.is_alive() and enemy.is_alive():
+            self.player.apply_status_effects()
+            if 'freeze' in self.player.status_effects:
+                print("\u2744\ufe0f You are frozen and skip this turn!")
+                self.player.status_effects['freeze'] -= 1
+                if self.player.status_effects['freeze'] <= 0:
+                    del self.player.status_effects['freeze']
+                if enemy.is_alive():
+                    enemy.attack(self.player)
+                continue
+
             print(f"Player Health: {self.player.health}")
             print(f"Enemy Health: {enemy.health}")
             print("1. Attack\n2. Defend\n3. Use Health Potion\n4. Use Skill")
