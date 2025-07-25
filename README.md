@@ -1,6 +1,6 @@
 # Dungeon Crawler
 
-Dungeon Crawler is a small text-based adventure inspired by the outrageous humor of the *Dungeon Crawler Carl* novels. Guide your hero through procedurally generated floors packed with quirky monsters, wild loot, and snarky NPCs.
+Dungeon Crawler is a small text-based adventure that borrows the core ideas of the *Dungeon Crawler Carl* novels while toning down the humor. Guide your hero through procedurally generated floors filled with monsters, treasure, and meaningful character choices.
 
 ## Installation
 
@@ -21,11 +21,16 @@ Progress is automatically saved whenever you clear a floor. On the next launch y
 ## Objectives
 
 - Survive each floor and defeat the boss to descend.
-- Collect ridiculous weapons and helpful companions.
+- Collect powerful weapons and trustworthy companions.
 - Rack up the highest score on the in-game leaderboard.
+
+## Features
+
+- Join a guild starting on the second floor to gain unique bonuses.
+- Unlock new playable races when reaching the third floor.
 
 ## Inspirations
 
-The style borrows heavily from Matt Dinniman's *Dungeon Crawler Carl* series. Expect sarcastic narration, strange NPCs, and outlandish equipment (yes, even an "Exploding Rubber Ducky of Doom").
+The design nods to Matt Dinniman's *Dungeon Crawler Carl* series but focuses on gameplay elements like guilds and race unlocks rather than parody.
 
 Enjoy and feel free to open issues or submit pull requests with new ideas!
