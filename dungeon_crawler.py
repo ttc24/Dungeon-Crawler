@@ -6,10 +6,10 @@ import random
 SAVE_FILE = "savegame.json"
 SCORE_FILE = "scores.json"
 ANNOUNCER_LINES = [
-    "Look at that move!",
-    "The crowd goes wild!",
-    "That's going to leave a mark.",
-    "Someone clip that for the highlight reel!",
+    "A decisive blow!",
+    "You fight with determination.",
+    "Your skill improves.",
+    "You press the attack.",
 ]
 
 # --- Entity Classes ---
@@ -46,6 +46,8 @@ class Player(Entity):
         self.companions = []
         self.status_effects = {}  # Tracks status effects like poison, burn, and freeze
         self.skill_cooldown = 0
+        self.guild = None
+        self.race = None
         self.x = 0
         self.y = 0
 
@@ -179,6 +181,30 @@ class Player(Entity):
         if self.level == 5:
             print("You've unlocked Passive Regen: Heal 1 HP per move.")
 
+    def join_guild(self, guild):
+        self.guild = guild
+        if guild == "Warriors' Guild":
+            self.max_health += 10
+            self.health += 10
+        elif guild == "Mages' Guild":
+            self.attack_power += 3
+        elif guild == "Rogues' Guild":
+            self.skill_cooldown = max(0, self.skill_cooldown - 1)
+        print(f"You have joined the {guild}!")
+
+    def choose_race(self, race):
+        self.race = race
+        if race == "Elf":
+            self.attack_power += 2
+        elif race == "Dwarf":
+            self.max_health += 5
+            self.health += 5
+        elif race == "Orc":
+            self.attack_power += 1
+            self.max_health += 3
+            self.health += 3
+        print(f"Race selected: {race}.")
+
     def equip_weapon(self, weapon):
         if weapon in self.inventory and isinstance(weapon, Weapon):
             if self.weapon:
@@ -247,7 +273,7 @@ class Weapon(Item):
 
 class Companion(Entity):
     def __init__(self, name, effect):
-        super().__init__(name, "A questionably helpful ally")
+        super().__init__(name, "A loyal companion")
         self.effect = effect
 
 # --- Dungeon System ---
@@ -271,11 +297,11 @@ class DungeonBase:
             Weapon("Flame Blade", "Glows with searing heat", 13, 20, 95),
             Weapon("Crossbow", "Ranged attack with bolts", 11, 19, 60)
         ]
-        self.comedic_loot = [
-            Weapon("Exploding Rubber Ducky", "Quack and kaboom!", 15, 25, 0),
-            Item("Bag of Infinite Glitter", "Because everyone loves sparkle"),
-            Weapon("Banana of Bludgeoning", "It looks silly but hits hard", 12, 20, 0),
-            Item("Cape of Mild Invisibility", "Now you see me, now you kinda don't")
+        self.rare_loot = [
+            Weapon("Elven Longbow", "Bow of unmatched accuracy.", 15, 25, 0),
+            Item("Blessed Charm", "Said to bring good fortune."),
+            Weapon("Dwarven Waraxe", "Forged in the deep halls.", 12, 20, 0),
+            Item("Shadow Cloak", "Grants an air of mystery")
         ]
 
     def announce(self, msg):
@@ -292,9 +318,11 @@ class DungeonBase:
                 "attack_power": self.player.attack_power,
                 "xp": self.player.xp,
                 "gold": self.player.gold,
-                "class": self.player.class_type,
-                "cooldown": self.player.skill_cooldown,
-            }
+            "class": self.player.class_type,
+            "cooldown": self.player.skill_cooldown,
+            "guild": self.player.guild,
+            "race": self.player.race,
+        }
         }
         with open(SAVE_FILE, "w") as f:
             json.dump(data, f)
@@ -312,6 +340,8 @@ class DungeonBase:
             self.player.xp = p["xp"]
             self.player.gold = p["gold"]
             self.player.skill_cooldown = p.get("cooldown", 0)
+            self.player.guild = p.get("guild")
+            self.player.race = p.get("race")
             return data.get("floor", 1)
         return 1
 
@@ -327,6 +357,28 @@ class DungeonBase:
         print("-- Leaderboard --")
         for r in records:
             print(f"{r['name']}: {r['score']}")
+
+    def offer_guild(self):
+        if self.player.guild:
+            return
+        print("Guilds now accept new members!")
+        print("1. Warriors' Guild - Bonus Health")
+        print("2. Mages' Guild - Bonus Attack")
+        print("3. Rogues' Guild - Faster Skills")
+        choice = input("Join which guild? (1/2/3 or skip): ")
+        guilds = {"1": "Warriors' Guild", "2": "Mages' Guild", "3": "Rogues' Guild"}
+        if choice in guilds:
+            self.player.join_guild(guilds[choice])
+
+    def offer_race(self):
+        if self.player.race:
+            return
+        print("New races are available to you!")
+        print("1. Human 2. Elf 3. Dwarf 4. Orc")
+        choice = input("Choose your race: ")
+        races = {"1": "Human", "2": "Elf", "3": "Dwarf", "4": "Orc"}
+        race = races.get(choice, "Human")
+        self.player.choose_race(race)
 
     def generate_room_name(self, room_type=None):
         lore = {
@@ -500,8 +552,8 @@ class DungeonBase:
             
             place(Item("Key", "A magical key dropped by the boss"))
         companion_options = [
-            Companion("Princess Donut", "heal"),
-            Companion("Kevin the Disposable", "attack"),
+            Companion("Battle Priest", "heal"),
+            Companion("Hired Blade", "attack"),
         ]
         place(random.choice(companion_options))
         for _ in range(3):
@@ -526,10 +578,18 @@ class DungeonBase:
         while (self.player is None or self.player.is_alive()) and floor <= 18:
             print(f"===== Entering Floor {floor} =====")
             self.generate_dungeon(floor)
+            if floor == 2:
+                self.offer_guild()
+            if floor == 3:
+                self.offer_race()
 
             while self.player.is_alive():
                 print(f"Position: ({self.player.x}, {self.player.y}) - {self.room_names[self.player.y][self.player.x]}")
                 print(f"Health: {self.player.health} | XP: {self.player.xp} | Gold: {self.player.gold} | Level: {self.player.level} | Floor: {floor} | Skill CD: {self.player.skill_cooldown}")
+                if self.player.guild:
+                    print(f"Guild: {self.player.guild}")
+                if self.player.race:
+                    print(f"Race: {self.player.race}")
                 print("1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit")
                 choice = input("Action: ")
 
@@ -616,7 +676,7 @@ class DungeonBase:
             self.player.gold += gold
             print(f"You found a treasure chest with {gold} gold!")
             if random.random() < 0.3:
-                loot = random.choice(self.comedic_loot)
+                loot = random.choice(self.rare_loot)
                 print(f"Inside you also discover {loot.name}!")
                 self.player.collect_item(loot)
             self.rooms[y][x] = None
