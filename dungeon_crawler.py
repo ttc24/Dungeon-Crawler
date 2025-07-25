@@ -20,18 +20,32 @@ class Entity:
         self.description = description
 
 class Player(Entity):
-    def __init__(self, name):
+    def __init__(self, name, class_type="Warrior"):
         super().__init__(name, "The player")
-        self.level = 1
-        self.health = 100
-        self.max_health = 100
-        self.attack_power = 10
+        self.class_type = class_type
+        # Base stats differ slightly depending on chosen class
+        if class_type == "Mage":
+            self.level = 1
+            self.health = 80
+            self.max_health = 80
+            self.attack_power = 14
+        elif class_type == "Rogue":
+            self.level = 1
+            self.health = 90
+            self.max_health = 90
+            self.attack_power = 12
+        else:  # Warrior or default
+            self.level = 1
+            self.health = 100
+            self.max_health = 100
+            self.attack_power = 10
         self.xp = 0
         self.gold = 0
         self.inventory = []
         self.weapon = None
         self.companions = []
         self.status_effects = {}  # Tracks status effects like poison, burn, and freeze
+        self.skill_cooldown = 0
         self.x = 0
         self.y = 0
 
@@ -119,6 +133,35 @@ class Player(Entity):
                 self.status_effects['freeze'] -= 1
             if self.status_effects['freeze'] <= 0:
                 del self.status_effects['freeze']
+
+    def decrement_cooldowns(self):
+        if self.skill_cooldown > 0:
+            self.skill_cooldown -= 1
+
+    def use_skill(self, enemy):
+        if self.skill_cooldown > 0:
+            print(f"Your skill is on cooldown for {self.skill_cooldown} more turn(s).")
+            return
+        if self.class_type == "Warrior":
+            damage = self.attack_power * 2
+            print(f"You unleash a mighty Power Strike dealing {damage} damage!")
+            enemy.take_damage(damage)
+        elif self.class_type == "Mage":
+            damage = self.attack_power + random.randint(10, 15)
+            print(f"You cast Fireball dealing {damage} damage!")
+            enemy.take_damage(damage)
+            enemy.status_effects = getattr(enemy, 'status_effects', {})
+            enemy.status_effects['burn'] = 3
+        elif self.class_type == "Rogue":
+            damage = self.attack_power + random.randint(5, 10)
+            print(f"You perform a sneaky Backstab for {damage} damage!")
+            enemy.take_damage(damage)
+        else:
+            print("You don't have a special skill.")
+            return
+        if not enemy.is_alive():
+            self.process_enemy_defeat(enemy)
+        self.skill_cooldown = 3
 
     def level_up(self):
         self.level += 1
@@ -225,11 +268,14 @@ class DungeonBase:
             Weapon("Dagger", "A quick dagger", 8, 12, 35),
             Weapon("Warhammer", "Crushes armor and bone", 14, 22, 85),
             Weapon("Rapier", "A slender, piercing blade", 9, 17, 50),
-            Weapon("Flame Blade", "Glows with searing heat", 13, 20, 95)
+            Weapon("Flame Blade", "Glows with searing heat", 13, 20, 95),
+            Weapon("Crossbow", "Ranged attack with bolts", 11, 19, 60)
         ]
         self.comedic_loot = [
             Weapon("Exploding Rubber Ducky", "Quack and kaboom!", 15, 25, 0),
-            Item("Bag of Infinite Glitter", "Because everyone loves sparkle")
+            Item("Bag of Infinite Glitter", "Because everyone loves sparkle"),
+            Weapon("Banana of Bludgeoning", "It looks silly but hits hard", 12, 20, 0),
+            Item("Cape of Mild Invisibility", "Now you see me, now you kinda don't")
         ]
 
     def announce(self, msg):
@@ -246,6 +292,8 @@ class DungeonBase:
                 "attack_power": self.player.attack_power,
                 "xp": self.player.xp,
                 "gold": self.player.gold,
+                "class": self.player.class_type,
+                "cooldown": self.player.skill_cooldown,
             }
         }
         with open(SAVE_FILE, "w") as f:
@@ -255,7 +303,7 @@ class DungeonBase:
         if os.path.exists(SAVE_FILE):
             with open(SAVE_FILE) as f:
                 data = json.load(f)
-            self.player = Player(data["player"]["name"])
+            self.player = Player(data["player"]["name"], data["player"].get("class", "Warrior"))
             p = data["player"]
             self.player.level = p["level"]
             self.player.health = p["health"]
@@ -263,6 +311,7 @@ class DungeonBase:
             self.player.attack_power = p["attack_power"]
             self.player.xp = p["xp"]
             self.player.gold = p["gold"]
+            self.player.skill_cooldown = p.get("cooldown", 0)
             return data.get("floor", 1)
         return 1
 
@@ -286,6 +335,7 @@ class DungeonBase:
             "Enemy": ("Cursed Hall", "The shadows shift... something watches from the dark."),
             "Exit": ("Sealed Gate", "Massive stone doors sealed by arcane runes. It might be the only way out."),
             "Key": ("Hidden Niche", "A hollow carved into the wall, forgotten by time. Something valuable glints inside."),
+            "Sanctuary": ("Sacred Sanctuary", "A calm aura fills this room, soothing your wounds."),
             "Empty": ("Silent Chamber", "Dust covers everything. It appears long abandoned."),
             "default": (None, None)
         }
@@ -327,8 +377,13 @@ class DungeonBase:
             self.rooms[y][x] = "Empty"
 
         if self.player is None:
-            self.player = Player(input("Enter your name: "))
-            print("Welcome contestant! Try not to die horribly.")
+            name = input("Enter your name: ")
+            print("Choose your class: 1. Warrior 2. Mage 3. Rogue")
+            choice = input("Class: ")
+            classes = {"1": "Warrior", "2": "Mage", "3": "Rogue"}
+            class_type = classes.get(choice, "Warrior")
+            self.player = Player(name, class_type)
+            print(f"Welcome {self.player.name} the {class_type}! Try not to die horribly.")
         self.rooms[start[1]][start[0]] = self.player
         self.player.x, self.player.y = start
         self.visited_rooms.add(start)
@@ -455,6 +510,8 @@ class DungeonBase:
             place("Treasure")
         for _ in range(2):
             place("Enchantment")
+        for _ in range(2):
+            place("Sanctuary")
         place("Blacksmith")
         # Key is now tied to boss drop; don't place it separately
 
@@ -472,7 +529,7 @@ class DungeonBase:
 
             while self.player.is_alive():
                 print(f"Position: ({self.player.x}, {self.player.y}) - {self.room_names[self.player.y][self.player.x]}")
-                print(f"Health: {self.player.health} | XP: {self.player.xp} | Gold: {self.player.gold} | Level: {self.player.level} | Floor: {floor}")
+                print(f"Health: {self.player.health} | XP: {self.player.xp} | Gold: {self.player.gold} | Level: {self.player.level} | Floor: {floor} | Skill CD: {self.player.skill_cooldown}")
                 print("1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit")
                 choice = input("Action: ")
 
@@ -526,7 +583,8 @@ class DungeonBase:
             "Cursed Hall": "The shadows shift... something watches from the dark.",
             "Sealed Gate": "Massive stone doors sealed by arcane runes. It might be the only way out.",
             "Hidden Niche": "A hollow carved into the wall, forgotten by time. Something valuable glints inside.",
-            "Silent Chamber": "Dust covers everything. It appears long abandoned."
+            "Silent Chamber": "Dust covers everything. It appears long abandoned.",
+            "Sacred Sanctuary": "A peaceful place that heals weary adventurers."
         }
         if name in lore:
             print(f"{lore[name]}")
@@ -606,6 +664,12 @@ class DungeonBase:
             self.rooms[y][x] = None
             self.room_names[y][x] = "Blacksmith Forge"
 
+        elif room == "Sanctuary":
+            self.player.health = self.player.max_health
+            print("A soothing warmth envelops you. Your wounds are fully healed.")
+            self.rooms[y][x] = None
+            self.room_names[y][x] = "Sacred Sanctuary"
+
         elif room == "Trap":
             damage = random.randint(10, 30)
             self.player.take_damage(damage)
@@ -641,7 +705,7 @@ class DungeonBase:
         while self.player.is_alive() and enemy.is_alive():
             print(f"Player Health: {self.player.health}")
             print(f"Enemy Health: {enemy.health}")
-            print("1. Attack\n2. Defend\n3. Use Health Potion")
+            print("1. Attack\n2. Defend\n3. Use Health Potion\n4. Use Skill")
             choice = input("Choose action: ")
             if choice == "1":
                 self.player.attack(enemy)
@@ -655,8 +719,13 @@ class DungeonBase:
                 self.player.use_health_potion()
                 if enemy.is_alive():
                     enemy.attack(self.player)
+            elif choice == "4":
+                self.player.use_skill(enemy)
+                if enemy.is_alive():
+                    enemy.attack(self.player)
             else:
                 print("Invalid choice!")
+            self.player.decrement_cooldowns()
 
     def shop(self):
         print("Welcome to the Shop!")
