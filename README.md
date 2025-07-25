@@ -4,10 +4,10 @@ Dungeon Crawler is a small text-based adventure that borrows the core ideas of t
 
 ## Installation
 
-The game only requires Python 3. Run it directly using the provided script:
+The game only requires Python 3. Run it directly using the main module:
 
 ```bash
-python3 dungeon_crawler.py
+python3 -m dungeoncrawler
 ```
 
 Make sure the file is executable if you wish to launch it with `./dungeon_crawler.py`.
