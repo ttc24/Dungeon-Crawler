@@ -18,7 +18,7 @@ class Player(Entity):
         self.gold = 0
         self.inventory = []
         self.weapon = None
-        self.status_effects = {}  # Tracks status effects like poison
+        self.status_effects = {}  # Tracks status effects like poison, burn, and freeze
         self.x = 0
         self.y = 0
 
@@ -168,7 +168,7 @@ class Enemy(Entity):
             player.status_effects['burn'] = 3
         elif self.ability == "freeze":
             player.status_effects['freeze'] = 1
-            print(f"The {self.name} freezes you for 3 turns!")
+            print(f"The {self.name} freezes you for 1 turns!")
         elif self.ability == "double_strike" and random.random() < 0.25:
             print(f"The {self.name} strikes twice!")
             player.take_damage(damage)
