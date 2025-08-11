@@ -23,6 +23,14 @@ At any time you may choose **8. Show Map** to display a grid of the dungeon. The
 
 Progress is automatically saved whenever you clear a floor. On the next launch you will be asked if you want to continue.
 
+## Save Files
+
+Saves and high scores are written as JSON under `~/.dungeon_crawler/saves/`.
+The main save file `savegame.json` records the current floor along with the
+player's stats, inventory, equipped weapon and companions. A separate
+`scores.json` file keeps the leaderboard. The directory is created
+automatically when the game starts.
+
 ## Objectives
 
 - Survive each floor and defeat the boss to descend.

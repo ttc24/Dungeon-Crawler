@@ -1,8 +1,13 @@
 from pathlib import Path
 import json
 
-SAVE_FILE = "savegame.json"
-SCORE_FILE = "scores.json"
+# Default save directory under the user's home directory.  Create it on import
+# so game code can assume it exists.
+SAVE_DIR = Path.home() / ".dungeon_crawler" / "saves"
+SAVE_DIR.mkdir(parents=True, exist_ok=True)
+
+SAVE_FILE = SAVE_DIR / "savegame.json"
+SCORE_FILE = SAVE_DIR / "scores.json"
 ANNOUNCER_LINES = [
     "A decisive blow!",
     "You fight with determination.",
@@ -26,8 +31,11 @@ def load_riddles():
 
     data_dir = Path(__file__).resolve().parent.parent / "data"
     path = data_dir / "riddles.json"
-    with open(path) as f:
-        riddles = json.load(f)
+    try:
+        with open(path) as f:
+            riddles = json.load(f)
+    except (IOError, json.JSONDecodeError):
+        return []
     # Normalise answers for case-insensitive comparison
     for r in riddles:
         r["answer"] = r["answer"].lower()

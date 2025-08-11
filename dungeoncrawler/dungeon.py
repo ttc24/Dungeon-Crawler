@@ -43,8 +43,11 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 def load_enemies():
     """Load enemy stats and abilities from ``enemies.json``."""
     path = DATA_DIR / "enemies.json"
-    with open(path) as f:
-        data = json.load(f)
+    try:
+        with open(path) as f:
+            data = json.load(f)
+    except (IOError, json.JSONDecodeError):
+        return {}, {}
     stats = {name: tuple(v["stats"]) for name, v in data.items()}
     abilities = {name: v.get("ability") for name, v in data.items() if v.get("ability")}
     return stats, abilities
@@ -53,8 +56,11 @@ def load_enemies():
 def load_bosses():
     """Load boss stats and loot tables from ``bosses.json``."""
     path = DATA_DIR / "bosses.json"
-    with open(path) as f:
-        data = json.load(f)
+    try:
+        with open(path) as f:
+            data = json.load(f)
+    except (IOError, json.JSONDecodeError):
+        return {}, {}
     stats = {}
     loot = {}
     for name, cfg in data.items():
@@ -254,13 +260,20 @@ class DungeonBase:
                 ],
             },
         }
-        with open(SAVE_FILE, "w") as f:
-            json.dump(data, f)
+        try:
+            with open(Path(SAVE_FILE), "w") as f:
+                json.dump(data, f)
+        except (IOError, json.JSONDecodeError):
+            pass
 
     def load_game(self):
-        if os.path.exists(SAVE_FILE):
-            with open(SAVE_FILE) as f:
-                data = json.load(f)
+        save_path = Path(SAVE_FILE)
+        if save_path.exists():
+            try:
+                with open(save_path) as f:
+                    data = json.load(f)
+            except (IOError, json.JSONDecodeError):
+                return 1
             self.player = Player(data["player"]["name"], data["player"].get("class", "Novice"))
             p = data["player"]
             self.player.level = p["level"]
@@ -308,13 +321,20 @@ class DungeonBase:
 
     def record_score(self, floor):
         records = []
-        if os.path.exists(SCORE_FILE):
-            with open(SCORE_FILE) as f:
-                records = json.load(f)
+        score_path = Path(SCORE_FILE)
+        if score_path.exists():
+            try:
+                with open(score_path) as f:
+                    records = json.load(f)
+            except (IOError, json.JSONDecodeError):
+                records = []
         records.append({"name": self.player.name, "score": self.player.get_score(), "floor": floor})
         records = sorted(records, key=lambda x: x["score"], reverse=True)[:10]
-        with open(SCORE_FILE, "w") as f:
-            json.dump(records, f, indent=2)
+        try:
+            with open(score_path, "w") as f:
+                json.dump(records, f, indent=2)
+        except (IOError, json.JSONDecodeError):
+            pass
         print("-- Leaderboard --")
         for r in records:
             print(f"{r['name']}: {r['score']} (Floor {r.get('floor', '?')})")
@@ -587,15 +607,21 @@ class DungeonBase:
                         print("You chose to exit the dungeon.")
                         print(f"Final Score: {self.player.get_score()}")
                         self.record_score(floor)
-                        if os.path.exists(SAVE_FILE):
-                            os.remove(SAVE_FILE)
+                        if Path(SAVE_FILE).exists():
+                            try:
+                                os.remove(SAVE_FILE)
+                            except IOError:
+                                pass
                         return
 
         print("You have died. Game Over!")
         print(f"Final Score: {self.player.get_score()}")
         self.record_score(floor)
-        if os.path.exists(SAVE_FILE):
-            os.remove(SAVE_FILE)
+        if Path(SAVE_FILE).exists():
+            try:
+                os.remove(SAVE_FILE)
+            except IOError:
+                pass
 
     def move_player(self, direction):
         dx, dy = {"left": (-1,0), "right": (1,0), "up": (0,-1), "down": (0,1)}.get(direction, (0,0))
