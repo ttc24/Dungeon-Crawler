@@ -1,181 +1,97 @@
 {
   "Astral Dragon": {
     "stats": [
-      220,
-      260,
-      30,
-      40,
+      230,
+      270,
+      32,
+      42,
       15
     ]
   },
   "Bandit": {
     "stats": [
-      50,
-      80,
-      6,
-      14,
+      60,
+      90,
+      8,
+      16,
       3
     ]
   },
   "Basilisk": {
+    "ability": "freeze",
     "stats": [
-      120,
-      160,
-      14,
-      24,
+      130,
+      170,
+      16,
+      26,
       7
-    ],
-    "ability": "freeze"
+    ]
   },
   "Beholder": {
     "stats": [
-      200,
-      240,
-      26,
-      36,
+      210,
+      250,
+      28,
+      38,
       13
     ]
   },
   "Cultist": {
     "stats": [
-      65,
-      95,
-      9,
-      16,
+      75,
+      105,
+      11,
+      18,
       3
     ]
   },
   "Cyclops": {
     "stats": [
-      190,
-      230,
-      24,
-      34,
+      200,
+      240,
+      26,
+      36,
       12
     ]
   },
   "Dark Knight": {
+    "ability": "double_strike",
     "stats": [
-      170,
-      210,
-      21,
-      29,
+      180,
+      220,
+      23,
+      31,
       10
-    ],
-    "ability": "double_strike"
+    ]
   },
   "Demon": {
     "stats": [
-      120,
-      160,
-      15,
-      26,
+      130,
+      170,
+      17,
+      28,
       8
     ]
   },
   "Gargoyle": {
     "stats": [
-      90,
-      130,
-      10,
-      22,
+      100,
+      140,
+      12,
+      24,
       6
     ]
   },
   "Ghoul": {
     "stats": [
-      70,
-      100,
-      8,
-      15,
-      4
-    ]
-  },
-  "Giant Spider": {
-    "stats": [
-      70,
+      80,
       110,
-      9,
+      10,
       17,
       4
     ]
   },
-  "Goblin": {
-    "stats": [
-      40,
-      70,
-      5,
-      12,
-      2
-    ]
-  },
-  "Harpy": {
-    "stats": [
-      70,
-      110,
-      10,
-      18,
-      4
-    ]
-  },
-  "Hydra": {
-    "stats": [
-      180,
-      220,
-      22,
-      32,
-      11
-    ],
-    "ability": "poison"
-  },
-  "Lich": {
-    "stats": [
-      130,
-      170,
-      14,
-      26,
-      7
-    ],
-    "ability": "lifesteal"
-  },
-  "Minotaur": {
-    "stats": [
-      140,
-      180,
-      16,
-      28,
-      8
-    ]
-  },
-  "Orc": {
-    "stats": [
-      80,
-      110,
-      10,
-      18,
-      4
-    ]
-  },
-  "Phoenix": {
-    "stats": [
-      160,
-      200,
-      20,
-      30,
-      10
-    ],
-    "ability": "burn"
-  },
-  "Revenant": {
-    "stats": [
-      150,
-      190,
-      18,
-      28,
-      9
-    ]
-  },
-  "Shade": {
+  "Giant Spider": {
     "stats": [
       80,
       120,
@@ -184,79 +100,163 @@
       4
     ]
   },
-  "Skeleton": {
+  "Goblin": {
     "stats": [
-      60,
-      90,
+      50,
+      80,
       7,
       14,
+      2
+    ]
+  },
+  "Harpy": {
+    "stats": [
+      80,
+      120,
+      12,
+      20,
+      4
+    ]
+  },
+  "Hydra": {
+    "ability": "poison",
+    "stats": [
+      190,
+      230,
+      24,
+      34,
+      11
+    ]
+  },
+  "Lich": {
+    "ability": "lifesteal",
+    "stats": [
+      140,
+      180,
+      16,
+      28,
+      7
+    ]
+  },
+  "Minotaur": {
+    "stats": [
+      150,
+      190,
+      18,
+      30,
+      8
+    ]
+  },
+  "Orc": {
+    "stats": [
+      90,
+      120,
+      12,
+      20,
+      4
+    ]
+  },
+  "Phoenix": {
+    "ability": "burn",
+    "stats": [
+      170,
+      210,
+      22,
+      32,
+      10
+    ]
+  },
+  "Revenant": {
+    "stats": [
+      160,
+      200,
+      20,
+      30,
+      9
+    ]
+  },
+  "Shade": {
+    "stats": [
+      90,
+      130,
+      13,
+      21,
+      4
+    ]
+  },
+  "Skeleton": {
+    "stats": [
+      70,
+      100,
+      9,
+      16,
       3
     ]
   },
   "Slime King": {
     "stats": [
-      130,
-      170,
-      13,
-      21,
+      140,
+      180,
+      15,
+      23,
       6
     ]
   },
   "Troll": {
     "stats": [
-      110,
-      150,
-      13,
-      23,
+      120,
+      160,
+      15,
+      25,
       6
     ]
   },
   "Vampire": {
-    "stats": [
-      90,
-      130,
-      10,
-      20,
-      5
-    ],
-    "ability": "lifesteal"
-  },
-  "Warlock": {
-    "stats": [
-      110,
-      150,
-      15,
-      25,
-      6
-    ],
-    "ability": "burn"
-  },
-  "Werewolf": {
-    "stats": [
-      100,
-      140,
-      12,
-      20,
-      5
-    ],
-    "ability": "double_strike"
-  },
-  "Wraith": {
+    "ability": "lifesteal",
     "stats": [
       100,
       140,
       12,
       22,
+      5
+    ]
+  },
+  "Warlock": {
+    "ability": "burn",
+    "stats": [
+      120,
+      160,
+      17,
+      27,
       6
-    ],
-    "ability": "poison"
+    ]
+  },
+  "Werewolf": {
+    "ability": "double_strike",
+    "stats": [
+      110,
+      150,
+      14,
+      22,
+      5
+    ]
+  },
+  "Wraith": {
+    "ability": "poison",
+    "stats": [
+      110,
+      150,
+      14,
+      24,
+      6
+    ]
   },
   "Zombie": {
     "stats": [
-      60,
-      100,
-      6,
-      14,
+      70,
+      110,
+      8,
+      16,
       3
     ]
   }

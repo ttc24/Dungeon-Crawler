@@ -112,10 +112,17 @@ def load_bosses():
 ENEMY_STATS, ENEMY_ABILITIES = load_enemies()
 BOSS_STATS, BOSS_LOOT = load_bosses()
 apply_enemy_plugins(ENEMY_STATS, ENEMY_ABILITIES)
+
+
+def floor_size(floor):
+    """Return map size for a given floor with cap at 15x15."""
+    size = min(7 + floor, 15)
+    return (size, size)
+
 # Floor specific configuration
 FLOOR_CONFIGS = {
     1: {
-        "size": (8, 8),
+        "size": floor_size(1),
         "enemies": ["Goblin", "Skeleton", "Bandit"],
         "bosses": ["Bone Tyrant"],
         "places": {
@@ -127,7 +134,7 @@ FLOOR_CONFIGS = {
         },
     },
     2: {
-        "size": (9, 9),
+        "size": floor_size(2),
         "enemies": ["Orc", "Cultist", "Ghoul", "Bandit"],
         "bosses": ["Inferno Golem", "Frost Warden"],
         "places": {
@@ -139,7 +146,7 @@ FLOOR_CONFIGS = {
         },
     },
     3: {
-        "size": (10, 10),
+        "size": floor_size(3),
         "enemies": ["Vampire", "Warlock", "Wraith", "Werewolf"],
         "bosses": ["Shadow Reaver", "Doom Bringer"],
         "places": {
@@ -151,7 +158,7 @@ FLOOR_CONFIGS = {
         },
     },
     4: {
-        "size": (11, 11),
+        "size": floor_size(4),
         "enemies": ["Basilisk", "Gargoyle", "Troll", "Lich"],
         "bosses": ["Void Serpent", "Ember Lord", "Glacier Fiend"],
         "places": {
@@ -163,7 +170,7 @@ FLOOR_CONFIGS = {
         },
     },
     5: {
-        "size": (12, 12),
+        "size": floor_size(5),
         "enemies": ["Phoenix", "Hydra", "Revenant", "Beholder"],
         "bosses": ["Grave Monarch", "Storm Reaper"],
         "places": {
@@ -175,7 +182,7 @@ FLOOR_CONFIGS = {
         },
     },
     6: {
-        "size": (13, 13),
+        "size": floor_size(6),
         "enemies": ["Minotaur", "Demon", "Harpy", "Shade"],
         "bosses": ["Bone Tyrant", "Inferno Golem"],
         "places": {
@@ -187,7 +194,7 @@ FLOOR_CONFIGS = {
         },
     },
     7: {
-        "size": (14, 14),
+        "size": floor_size(7),
         "enemies": ["Giant Spider", "Slime King", "Zombie", "Gargoyle"],
         "bosses": ["Frost Warden", "Shadow Reaver"],
         "places": {
@@ -199,7 +206,7 @@ FLOOR_CONFIGS = {
         },
     },
     8: {
-        "size": (15, 15),
+        "size": floor_size(8),
         "enemies": ["Dark Knight", "Cyclops", "Basilisk", "Werewolf"],
         "bosses": ["Doom Bringer", "Void Serpent"],
         "places": {
@@ -211,7 +218,7 @@ FLOOR_CONFIGS = {
         },
     },
     9: {
-        "size": (15, 15),
+        "size": floor_size(9),
         "enemies": ["Hydra", "Beholder", "Revenant", "Warlock"],
         "bosses": ["Ember Lord", "Glacier Fiend"],
         "places": {
@@ -223,7 +230,7 @@ FLOOR_CONFIGS = {
         },
     },
     10: {
-        "size": (15, 15),
+        "size": floor_size(10),
         "enemies": ["Phoenix", "Dark Knight", "Cyclops", "Minotaur"],
         "bosses": ["Grave Monarch", "Storm Reaper"],
         "places": {
@@ -235,7 +242,7 @@ FLOOR_CONFIGS = {
         },
     },
     11: {
-        "size": (15, 15),
+        "size": floor_size(11),
         "enemies": ["Astral Dragon", "Demon", "Harpy", "Shade"],
         "bosses": ["Bone Tyrant", "Inferno Golem", "Frost Warden"],
         "places": {
@@ -247,7 +254,7 @@ FLOOR_CONFIGS = {
         },
     },
     12: {
-        "size": (15, 15),
+        "size": floor_size(12),
         "enemies": ["Giant Spider", "Slime King", "Zombie", "Warlock"],
         "bosses": ["Shadow Reaver", "Doom Bringer", "Void Serpent"],
         "places": {
@@ -259,7 +266,7 @@ FLOOR_CONFIGS = {
         },
     },
     13: {
-        "size": (15, 15),
+        "size": floor_size(13),
         "enemies": ["Basilisk", "Gargoyle", "Troll", "Lich"],
         "bosses": ["Ember Lord", "Glacier Fiend", "Grave Monarch"],
         "places": {
@@ -271,7 +278,7 @@ FLOOR_CONFIGS = {
         },
     },
     14: {
-        "size": (15, 15),
+        "size": floor_size(14),
         "enemies": ["Hydra", "Beholder", "Revenant", "Dark Knight"],
         "bosses": ["Storm Reaper"],
         "places": {
@@ -283,7 +290,7 @@ FLOOR_CONFIGS = {
         },
     },
     15: {
-        "size": (15, 15),
+        "size": floor_size(15),
         "enemies": ["Cyclops", "Astral Dragon", "Phoenix", "Minotaur"],
         "bosses": ["Doom Bringer", "Void Serpent"],
         "places": {
@@ -295,7 +302,7 @@ FLOOR_CONFIGS = {
         },
     },
     16: {
-        "size": (15, 15),
+        "size": floor_size(16),
         "enemies": ["Demon", "Harpy", "Shade", "Giant Spider"],
         "bosses": ["Ember Lord", "Glacier Fiend"],
         "places": {
@@ -307,7 +314,7 @@ FLOOR_CONFIGS = {
         },
     },
     17: {
-        "size": (15, 15),
+        "size": floor_size(17),
         "enemies": ["Slime King", "Zombie", "Gargoyle", "Warlock"],
         "bosses": ["Grave Monarch", "Storm Reaper"],
         "places": {
@@ -319,7 +326,7 @@ FLOOR_CONFIGS = {
         },
     },
     18: {
-        "size": (15, 15),
+        "size": floor_size(18),
         "enemies": ["Hydra", "Beholder", "Astral Dragon", "Dark Knight"],
         "bosses": ["Bone Tyrant", "Doom Bringer", "Void Serpent"],
         "places": {
