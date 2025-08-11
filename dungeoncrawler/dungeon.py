@@ -11,6 +11,7 @@ from .plugins import apply_enemy_plugins, apply_item_plugins
 from . import combat as combat_module
 from . import map as map_module
 from . import shop as shop_module
+from .events import MerchantEvent, PuzzleEvent, TrapEvent
 
 # ---------------------------------------------------------------------------
 # Data loading utilities
@@ -338,6 +339,12 @@ FLOOR_CONFIGS = {
         },
     },
 }
+
+
+# Register default event types for each floor configuration
+EVENT_TYPES = [MerchantEvent, PuzzleEvent, TrapEvent]
+for cfg in FLOOR_CONFIGS.values():
+    cfg.setdefault("events", EVENT_TYPES)
 
 
 class DungeonBase:
@@ -779,6 +786,15 @@ class DungeonBase:
             self.player.gold += reward
         else:
             print("Incorrect! The sage vanishes in disappointment.")
+
+    def trigger_random_event(self, floor):
+        """Randomly select and trigger an event for ``floor``."""
+        cfg = self.floor_configs.get(floor, {})
+        events = cfg.get("events")
+        if events:
+            event_cls = random.choice(events)
+            event = event_cls()
+            event.trigger(self)
 
     # Floor-specific events keep gameplay varied without hardcoding logic in
     # play_game. Additional floors can be added here easily.
