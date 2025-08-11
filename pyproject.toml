@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dungeon-crawler"
+version = "0.1.0"
+description = "A text-based adventure inspired by the Dungeon Crawler Carl novels."
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [{name = "Dungeon Crawler Contributors"}]
+dependencies = []
+
+[project.scripts]
+dungeon-crawler = "dungeoncrawler.main:main"
+
+[tool.setuptools.packages.find]
+include = ["dungeoncrawler", "data"]
+
+[tool.setuptools.package-data]
+"data" = ["*.json"]
