@@ -7,14 +7,10 @@ race and guild selections are deferred to later floors and offered by the
 """
 
 import argparse
+from gettext import gettext as _
 
 from .config import load_config
-from .dungeon import DungeonBase
-from .entities import Player
-# Explicitly import modules that now host game subsystems.
-from . import combat as combat_module  # noqa: F401
-from . import map as dungeon_map  # noqa: F401
-from . import shop as shop_module  # noqa: F401
+from .i18n import set_language
 
 
 def build_character():
@@ -25,14 +21,16 @@ def build_character():
     the gradual progression described in the novels.
     """
 
+    from .entities import Player
+
     name = ""
     while not name:
-        name = input("Enter your name: ").strip()
+        name = input(_("Enter your name: ")).strip()
         if not name:
-            print("Name cannot be blank.")
+            print(_("Name cannot be blank."))
 
     player = Player(name)
-    print(f"Welcome {player.name}! Your journey is just beginning.")
+    print(_("Welcome {name}! Your journey is just beginning.").format(name=player.name))
     return player
 
 
@@ -43,13 +41,23 @@ def main(argv=None):
     parser.add_argument(
         "--skip-tutorial",
         action="store_true",
-        help="Do not run the interactive tutorial",
+        help=_("Do not run the interactive tutorial"),
     )
+    parser.add_argument("--lang", help=_("Language code for translations"))
     args = parser.parse_args(argv)
+
+    set_language(args.lang)
+
+    global DungeonBase, Player
+    from .dungeon import DungeonBase
+    from .entities import Player
+    from . import combat as combat_module  # noqa: F401
+    from . import map as dungeon_map  # noqa: F401
+    from . import shop as shop_module  # noqa: F401
 
     cfg = load_config()
     game = DungeonBase(cfg.screen_width, cfg.screen_height)
-    cont = input("Load existing save? (y/n): ").strip().lower()
+    cont = input(_("Load existing save? (y/n): ")).strip().lower()
     if cont != "y":
         game.player = build_character()
         if args.skip_tutorial:

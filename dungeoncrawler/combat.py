@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import random
 from typing import TYPE_CHECKING
+from gettext import gettext as _
 
 if TYPE_CHECKING:  # pragma: no cover - for type hints only
     from .dungeon import DungeonBase
@@ -23,7 +24,7 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
 
     player = game.player
     print(
-        f"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability else ''} Boss incoming!"
+        _(f"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability else ''} Boss incoming!")
     )
     game.announce(f"{player.name} engages {enemy.name}!")
     while player.is_alive() and enemy.is_alive():
@@ -39,13 +40,13 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
                     enemy.take_turn(player)
             continue
 
-        print(f"Player Health: {player.health}")
-        print(f"Enemy Health: {enemy.health}")
-        print("1. Attack\n2. Defend\n3. Use Health Potion\n4. Use Skill")
-        choice = input("Choose action: ")
+        print(_(f"Player Health: {player.health}"))
+        print(_(f"Enemy Health: {enemy.health}"))
+        print(_("1. Attack\n2. Defend\n3. Use Health Potion\n4. Use Skill"))
+        choice = input(_("Choose action: "))
         if choice == "1":
             player.attack(enemy)
-            game.announce("A fierce attack lands!")
+            game.announce(_("A fierce attack lands!"))
             if enemy.is_alive():
                 skip = enemy.apply_status_effects()
                 if enemy.is_alive() and not skip:
@@ -64,13 +65,13 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
                     enemy.take_turn(player)
         elif choice == "4":
             player.use_skill(enemy)
-            game.announce("Special skill unleashed!")
+            game.announce(_("Special skill unleashed!"))
             if enemy.is_alive():
                 skip = enemy.apply_status_effects()
                 if enemy.is_alive() and not skip:
                     enemy.take_turn(player)
         else:
-            print("Invalid choice!")
+            print(_("Invalid choice!"))
         player.decrement_cooldowns()
 
     if not enemy.is_alive():
@@ -78,6 +79,6 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
         if enemy.name in game.boss_loot:
             loot = random.choice(game.boss_loot[enemy.name])
             player.collect_item(loot)
-            print(f"The {enemy.name} dropped {loot.name}!")
-            game.announce(f"{player.name} obtains {loot.name}!")
+            print(_(f"The {enemy.name} dropped {loot.name}!"))
+            game.announce(_(f"{player.name} obtains {loot.name}!"))
 

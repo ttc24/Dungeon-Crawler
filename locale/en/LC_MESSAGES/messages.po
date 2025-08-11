@@ -1,0 +1,983 @@
+# English translations for PACKAGE package.
+# Copyright (C) 2025 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Automatically generated, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-11 22:48+0000\n"
+"PO-Revision-Date: 2025-08-11 22:48+0000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: dungeoncrawler/map.py:98
+#, python-brace-format
+msgid "A powerful boss guards this floor! The {name} lurks nearby..."
+msgstr "A powerful boss guards this floor! The {name} lurks nearby..."
+
+#: dungeoncrawler/map.py:111
+#, python-brace-format
+msgid "✨ The boss dropped a unique weapon: {loot.name}!"
+msgstr "✨ The boss dropped a unique weapon: {loot.name}!"
+
+#: dungeoncrawler/map.py:145
+msgid "You can't move that way."
+msgstr "You can't move that way."
+
+#: dungeoncrawler/map.py:196
+msgid "Press '?' for legend, q to exit"
+msgstr "Press '?' for legend, q to exit"
+
+#: dungeoncrawler/map.py:198
+msgid "@: Player"
+msgstr "@: Player"
+
+#: dungeoncrawler/map.py:198
+msgid "E: Exit"
+msgstr "E: Exit"
+
+#: dungeoncrawler/map.py:198
+msgid ".: Explored"
+msgstr ".: Explored"
+
+#: dungeoncrawler/map.py:198
+msgid "#: Unexplored"
+msgstr "#: Unexplored"
+
+#: dungeoncrawler/map.py:227
+#, python-brace-format
+msgid "{lore[name]}"
+msgstr "{lore[name]}"
+
+#: dungeoncrawler/map.py:234
+#, python-brace-format
+msgid "You meet {room.name}. {room.description}"
+msgstr "You meet {room.name}. {room.description}"
+
+#: dungeoncrawler/map.py:235
+msgid "Recruit this companion? (y/n): "
+msgstr "Recruit this companion? (y/n): "
+
+#: dungeoncrawler/map.py:243
+#, python-brace-format
+msgid "{game.player.name} gains a companion!"
+msgstr "{game.player.name} gains a companion!"
+
+#: dungeoncrawler/map.py:246
+#, python-brace-format
+msgid "You found a {room.name}!"
+msgstr "You found a {room.name}!"
+
+#: dungeoncrawler/map.py:248
+#, python-brace-format
+msgid "{game.player.name} obtained {room.name}!"
+msgstr "{game.player.name} obtained {room.name}!"
+
+#: dungeoncrawler/map.py:255
+#, python-brace-format
+msgid "You found a treasure chest with {gold} gold!"
+msgstr "You found a treasure chest with {gold} gold!"
+
+#: dungeoncrawler/map.py:258
+#, python-brace-format
+msgid "Inside you also discover {loot.name}!"
+msgstr "Inside you also discover {loot.name}!"
+
+#: dungeoncrawler/map.py:260
+#, python-brace-format
+msgid "{game.player.name} picks up {loot.name}!"
+msgstr "{game.player.name} picks up {loot.name}!"
+
+#: dungeoncrawler/map.py:264
+msgid "You enter a glowing chamber with ancient runes etched in the stone."
+msgstr "You enter a glowing chamber with ancient runes etched in the stone."
+
+#: dungeoncrawler/map.py:266
+#, python-brace-format
+msgid "Your current weapon is: {game.player.weapon.name}"
+msgstr "Your current weapon is: {game.player.weapon.name}"
+
+#: dungeoncrawler/map.py:267
+msgid "You may enchant it with a status effect for 30 gold."
+msgstr "You may enchant it with a status effect for 30 gold."
+
+#: dungeoncrawler/map.py:268
+msgid "1. Poison  2. Burn  3. Freeze  4. Cancel"
+msgstr "1. Poison  2. Burn  3. Freeze  4. Cancel"
+
+#: dungeoncrawler/map.py:269
+msgid "Choose enchantment: "
+msgstr "Choose enchantment: "
+
+#: dungeoncrawler/map.py:271
+msgid "Your weapon is already enchanted! You can't add another enchantment."
+msgstr "Your weapon is already enchanted! You can't add another enchantment."
+
+#: dungeoncrawler/map.py:277
+#, python-brace-format
+msgid "Your weapon is now enchanted with {effect}!"
+msgstr "Your weapon is now enchanted with {effect}!"
+
+#: dungeoncrawler/map.py:279
+msgid "You leave the enchantment chamber untouched."
+msgstr "You leave the enchantment chamber untouched."
+
+#: dungeoncrawler/map.py:281
+msgid "Not enough gold or invalid choice."
+msgstr "Not enough gold or invalid choice."
+
+#: dungeoncrawler/map.py:283
+msgid "You need a weapon to enchant."
+msgstr "You need a weapon to enchant."
+
+#: dungeoncrawler/map.py:287
+msgid "You meet a grizzled blacksmith hammering at a forge."
+msgstr "You meet a grizzled blacksmith hammering at a forge."
+
+#: dungeoncrawler/map.py:290
+#, python-brace-format
+msgid ""
+"Your weapon: {game.player.weapon.name} "
+"({game.player.weapon.min_damage}-{game.player.weapon.max_damage})"
+msgstr ""
+"Your weapon: {game.player.weapon.name} "
+"({game.player.weapon.min_damage}-{game.player.weapon.max_damage})"
+
+#: dungeoncrawler/map.py:292
+msgid "Would you like to upgrade your weapon for 50 gold? +3 min/max damage"
+msgstr "Would you like to upgrade your weapon for 50 gold? +3 min/max damage"
+
+#: dungeoncrawler/map.py:293
+msgid "Upgrade? (y/n): "
+msgstr "Upgrade? (y/n): "
+
+#: dungeoncrawler/map.py:298
+msgid "Your weapon has been reforged and is stronger!"
+msgstr "Your weapon has been reforged and is stronger!"
+
+#: dungeoncrawler/map.py:300
+msgid "You don't have enough gold."
+msgstr "You don't have enough gold."
+
+#: dungeoncrawler/map.py:302
+msgid "Maybe next time."
+msgstr "Maybe next time."
+
+#: dungeoncrawler/map.py:305
+msgid ""
+"The blacksmith scoffs. 'No weapon? Come back when you have something worth "
+"forging.'"
+msgstr ""
+"The blacksmith scoffs. 'No weapon? Come back when you have something worth "
+"forging.'"
+
+#: dungeoncrawler/map.py:312
+msgid "A soothing warmth envelops you. Your wounds are fully healed."
+msgstr "A soothing warmth envelops you. Your wounds are fully healed."
+
+#: dungeoncrawler/map.py:318
+msgid "A trap springs! Solve this riddle to escape unharmed:"
+msgstr "A trap springs! Solve this riddle to escape unharmed:"
+
+#: dungeoncrawler/map.py:320 dungeoncrawler/dungeon.py:828
+#: dungeoncrawler/events.py:33
+msgid "Answer: "
+msgstr "Answer: "
+
+#: dungeoncrawler/map.py:322
+msgid "The mechanism clicks harmlessly. You solved it!"
+msgstr "The mechanism clicks harmlessly. You solved it!"
+
+#: dungeoncrawler/map.py:323
+msgid "Brilliant puzzle solving!"
+msgstr "Brilliant puzzle solving!"
+
+#: dungeoncrawler/map.py:327
+#, python-brace-format
+msgid "Wrong answer! You take {damage} damage."
+msgstr "Wrong answer! You take {damage} damage."
+
+#: dungeoncrawler/map.py:333
+msgid "🎉 You unlocked the exit and escaped the dungeon!"
+msgstr "🎉 You unlocked the exit and escaped the dungeon!"
+
+#: dungeoncrawler/map.py:334
+msgid "Final Score: {game.player.get_score()}"
+msgstr "Final Score: {game.player.get_score()}"
+
+#: dungeoncrawler/map.py:337
+msgid "The exit is locked. You need a key!"
+msgstr "The exit is locked. You need a key!"
+
+#: dungeoncrawler/main.py:26
+msgid "Enter your name: "
+msgstr "Enter your name: "
+
+#: dungeoncrawler/main.py:28
+msgid "Name cannot be blank."
+msgstr "Name cannot be blank."
+
+#: dungeoncrawler/main.py:31
+#, python-brace-format
+msgid "Welcome {name}! Your journey is just beginning."
+msgstr "Welcome {name}! Your journey is just beginning."
+
+#: dungeoncrawler/main.py:42
+msgid "Do not run the interactive tutorial"
+msgstr "Do not run the interactive tutorial"
+
+#: dungeoncrawler/main.py:44
+msgid "Language code for translations"
+msgstr "Language code for translations"
+
+#: dungeoncrawler/main.py:58
+msgid "Load existing save? (y/n): "
+msgstr "Load existing save? (y/n): "
+
+#: dungeoncrawler/shop.py:17
+msgid "Welcome to the Shop!"
+msgstr "Welcome to the Shop!"
+
+#: dungeoncrawler/shop.py:18
+#, python-brace-format
+msgid "Gold: {game.player.gold}"
+msgstr "Gold: {game.player.gold}"
+
+#: dungeoncrawler/shop.py:21
+#, python-brace-format
+msgid "{i}. {item.name} - {price} Gold"
+msgstr "{i}. {item.name} - {price} Gold"
+
+#: dungeoncrawler/shop.py:24
+#, python-brace-format
+msgid "{sell_option}. Sell Items"
+msgstr "{sell_option}. Sell Items"
+
+#: dungeoncrawler/shop.py:25
+#, python-brace-format
+msgid "{exit_option}. Exit"
+msgstr "{exit_option}. Exit"
+
+#: dungeoncrawler/shop.py:27
+msgid "Choose an option:"
+msgstr "Choose an option:"
+
+#: dungeoncrawler/shop.py:36
+#, python-brace-format
+msgid "You bought {item.name}."
+msgstr "You bought {item.name}."
+
+#: dungeoncrawler/shop.py:38
+msgid "Not enough gold."
+msgstr "Not enough gold."
+
+#: dungeoncrawler/shop.py:42
+msgid "Leaving the shop."
+msgstr "Leaving the shop."
+
+#: dungeoncrawler/shop.py:44 dungeoncrawler/shop.py:95
+msgid "Invalid choice."
+msgstr "Invalid choice."
+
+#: dungeoncrawler/shop.py:46 dungeoncrawler/shop.py:97
+msgid "Invalid input."
+msgstr "Invalid input."
+
+#: dungeoncrawler/shop.py:66
+msgid "You have nothing to sell."
+msgstr "You have nothing to sell."
+
+#: dungeoncrawler/shop.py:69
+msgid "Your Items:"
+msgstr "Your Items:"
+
+#: dungeoncrawler/shop.py:73
+#, python-brace-format
+msgid "{i}. {item.name} - Cannot sell"
+msgstr "{i}. {item.name} - Cannot sell"
+
+#: dungeoncrawler/shop.py:75
+#, python-brace-format
+msgid "{i}. {item.name} - {sale_price} Gold"
+msgstr "{i}. {item.name} - {sale_price} Gold"
+
+#: dungeoncrawler/shop.py:76
+msgid "{len(game.player.inventory)+1}. Back"
+msgstr "{len(game.player.inventory)+1}. Back"
+
+#: dungeoncrawler/shop.py:78
+msgid "Sell what?"
+msgstr "Sell what?"
+
+#: dungeoncrawler/shop.py:85
+msgid "You can't sell that item."
+msgstr "You can't sell that item."
+
+#: dungeoncrawler/shop.py:87
+#, python-brace-format
+msgid "Sell {item.name} for {sale_price} gold? (y/n) "
+msgstr "Sell {item.name} for {sale_price} gold? (y/n) "
+
+#: dungeoncrawler/shop.py:91
+#, python-brace-format
+msgid "You sold {item.name}."
+msgstr "You sold {item.name}."
+
+#: dungeoncrawler/shop.py:104
+msgid "Your inventory is empty."
+msgstr "Your inventory is empty."
+
+#: dungeoncrawler/shop.py:107
+msgid "Your Inventory:"
+msgstr "Your Inventory:"
+
+#: dungeoncrawler/shop.py:110
+#, python-brace-format
+msgid "{i}. {item.name}{equipped} - {item.description}"
+msgstr "{i}. {item.name}{equipped} - {item.description}"
+
+#: dungeoncrawler/shop.py:112
+msgid "Enter item number to equip weapon, or press Enter to go back: "
+msgstr "Enter item number to equip weapon, or press Enter to go back: "
+
+#: dungeoncrawler/shop.py:120
+msgid "You can only equip weapons."
+msgstr "You can only equip weapons."
+
+#: dungeoncrawler/shop.py:122
+msgid "Invalid selection."
+msgstr "Invalid selection."
+
+#: dungeoncrawler/tutorial.py:16
+msgid "=== Welcome to the Dungeon Crawler tutorial! ==="
+msgstr "=== Welcome to the Dungeon Crawler tutorial! ==="
+
+#: dungeoncrawler/tutorial.py:17
+msgid ""
+"Let's begin with movement. Use '1' (left), '2' (right), '3' (up) or '4' "
+"(down)."
+msgstr ""
+"Let's begin with movement. Use '1' (left), '2' (right), '3' (up) or '4' "
+"(down)."
+
+#: dungeoncrawler/tutorial.py:19
+msgid "Move: "
+msgstr "Move: "
+
+#: dungeoncrawler/tutorial.py:21
+msgid "Good job! You can navigate the dungeon using those keys."
+msgstr "Good job! You can navigate the dungeon using those keys."
+
+#: dungeoncrawler/tutorial.py:23
+msgid "Please use one of 1, 2, 3 or 4 to move."
+msgstr "Please use one of 1, 2, 3 or 4 to move."
+
+#: dungeoncrawler/tutorial.py:25
+msgid "Now let's practice combat. Type 'attack' to strike the training dummy."
+msgstr ""
+"Now let's practice combat. Type 'attack' to strike the training dummy."
+
+#: dungeoncrawler/tutorial.py:27 dungeoncrawler/dungeon.py:719
+msgid "Action: "
+msgstr "Action: "
+
+#: dungeoncrawler/tutorial.py:29
+msgid "The dummy falls apart. A solid hit!"
+msgstr "The dummy falls apart. A solid hit!"
+
+#: dungeoncrawler/tutorial.py:31
+msgid "Type 'attack' to perform an attack."
+msgstr "Type 'attack' to perform an attack."
+
+#: dungeoncrawler/tutorial.py:33
+msgid "Finally, open your inventory by typing 'inventory'."
+msgstr "Finally, open your inventory by typing 'inventory'."
+
+#: dungeoncrawler/tutorial.py:35
+msgid "Command: "
+msgstr "Command: "
+
+#: dungeoncrawler/tutorial.py:37
+msgid "Your empty bag opens. You'll fill it with loot soon enough."
+msgstr "Your empty bag opens. You'll fill it with loot soon enough."
+
+#: dungeoncrawler/tutorial.py:39
+msgid "Type 'inventory' to check your belongings."
+msgstr "Type 'inventory' to check your belongings."
+
+#: dungeoncrawler/tutorial.py:41
+msgid "That's it for the basics. Good luck in the dungeon!"
+msgstr "That's it for the basics. Good luck in the dungeon!"
+
+#: dungeoncrawler/entities.py:81
+#, python-brace-format
+msgid "Class selected: {self.class_type}."
+msgstr "Class selected: {self.class_type}."
+
+#: dungeoncrawler/entities.py:105
+#, python-brace-format
+msgid "You used a Health Potion and gained {healed_amount} health."
+msgstr "You used a Health Potion and gained {healed_amount} health."
+
+#: dungeoncrawler/entities.py:107
+msgid "You don't have a Health Potion to use."
+msgstr "You don't have a Health Potion to use."
+
+#: dungeoncrawler/entities.py:117
+#, python-brace-format
+msgid "You attacked the {enemy.name} and dealt {damage} damage!"
+msgstr "You attacked the {enemy.name} and dealt {damage} damage!"
+
+#: dungeoncrawler/entities.py:134
+#, python-brace-format
+msgid "Your weapon inflicts {effect} on the {enemy.name}!"
+msgstr "Your weapon inflicts {effect} on the {enemy.name}!"
+
+#: dungeoncrawler/entities.py:143
+#, python-brace-format
+msgid "You defeated the {enemy.name}!"
+msgstr "You defeated the {enemy.name}!"
+
+#: dungeoncrawler/entities.py:144
+#, python-brace-format
+msgid "You gained {enemy.xp} XP and {gold_dropped} gold."
+msgstr "You gained {enemy.xp} XP and {gold_dropped} gold."
+
+#: dungeoncrawler/entities.py:152
+#, python-brace-format
+msgid "The {enemy.name} attacked you and dealt {damage} damage."
+msgstr "The {enemy.name} attacked you and dealt {damage} damage."
+
+#: dungeoncrawler/entities.py:157
+msgid "Your shield absorbs 5 damage!"
+msgstr "Your shield absorbs 5 damage!"
+
+#: dungeoncrawler/entities.py:166
+msgid "You take 3 poison damage!"
+msgstr "You take 3 poison damage!"
+
+#: dungeoncrawler/entities.py:174
+msgid "You suffer 4 burn damage!"
+msgstr "You suffer 4 burn damage!"
+
+#: dungeoncrawler/entities.py:182
+msgid "You bleed for 2 damage!"
+msgstr "You bleed for 2 damage!"
+
+#: dungeoncrawler/entities.py:189
+msgid "You're frozen and lose your turn!"
+msgstr "You're frozen and lose your turn!"
+
+#: dungeoncrawler/entities.py:197
+msgid "You're stunned and can't move!"
+msgstr "You're stunned and can't move!"
+
+#: dungeoncrawler/entities.py:205
+msgid "Your shield fades."
+msgstr "Your shield fades."
+
+#: dungeoncrawler/entities.py:222
+#, python-brace-format
+msgid "Your skill is on cooldown for {self.skill_cooldown} more turn(s)."
+msgstr "Your skill is on cooldown for {self.skill_cooldown} more turn(s)."
+
+#: dungeoncrawler/entities.py:226
+#, python-brace-format
+msgid "You unleash a mighty Power Strike dealing {damage} damage!"
+msgstr "You unleash a mighty Power Strike dealing {damage} damage!"
+
+#: dungeoncrawler/entities.py:230
+#, python-brace-format
+msgid "You cast Fireball dealing {damage} damage!"
+msgstr "You cast Fireball dealing {damage} damage!"
+
+#: dungeoncrawler/entities.py:236
+#, python-brace-format
+msgid "You perform a sneaky Backstab for {damage} damage!"
+msgstr "You perform a sneaky Backstab for {damage} damage!"
+
+#: dungeoncrawler/entities.py:241
+#, python-brace-format
+msgid "You invoke Healing Light and recover {heal} health!"
+msgstr "You invoke Healing Light and recover {heal} health!"
+
+#: dungeoncrawler/entities.py:244
+#, python-brace-format
+msgid "You smite the {enemy.name} for {damage} holy damage!"
+msgstr "You smite the {enemy.name} for {damage} holy damage!"
+
+#: dungeoncrawler/entities.py:249
+#, python-brace-format
+msgid "Divine power heals you for {heal} HP!"
+msgstr "Divine power heals you for {heal} HP!"
+
+#: dungeoncrawler/entities.py:251
+msgid "You play an inspiring tune, bolstering your spirit!"
+msgstr "You play an inspiring tune, bolstering your spirit!"
+
+#: dungeoncrawler/entities.py:258
+#, python-brace-format
+msgid "You enter a rage, dealing {damage} damage and healing {heal}!"
+msgstr "You enter a rage, dealing {damage} damage and healing {heal}!"
+
+#: dungeoncrawler/entities.py:265
+#, python-brace-format
+msgid "Nature's wrath deals {damage} damage and restores {heal} health!"
+msgstr "Nature's wrath deals {damage} damage and restores {heal} health!"
+
+#: dungeoncrawler/entities.py:270
+#, python-brace-format
+msgid "A volley of arrows hits for {damage} damage and poisons the foe!"
+msgstr "A volley of arrows hits for {damage} damage and poisons the foe!"
+
+#: dungeoncrawler/entities.py:275
+#, python-brace-format
+msgid "You unleash Arcane Blast for {damage} damage!"
+msgstr "You unleash Arcane Blast for {damage} damage!"
+
+#: dungeoncrawler/entities.py:280
+msgid "You strike twice with a flurry for {damage * 2} total damage!"
+msgstr "You strike twice with a flurry for {damage * 2} total damage!"
+
+#: dungeoncrawler/entities.py:286
+#, python-brace-format
+msgid "Eldritch energy deals {damage} damage and heals you for {heal}!"
+msgstr "Eldritch energy deals {damage} damage and heals you for {heal}!"
+
+#: dungeoncrawler/entities.py:292
+#, python-brace-format
+msgid "You siphon the enemy's soul for {damage} damage and {heal} health!"
+msgstr "You siphon the enemy's soul for {damage} damage and {heal} health!"
+
+#: dungeoncrawler/entities.py:298
+#, python-brace-format
+msgid "Spirits mend you for {heal} and shock the foe for {damage} damage!"
+msgstr "Spirits mend you for {heal} and shock the foe for {damage} damage!"
+
+#: dungeoncrawler/entities.py:304
+#, python-brace-format
+msgid "An explosive flask bursts for {damage} damage and sets the foe ablaze!"
+msgstr ""
+"An explosive flask bursts for {damage} damage and sets the foe ablaze!"
+
+#: dungeoncrawler/entities.py:307
+msgid "You don't have a special skill."
+msgstr "You don't have a special skill."
+
+#: dungeoncrawler/entities.py:318
+#, python-brace-format
+msgid ""
+"\n"
+"You leveled up to level {self.level}!"
+msgstr ""
+"\n"
+"You leveled up to level {self.level}!"
+
+#: dungeoncrawler/entities.py:319
+#, python-brace-format
+msgid "Max Health increased to {self.max_health}"
+msgstr "Max Health increased to {self.max_health}"
+
+#: dungeoncrawler/entities.py:320
+#, python-brace-format
+msgid "Attack Power increased to {self.attack_power}"
+msgstr "Attack Power increased to {self.attack_power}"
+
+#: dungeoncrawler/entities.py:323
+msgid "You've unlocked Gold Finder: +5 gold after each kill."
+msgstr "You've unlocked Gold Finder: +5 gold after each kill."
+
+#: dungeoncrawler/entities.py:325
+msgid "You've unlocked Passive Regen: Heal 1 HP per move."
+msgstr "You've unlocked Passive Regen: Heal 1 HP per move."
+
+#: dungeoncrawler/entities.py:350
+#, python-brace-format
+msgid "You have joined the {guild}!"
+msgstr "You have joined the {guild}!"
+
+#: dungeoncrawler/entities.py:397
+#, python-brace-format
+msgid "Race selected: {race}."
+msgstr "Race selected: {race}."
+
+#: dungeoncrawler/entities.py:403
+#, python-brace-format
+msgid "You unequipped the {self.weapon.name}"
+msgstr "You unequipped the {self.weapon.name}"
+
+#: dungeoncrawler/entities.py:406
+#, python-brace-format
+msgid "You equipped the {weapon.name}"
+msgstr "You equipped the {weapon.name}"
+
+#: dungeoncrawler/entities.py:408
+msgid "You don't have a valid weapon to equip."
+msgstr "You don't have a valid weapon to equip."
+
+#: dungeoncrawler/entities.py:441
+#, python-brace-format
+msgid "The {self.name}'s shield absorbs 5 damage!"
+msgstr "The {self.name}'s shield absorbs 5 damage!"
+
+#: dungeoncrawler/entities.py:453
+#, python-brace-format
+msgid "The {self.name} takes 3 poison damage!"
+msgstr "The {self.name} takes 3 poison damage!"
+
+#: dungeoncrawler/entities.py:460
+#, python-brace-format
+msgid "The {self.name} suffers 4 burn damage!"
+msgstr "The {self.name} suffers 4 burn damage!"
+
+#: dungeoncrawler/entities.py:467
+#, python-brace-format
+msgid "The {self.name} bleeds for 2 damage!"
+msgstr "The {self.name} bleeds for 2 damage!"
+
+#: dungeoncrawler/entities.py:473
+#, python-brace-format
+msgid "The {self.name} is frozen and can't move!"
+msgstr "The {self.name} is frozen and can't move!"
+
+#: dungeoncrawler/entities.py:480
+#, python-brace-format
+msgid "The {self.name} is stunned and can't move!"
+msgstr "The {self.name} is stunned and can't move!"
+
+#: dungeoncrawler/entities.py:488
+#, python-brace-format
+msgid "The {self.name}'s shield fades."
+msgstr "The {self.name}'s shield fades."
+
+#: dungeoncrawler/entities.py:494
+#, python-brace-format
+msgid "The {self.name} raises its guard!"
+msgstr "The {self.name} raises its guard!"
+
+#: dungeoncrawler/entities.py:509
+msgid "The {self.name} drains life and heals for {damage // 3}!"
+msgstr "The {self.name} drains life and heals for {damage // 3}!"
+
+#: dungeoncrawler/entities.py:516
+#, python-brace-format
+msgid "The {self.name} stuns you!"
+msgstr "The {self.name} stuns you!"
+
+#: dungeoncrawler/entities.py:521
+#, python-brace-format
+msgid "The {self.name} freezes you for 1 turns!"
+msgstr "The {self.name} freezes you for 1 turns!"
+
+#: dungeoncrawler/entities.py:523
+#, python-brace-format
+msgid "The {self.name} strikes twice!"
+msgstr "The {self.name} strikes twice!"
+
+#: dungeoncrawler/entities.py:526
+#, python-brace-format
+msgid "The {self.name} attacked you and dealt {damage} damage."
+msgstr "The {self.name} attacked you and dealt {damage} damage."
+
+#: dungeoncrawler/entities.py:559
+#, python-brace-format
+msgid "{self.name} strikes {enemy.name} for {dmg} damage!"
+msgstr "{self.name} strikes {enemy.name} for {dmg} damage!"
+
+#: dungeoncrawler/entities.py:564
+#, python-brace-format
+msgid "{self.name} heals {player.name} for {heal} HP!"
+msgstr "{self.name} heals {player.name} for {heal} HP!"
+
+#: dungeoncrawler/dungeon.py:402
+msgid "[Announcer] {random.choice(ANNOUNCER_LINES)} {msg}"
+msgstr "[Announcer] {random.choice(ANNOUNCER_LINES)} {msg}"
+
+#: dungeoncrawler/dungeon.py:545
+msgid "-- Leaderboard --"
+msgstr "-- Leaderboard --"
+
+#: dungeoncrawler/dungeon.py:547
+msgid "No scores yet."
+msgstr "No scores yet."
+
+#: dungeoncrawler/dungeon.py:551
+msgid "{r.get('player_name', '?')}: {r.get('score', 0)} "
+msgstr "{r.get('player_name', '?')}: {r.get('score', 0)} "
+
+#: dungeoncrawler/dungeon.py:558
+msgid "It's time to choose your class!"
+msgstr "It's time to choose your class!"
+
+#: dungeoncrawler/dungeon.py:559
+msgid "1. Warrior 2. Mage 3. Rogue 4. Cleric 5. Paladin 6. Bard"
+msgstr "1. Warrior 2. Mage 3. Rogue 4. Cleric 5. Paladin 6. Bard"
+
+#: dungeoncrawler/dungeon.py:560
+msgid "7. Barbarian 8. Druid 9. Ranger 10. Sorcerer 11. Monk"
+msgstr "7. Barbarian 8. Druid 9. Ranger 10. Sorcerer 11. Monk"
+
+#: dungeoncrawler/dungeon.py:561
+msgid "12. Warlock 13. Necromancer 14. Shaman 15. Alchemist"
+msgstr "12. Warlock 13. Necromancer 14. Shaman 15. Alchemist"
+
+#: dungeoncrawler/dungeon.py:581
+msgid "Class: "
+msgstr "Class: "
+
+#: dungeoncrawler/dungeon.py:583
+msgid "Invalid choice. Please try again."
+msgstr "Invalid choice. Please try again."
+
+#: dungeoncrawler/dungeon.py:589
+msgid "Guilds now accept new members!"
+msgstr "Guilds now accept new members!"
+
+#: dungeoncrawler/dungeon.py:590
+msgid "1. Warriors' Guild - Bonus Health"
+msgstr "1. Warriors' Guild - Bonus Health"
+
+#: dungeoncrawler/dungeon.py:591
+msgid "2. Mages' Guild - Bonus Attack"
+msgstr "2. Mages' Guild - Bonus Attack"
+
+#: dungeoncrawler/dungeon.py:592
+msgid "3. Rogues' Guild - Faster Skills"
+msgstr "3. Rogues' Guild - Faster Skills"
+
+#: dungeoncrawler/dungeon.py:593
+msgid "4. Healers' Circle - Extra Vitality"
+msgstr "4. Healers' Circle - Extra Vitality"
+
+#: dungeoncrawler/dungeon.py:594
+msgid "5. Shadow Brotherhood - Heavy Strikes"
+msgstr "5. Shadow Brotherhood - Heavy Strikes"
+
+#: dungeoncrawler/dungeon.py:595
+msgid "6. Arcane Order - Arcane Mastery"
+msgstr "6. Arcane Order - Arcane Mastery"
+
+#: dungeoncrawler/dungeon.py:596
+msgid "7. Rangers' Lodge - Balanced Training"
+msgstr "7. Rangers' Lodge - Balanced Training"
+
+#: dungeoncrawler/dungeon.py:597
+msgid "8. Berserkers' Clan - Brutal Strength"
+msgstr "8. Berserkers' Clan - Brutal Strength"
+
+#: dungeoncrawler/dungeon.py:598
+msgid "Join which guild? (1-8 or skip): "
+msgstr "Join which guild? (1-8 or skip): "
+
+#: dungeoncrawler/dungeon.py:615
+msgid "New races are available to you!"
+msgstr "New races are available to you!"
+
+#: dungeoncrawler/dungeon.py:616
+msgid "1. Human 2. Elf 3. Dwarf 4. Orc 5. Gnome 6. Halfling"
+msgstr "1. Human 2. Elf 3. Dwarf 4. Orc 5. Gnome 6. Halfling"
+
+#: dungeoncrawler/dungeon.py:617
+msgid "7. Catfolk 8. Lizardfolk 9. Tiefling 10. Aasimar 11. Goblin"
+msgstr "7. Catfolk 8. Lizardfolk 9. Tiefling 10. Aasimar 11. Goblin"
+
+#: dungeoncrawler/dungeon.py:618
+msgid "12. Dragonborn 13. Half-Elf 14. Kobold 15. Triton"
+msgstr "12. Dragonborn 13. Half-Elf 14. Kobold 15. Triton"
+
+#: dungeoncrawler/dungeon.py:619
+msgid "Choose your race: "
+msgstr "Choose your race: "
+
+#: dungeoncrawler/dungeon.py:687
+msgid "Continue your last adventure? (y/n): "
+msgstr "Continue your last adventure? (y/n): "
+
+#: dungeoncrawler/dungeon.py:699
+msgid "Welcome to Dungeon Crawler!"
+msgstr "Welcome to Dungeon Crawler!"
+
+#: dungeoncrawler/dungeon.py:701
+#, python-brace-format
+msgid "===== Entering Floor {floor} ====="
+msgstr "===== Entering Floor {floor} ====="
+
+#: dungeoncrawler/dungeon.py:707
+msgid ""
+"Position: ({self.player.x}, {self.player.y}) - "
+"{self.room_names[self.player.y][self.player.x]}"
+msgstr ""
+"Position: ({self.player.x}, {self.player.y}) - "
+"{self.room_names[self.player.y][self.player.x]}"
+
+#: dungeoncrawler/dungeon.py:710
+#, python-brace-format
+msgid ""
+"Health: {self.player.health} | XP: {self.player.xp} | Gold: "
+"{self.player.gold} | Level: {self.player.level} | Floor: {floor} | Skill CD:"
+" {self.player.skill_cooldown}"
+msgstr ""
+"Health: {self.player.health} | XP: {self.player.xp} | Gold: "
+"{self.player.gold} | Level: {self.player.level} | Floor: {floor} | Skill CD:"
+" {self.player.skill_cooldown}"
+
+#: dungeoncrawler/dungeon.py:713
+#, python-brace-format
+msgid "Guild: {self.player.guild}"
+msgstr "Guild: {self.player.guild}"
+
+#: dungeoncrawler/dungeon.py:715
+#, python-brace-format
+msgid "Race: {self.player.race}"
+msgstr "Race: {self.player.race}"
+
+#: dungeoncrawler/dungeon.py:717
+msgid ""
+"1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. "
+"Inventory 7. Quit 8. Show Map 9. View Leaderboard"
+msgstr ""
+"1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. "
+"Inventory 7. Quit 8. Show Map 9. View Leaderboard"
+
+#: dungeoncrawler/dungeon.py:734
+msgid "Thanks for playing!"
+msgstr "Thanks for playing!"
+
+#: dungeoncrawler/dungeon.py:741 dungeoncrawler/combat.py:74
+msgid "Invalid choice!"
+msgstr "Invalid choice!"
+
+#: dungeoncrawler/dungeon.py:754
+msgid "You reach the Sealed Gate."
+msgstr "You reach the Sealed Gate."
+
+#: dungeoncrawler/dungeon.py:756
+msgid "Would you like to descend to the next floor? (y/n): "
+msgstr "Would you like to descend to the next floor? (y/n): "
+
+#: dungeoncrawler/dungeon.py:763
+msgid "You chose to exit the dungeon."
+msgstr "You chose to exit the dungeon."
+
+#: dungeoncrawler/dungeon.py:764 dungeoncrawler/dungeon.py:774
+msgid "Final Score: {self.player.get_score()}"
+msgstr "Final Score: {self.player.get_score()}"
+
+#: dungeoncrawler/dungeon.py:773
+msgid "You have died. Game Over!"
+msgstr "You have died. Game Over!"
+
+#: dungeoncrawler/dungeon.py:796
+msgid "A package falls from above! It's a gift from the audience."
+msgstr "A package falls from above! It's a gift from the audience."
+
+#: dungeoncrawler/dungeon.py:800
+#, python-brace-format
+msgid "You received a {item.name}."
+msgstr "You received a {item.name}."
+
+#: dungeoncrawler/dungeon.py:805
+#, python-brace-format
+msgid "Uh-oh! It explodes and deals {damage} damage."
+msgstr "Uh-oh! It explodes and deals {damage} damage."
+
+#: dungeoncrawler/dungeon.py:827
+msgid "A sage poses a riddle:\n"
+msgstr "A sage poses a riddle:\n"
+
+#: dungeoncrawler/dungeon.py:831 dungeoncrawler/events.py:36
+#, python-brace-format
+msgid "Correct! You receive {reward} gold."
+msgstr "Correct! You receive {reward} gold."
+
+#: dungeoncrawler/dungeon.py:834 dungeoncrawler/events.py:39
+msgid "Incorrect! The sage vanishes in disappointment."
+msgstr "Incorrect! The sage vanishes in disappointment."
+
+#: dungeoncrawler/dungeon.py:861
+msgid "The crowd roars as you step into the arena for the first time."
+msgstr "The crowd roars as you step into the arena for the first time."
+
+#: dungeoncrawler/dungeon.py:871
+msgid "A mysterious merchant sets up shop, selling exotic wares."
+msgstr "A mysterious merchant sets up shop, selling exotic wares."
+
+#: dungeoncrawler/dungeon.py:874
+msgid "You stumble upon a radiant shrine, filling you with determination."
+msgstr "You stumble upon a radiant shrine, filling you with determination."
+
+#: dungeoncrawler/dungeon.py:878
+msgid "An elusive merchant appears, offering rare goods."
+msgstr "An elusive merchant appears, offering rare goods."
+
+#: dungeoncrawler/dungeon.py:882
+msgid "A robed sage blocks your path, offering a riddle challenge."
+msgstr "A robed sage blocks your path, offering a riddle challenge."
+
+#: dungeoncrawler/events.py:32
+msgid "A sage presents a riddle:\n"
+msgstr "A sage presents a riddle:\n"
+
+#: dungeoncrawler/events.py:48
+#, python-brace-format
+msgid "A trap is sprung! You take {damage} damage."
+msgstr "A trap is sprung! You take {damage} damage."
+
+#: dungeoncrawler/combat.py:27
+msgid ""
+"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability"
+" else ''} Boss incoming!"
+msgstr ""
+"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability"
+" else ''} Boss incoming!"
+
+#: dungeoncrawler/combat.py:43
+#, python-brace-format
+msgid "Player Health: {player.health}"
+msgstr "Player Health: {player.health}"
+
+#: dungeoncrawler/combat.py:44
+#, python-brace-format
+msgid "Enemy Health: {enemy.health}"
+msgstr "Enemy Health: {enemy.health}"
+
+#: dungeoncrawler/combat.py:45
+msgid ""
+"1. Attack\n"
+"2. Defend\n"
+"3. Use Health Potion\n"
+"4. Use Skill"
+msgstr ""
+"1. Attack\n"
+"2. Defend\n"
+"3. Use Health Potion\n"
+"4. Use Skill"
+
+#: dungeoncrawler/combat.py:46
+msgid "Choose action: "
+msgstr "Choose action: "
+
+#: dungeoncrawler/combat.py:49
+msgid "A fierce attack lands!"
+msgstr "A fierce attack lands!"
+
+#: dungeoncrawler/combat.py:68
+msgid "Special skill unleashed!"
+msgstr "Special skill unleashed!"
+
+#: dungeoncrawler/combat.py:82
+#, python-brace-format
+msgid "The {enemy.name} dropped {loot.name}!"
+msgstr "The {enemy.name} dropped {loot.name}!"
+
+#: dungeoncrawler/combat.py:83
+#, python-brace-format
+msgid "{player.name} obtains {loot.name}!"
+msgstr "{player.name} obtains {loot.name}!"

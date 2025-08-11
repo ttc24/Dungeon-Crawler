@@ -57,3 +57,6 @@ Thumbs.db
 
 # Sphinx build output
 docs/_build/
+
+# gettext compiled files
+*.mo
