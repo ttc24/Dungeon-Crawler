@@ -46,3 +46,18 @@ def test_status_effects_tick():
     p.apply_status_effects()
     assert p.health == 47
     assert p.status_effects['poison'] == 1
+
+
+def test_player_damage_in_range(player):
+    random.seed(1)
+    dmg = player.calculate_damage()
+    assert player.weapon.min_damage <= dmg <= player.weapon.max_damage
+
+
+def test_enemy_damage_in_range(player):
+    random.seed(1)
+    enemy = Enemy("Orc", 30, 20, 0, 0)
+    start = player.health
+    enemy.attack(player)
+    dealt = start - player.health
+    assert 10 <= dealt <= 20

@@ -481,8 +481,8 @@ class DungeonBase:
             name = random.choice(enemy_names)
             hp_min, hp_max, atk_min, atk_max, defense = ENEMY_STATS[name]
 
-            hp_scale = 1 if floor <= 3 else 2
-            atk_scale = 1 if floor <= 3 else 2
+            hp_scale = 1 + floor // 2
+            atk_scale = 1 + floor // 3
 
             defense = max(1, defense + floor // 3)
 

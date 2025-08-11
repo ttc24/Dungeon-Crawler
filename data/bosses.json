@@ -84,7 +84,7 @@
         "name": "Frozen Talon",
         "description": "Ice-forged claw that freezes.",
         "min_damage": 24,
-        "max_damage": 31,
+        "max_damage": 32,
         "price": 0
       }
     ]
@@ -102,7 +102,7 @@
         "name": "Cryptblade",
         "description": "Blade of necrotic energy.",
         "min_damage": 25,
-        "max_damage": 34,
+        "max_damage": 33,
         "price": 0
       }
     ]
@@ -156,7 +156,7 @@
         "name": "Thunder Cleaver",
         "description": "Sword crackling with lightning.",
         "min_damage": 26,
-        "max_damage": 35,
+        "max_damage": 34,
         "price": 0
       }
     ]
