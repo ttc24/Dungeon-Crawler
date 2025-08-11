@@ -4,8 +4,8 @@ import random
 from functools import lru_cache
 from pathlib import Path
 
-from .constants import SAVE_FILE, SCORE_FILE, ANNOUNCER_LINES, RIDDLES
-from .entities import Player, Enemy, Companion
+from .constants import ANNOUNCER_LINES, RIDDLES, SAVE_FILE, SCORE_FILE
+from .entities import Companion, Enemy, Player
 from .items import Item, Weapon
 from .plugins import apply_enemy_plugins, apply_item_plugins
 
@@ -115,109 +115,217 @@ FLOOR_CONFIGS = {
         "size": (8, 8),
         "enemies": ["Goblin", "Skeleton", "Bandit"],
         "bosses": ["Bone Tyrant"],
-        "places": {"Trap": 2, "Treasure": 2, "Enchantment": 1, "Sanctuary": 1, "Blacksmith": 1},
+        "places": {
+            "Trap": 2,
+            "Treasure": 2,
+            "Enchantment": 1,
+            "Sanctuary": 1,
+            "Blacksmith": 1,
+        },
     },
     2: {
         "size": (9, 9),
         "enemies": ["Orc", "Cultist", "Ghoul", "Bandit"],
         "bosses": ["Inferno Golem", "Frost Warden"],
-        "places": {"Trap": 3, "Treasure": 3, "Enchantment": 1, "Sanctuary": 1, "Blacksmith": 1},
+        "places": {
+            "Trap": 3,
+            "Treasure": 3,
+            "Enchantment": 1,
+            "Sanctuary": 1,
+            "Blacksmith": 1,
+        },
     },
     3: {
         "size": (10, 10),
         "enemies": ["Vampire", "Warlock", "Wraith", "Werewolf"],
         "bosses": ["Shadow Reaver", "Doom Bringer"],
-        "places": {"Trap": 3, "Treasure": 4, "Enchantment": 2, "Sanctuary": 2, "Blacksmith": 1},
+        "places": {
+            "Trap": 3,
+            "Treasure": 4,
+            "Enchantment": 2,
+            "Sanctuary": 2,
+            "Blacksmith": 1,
+        },
     },
     4: {
         "size": (11, 11),
         "enemies": ["Basilisk", "Gargoyle", "Troll", "Lich"],
         "bosses": ["Void Serpent", "Ember Lord", "Glacier Fiend"],
-        "places": {"Trap": 4, "Treasure": 4, "Enchantment": 2, "Sanctuary": 2, "Blacksmith": 1},
+        "places": {
+            "Trap": 4,
+            "Treasure": 4,
+            "Enchantment": 2,
+            "Sanctuary": 2,
+            "Blacksmith": 1,
+        },
     },
     5: {
         "size": (12, 12),
         "enemies": ["Phoenix", "Hydra", "Revenant", "Beholder"],
         "bosses": ["Grave Monarch", "Storm Reaper"],
-        "places": {"Trap": 4, "Treasure": 5, "Enchantment": 2, "Sanctuary": 2, "Blacksmith": 1},
+        "places": {
+            "Trap": 4,
+            "Treasure": 5,
+            "Enchantment": 2,
+            "Sanctuary": 2,
+            "Blacksmith": 1,
+        },
     },
     6: {
         "size": (13, 13),
         "enemies": ["Minotaur", "Demon", "Harpy", "Shade"],
         "bosses": ["Bone Tyrant", "Inferno Golem"],
-        "places": {"Trap": 5, "Treasure": 5, "Enchantment": 2, "Sanctuary": 2, "Blacksmith": 1},
+        "places": {
+            "Trap": 5,
+            "Treasure": 5,
+            "Enchantment": 2,
+            "Sanctuary": 2,
+            "Blacksmith": 1,
+        },
     },
     7: {
         "size": (14, 14),
         "enemies": ["Giant Spider", "Slime King", "Zombie", "Gargoyle"],
         "bosses": ["Frost Warden", "Shadow Reaver"],
-        "places": {"Trap": 5, "Treasure": 6, "Enchantment": 2, "Sanctuary": 2, "Blacksmith": 1},
+        "places": {
+            "Trap": 5,
+            "Treasure": 6,
+            "Enchantment": 2,
+            "Sanctuary": 2,
+            "Blacksmith": 1,
+        },
     },
     8: {
         "size": (15, 15),
         "enemies": ["Dark Knight", "Cyclops", "Basilisk", "Werewolf"],
         "bosses": ["Doom Bringer", "Void Serpent"],
-        "places": {"Trap": 5, "Treasure": 6, "Enchantment": 3, "Sanctuary": 2, "Blacksmith": 1},
+        "places": {
+            "Trap": 5,
+            "Treasure": 6,
+            "Enchantment": 3,
+            "Sanctuary": 2,
+            "Blacksmith": 1,
+        },
     },
     9: {
         "size": (15, 15),
         "enemies": ["Hydra", "Beholder", "Revenant", "Warlock"],
         "bosses": ["Ember Lord", "Glacier Fiend"],
-        "places": {"Trap": 6, "Treasure": 6, "Enchantment": 3, "Sanctuary": 2, "Blacksmith": 1},
+        "places": {
+            "Trap": 6,
+            "Treasure": 6,
+            "Enchantment": 3,
+            "Sanctuary": 2,
+            "Blacksmith": 1,
+        },
     },
     10: {
         "size": (15, 15),
         "enemies": ["Phoenix", "Dark Knight", "Cyclops", "Minotaur"],
         "bosses": ["Grave Monarch", "Storm Reaper"],
-        "places": {"Trap": 6, "Treasure": 7, "Enchantment": 3, "Sanctuary": 3, "Blacksmith": 1},
+        "places": {
+            "Trap": 6,
+            "Treasure": 7,
+            "Enchantment": 3,
+            "Sanctuary": 3,
+            "Blacksmith": 1,
+        },
     },
     11: {
         "size": (15, 15),
         "enemies": ["Astral Dragon", "Demon", "Harpy", "Shade"],
         "bosses": ["Bone Tyrant", "Inferno Golem", "Frost Warden"],
-        "places": {"Trap": 7, "Treasure": 7, "Enchantment": 3, "Sanctuary": 3, "Blacksmith": 1},
+        "places": {
+            "Trap": 7,
+            "Treasure": 7,
+            "Enchantment": 3,
+            "Sanctuary": 3,
+            "Blacksmith": 1,
+        },
     },
     12: {
         "size": (15, 15),
         "enemies": ["Giant Spider", "Slime King", "Zombie", "Warlock"],
         "bosses": ["Shadow Reaver", "Doom Bringer", "Void Serpent"],
-        "places": {"Trap": 7, "Treasure": 8, "Enchantment": 4, "Sanctuary": 3, "Blacksmith": 1},
+        "places": {
+            "Trap": 7,
+            "Treasure": 8,
+            "Enchantment": 4,
+            "Sanctuary": 3,
+            "Blacksmith": 1,
+        },
     },
     13: {
         "size": (15, 15),
         "enemies": ["Basilisk", "Gargoyle", "Troll", "Lich"],
         "bosses": ["Ember Lord", "Glacier Fiend", "Grave Monarch"],
-        "places": {"Trap": 8, "Treasure": 8, "Enchantment": 4, "Sanctuary": 3, "Blacksmith": 1},
+        "places": {
+            "Trap": 8,
+            "Treasure": 8,
+            "Enchantment": 4,
+            "Sanctuary": 3,
+            "Blacksmith": 1,
+        },
     },
     14: {
         "size": (15, 15),
         "enemies": ["Hydra", "Beholder", "Revenant", "Dark Knight"],
         "bosses": ["Storm Reaper"],
-        "places": {"Trap": 8, "Treasure": 9, "Enchantment": 4, "Sanctuary": 3, "Blacksmith": 1},
+        "places": {
+            "Trap": 8,
+            "Treasure": 9,
+            "Enchantment": 4,
+            "Sanctuary": 3,
+            "Blacksmith": 1,
+        },
     },
     15: {
         "size": (15, 15),
         "enemies": ["Cyclops", "Astral Dragon", "Phoenix", "Minotaur"],
         "bosses": ["Doom Bringer", "Void Serpent"],
-        "places": {"Trap": 9, "Treasure": 9, "Enchantment": 5, "Sanctuary": 3, "Blacksmith": 1},
+        "places": {
+            "Trap": 9,
+            "Treasure": 9,
+            "Enchantment": 5,
+            "Sanctuary": 3,
+            "Blacksmith": 1,
+        },
     },
     16: {
         "size": (15, 15),
         "enemies": ["Demon", "Harpy", "Shade", "Giant Spider"],
         "bosses": ["Ember Lord", "Glacier Fiend"],
-        "places": {"Trap": 9, "Treasure": 10, "Enchantment": 5, "Sanctuary": 3, "Blacksmith": 1},
+        "places": {
+            "Trap": 9,
+            "Treasure": 10,
+            "Enchantment": 5,
+            "Sanctuary": 3,
+            "Blacksmith": 1,
+        },
     },
     17: {
         "size": (15, 15),
         "enemies": ["Slime King", "Zombie", "Gargoyle", "Warlock"],
         "bosses": ["Grave Monarch", "Storm Reaper"],
-        "places": {"Trap": 9, "Treasure": 10, "Enchantment": 5, "Sanctuary": 4, "Blacksmith": 1},
+        "places": {
+            "Trap": 9,
+            "Treasure": 10,
+            "Enchantment": 5,
+            "Sanctuary": 4,
+            "Blacksmith": 1,
+        },
     },
     18: {
         "size": (15, 15),
         "enemies": ["Hydra", "Beholder", "Astral Dragon", "Dark Knight"],
         "bosses": ["Bone Tyrant", "Doom Bringer", "Void Serpent"],
-        "places": {"Trap": 10, "Treasure": 10, "Enchantment": 6, "Sanctuary": 4, "Blacksmith": 1},
+        "places": {
+            "Trap": 10,
+            "Treasure": 10,
+            "Enchantment": 6,
+            "Sanctuary": 4,
+            "Blacksmith": 1,
+        },
     },
 }
 
@@ -231,11 +339,14 @@ class DungeonBase:
     flow of a game session while utility helpers handle saving progress and
     shop interactions.
     """
+
     def __init__(self, width, height):
         self.width = width
         self.height = height
         self.rooms = [[None for _ in range(width)] for _ in range(height)]
-        self.room_names = [[self.generate_room_name() for _ in range(width)] for _ in range(height)]
+        self.room_names = [
+            [self.generate_room_name() for _ in range(width)] for _ in range(height)
+        ]
         self.visited_rooms = set()
         self.player = None
         self.exit_coords = None
@@ -247,13 +358,13 @@ class DungeonBase:
             Weapon("Warhammer", "Crushes armor and bone", 14, 22, 85),
             Weapon("Rapier", "A slender, piercing blade", 9, 17, 50),
             Weapon("Flame Blade", "Glows with searing heat", 13, 20, 95),
-            Weapon("Crossbow", "Ranged attack with bolts", 11, 19, 60)
+            Weapon("Crossbow", "Ranged attack with bolts", 11, 19, 60),
         ]
         self.rare_loot = [
             Weapon("Elven Longbow", "Bow of unmatched accuracy.", 15, 25, 0),
             Item("Blessed Charm", "Said to bring good fortune."),
             Weapon("Dwarven Waraxe", "Forged in the deep halls.", 12, 20, 0),
-            Item("Shadow Cloak", "Grants an air of mystery")
+            Item("Shadow Cloak", "Grants an air of mystery"),
         ]
         apply_item_plugins(self.shop_items)
 
@@ -304,7 +415,9 @@ class DungeonBase:
         if os.path.exists(SAVE_FILE):
             with open(SAVE_FILE) as f:
                 data = json.load(f)
-            self.player = Player(data["player"]["name"], data["player"].get("class", "Novice"))
+            self.player = Player(
+                data["player"]["name"], data["player"].get("class", "Novice")
+            )
             p = data["player"]
             self.player.level = p["level"]
             self.player.health = p["health"]
@@ -354,7 +467,9 @@ class DungeonBase:
         if os.path.exists(SCORE_FILE):
             with open(SCORE_FILE) as f:
                 records = json.load(f)
-        records.append({"name": self.player.name, "score": self.player.get_score(), "floor": floor})
+        records.append(
+            {"name": self.player.name, "score": self.player.get_score(), "floor": floor}
+        )
         records = sorted(records, key=lambda x: x["score"], reverse=True)[:10]
         with open(SCORE_FILE, "w") as f:
             json.dump(records, f, indent=2)
@@ -449,14 +564,35 @@ class DungeonBase:
 
     def generate_room_name(self, room_type=None):
         lore = {
-            "Treasure": ("Glittering Vault", "The air shimmers with unseen magic. Ancient riches may lie within."),
-            "Trap": ("Booby-Trapped Passage", "This corridor is riddled with pressure plates and crumbled bones."),
-            "Enemy": ("Cursed Hall", "The shadows shift... something watches from the dark."),
-            "Exit": ("Sealed Gate", "Massive stone doors sealed by arcane runes. It might be the only way out."),
-            "Key": ("Hidden Niche", "A hollow carved into the wall, forgotten by time. Something valuable glints inside."),
-            "Sanctuary": ("Sacred Sanctuary", "A calm aura fills this room, soothing your wounds."),
-            "Empty": ("Silent Chamber", "Dust covers everything. It appears long abandoned."),
-            "default": (None, None)
+            "Treasure": (
+                "Glittering Vault",
+                "The air shimmers with unseen magic. Ancient riches may lie within.",
+            ),
+            "Trap": (
+                "Booby-Trapped Passage",
+                "This corridor is riddled with pressure plates and crumbled bones.",
+            ),
+            "Enemy": (
+                "Cursed Hall",
+                "The shadows shift... something watches from the dark.",
+            ),
+            "Exit": (
+                "Sealed Gate",
+                "Massive stone doors sealed by arcane runes. It might be the only way out.",
+            ),
+            "Key": (
+                "Hidden Niche",
+                "A hollow carved into the wall, forgotten by time. Something valuable glints inside.",
+            ),
+            "Sanctuary": (
+                "Sacred Sanctuary",
+                "A calm aura fills this room, soothing your wounds.",
+            ),
+            "Empty": (
+                "Silent Chamber",
+                "Dust covers everything. It appears long abandoned.",
+            ),
+            "default": (None, None),
         }
 
         if room_type in lore:
@@ -471,7 +607,10 @@ class DungeonBase:
         size = cfg.get("size", (min(15, 8 + floor), min(15, 8 + floor)))
         self.width, self.height = size
         self.rooms = [[None for _ in range(self.width)] for _ in range(self.height)]
-        self.room_names = [[self.generate_room_name() for _ in range(self.width)] for _ in range(self.height)]
+        self.room_names = [
+            [self.generate_room_name() for _ in range(self.width)]
+            for _ in range(self.height)
+        ]
         visited = set()
         path = []
         x, y = self.width // 2, self.height // 2
@@ -480,7 +619,7 @@ class DungeonBase:
         path.append(start)
 
         while len(visited) < (self.width * self.height) // 2:
-            direction = random.choice([(1,0), (-1,0), (0,1), (0,-1)])
+            direction = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])
             nx, ny = x + direction[0], y + direction[1]
             if 0 <= nx < self.width and 0 <= ny < self.height:
                 if (nx, ny) not in visited:
@@ -488,7 +627,7 @@ class DungeonBase:
                     path.append((nx, ny))
                 x, y = nx, ny
 
-        for (x, y) in visited:
+        for x, y in visited:
             self.rooms[y][x] = "Empty"
 
         if self.player is None:
@@ -521,7 +660,9 @@ class DungeonBase:
 
             defense = max(1, defense + floor // 3)
 
-            health = random.randint(hp_min + floor * hp_scale, hp_max + floor * hp_scale)
+            health = random.randint(
+                hp_min + floor * hp_scale, hp_max + floor * hp_scale
+            )
             attack = random.randint(
                 atk_min + floor * atk_scale,
                 atk_max + floor * atk_scale,
@@ -538,7 +679,14 @@ class DungeonBase:
         name = random.choice(boss_names)
         hp, atk, dfs, gold, ability = BOSS_STATS[name]
         print(f"A powerful boss guards this floor! The {name} lurks nearby...")
-        boss = Enemy(name, hp + floor * 10, atk + floor, dfs + floor // 2, gold + floor * 5, ability=ability)
+        boss = Enemy(
+            name,
+            hp + floor * 10,
+            atk + floor,
+            dfs + floor // 2,
+            gold + floor * 5,
+            ability=ability,
+        )
         place(boss)
         boss_drop = BOSS_LOOT.get(name, [])
         if boss_drop and random.random() < 0.5:
@@ -552,7 +700,13 @@ class DungeonBase:
             Companion("Hired Blade", "attack"),
         ]
         place(random.choice(companion_options))
-        default_places = {"Trap": 3, "Treasure": 3, "Enchantment": 2, "Sanctuary": 2, "Blacksmith": 1}
+        default_places = {
+            "Trap": 3,
+            "Treasure": 3,
+            "Enchantment": 2,
+            "Sanctuary": 2,
+            "Blacksmith": 1,
+        }
         place_counts = default_places.copy()
         place_counts.update(cfg.get("places", {}))
         for pname, count in place_counts.items():
@@ -581,13 +735,19 @@ class DungeonBase:
             self.trigger_floor_event(floor)
 
             while self.player.is_alive():
-                print(f"Position: ({self.player.x}, {self.player.y}) - {self.room_names[self.player.y][self.player.x]}")
-                print(f"Health: {self.player.health} | XP: {self.player.xp} | Gold: {self.player.gold} | Level: {self.player.level} | Floor: {floor} | Skill CD: {self.player.skill_cooldown}")
+                print(
+                    f"Position: ({self.player.x}, {self.player.y}) - {self.room_names[self.player.y][self.player.x]}"
+                )
+                print(
+                    f"Health: {self.player.health} | XP: {self.player.xp} | Gold: {self.player.gold} | Level: {self.player.level} | Floor: {floor} | Skill CD: {self.player.skill_cooldown}"
+                )
                 if self.player.guild:
                     print(f"Guild: {self.player.guild}")
                 if self.player.race:
                     print(f"Race: {self.player.race}")
-                print("1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit 8. Show Map")
+                print(
+                    "1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit 8. Show Map"
+                )
                 choice = input("Action: ")
 
                 if choice == "1":
@@ -610,12 +770,21 @@ class DungeonBase:
                 else:
                     print("Invalid choice!")
 
-                if self.player.level >= 5 and self.player.health < self.player.max_health:
+                if (
+                    self.player.level >= 5
+                    and self.player.health < self.player.max_health
+                ):
                     self.player.health += 1
 
-                if self.player.x == self.exit_coords[0] and self.player.y == self.exit_coords[1] and self.player.has_item("Key"):
+                if (
+                    self.player.x == self.exit_coords[0]
+                    and self.player.y == self.exit_coords[1]
+                    and self.player.has_item("Key")
+                ):
                     print("You reach the Sealed Gate.")
-                    proceed = input("Would you like to descend to the next floor? (y/n): ").lower()
+                    proceed = input(
+                        "Would you like to descend to the next floor? (y/n): "
+                    ).lower()
                     if proceed == "y":
                         floor += 1
                         self.save_game(floor)
@@ -635,9 +804,15 @@ class DungeonBase:
             os.remove(SAVE_FILE)
 
     def move_player(self, direction):
-        dx, dy = {"left": (-1,0), "right": (1,0), "up": (0,-1), "down": (0,1)}.get(direction, (0,0))
+        dx, dy = {"left": (-1, 0), "right": (1, 0), "up": (0, -1), "down": (0, 1)}.get(
+            direction, (0, 0)
+        )
         x, y = self.player.x + dx, self.player.y + dy
-        if 0 <= x < self.width and 0 <= y < self.height and self.rooms[y][x] is not None:
+        if (
+            0 <= x < self.width
+            and 0 <= y < self.height
+            and self.rooms[y][x] is not None
+        ):
             self.handle_room(x, y)
         else:
             print("You can't move that way.")
@@ -665,7 +840,7 @@ class DungeonBase:
             "Sealed Gate": "Massive stone doors sealed by arcane runes. It might be the only way out.",
             "Hidden Niche": "A hollow carved into the wall, forgotten by time. Something valuable glints inside.",
             "Silent Chamber": "Dust covers everything. It appears long abandoned.",
-            "Sacred Sanctuary": "A peaceful place that heals weary adventurers."
+            "Sacred Sanctuary": "A peaceful place that heals weary adventurers.",
         }
         if name in lore:
             print(f"{lore[name]}")
@@ -712,7 +887,9 @@ class DungeonBase:
                 print("1. Poison  2. Burn  3. Freeze  4. Cancel")
                 choice = input("Choose enchantment: ")
                 if self.player.weapon.effect:
-                    print("Your weapon is already enchanted! You can't add another enchantment.")
+                    print(
+                        "Your weapon is already enchanted! You can't add another enchantment."
+                    )
                 elif self.player.gold >= 30 and choice in ["1", "2", "3"]:
                     effect = {"1": "poison", "2": "burn", "3": "freeze"}[choice]
                     self.player.weapon.description += f" (Enchanted: {effect})"
@@ -730,8 +907,12 @@ class DungeonBase:
         elif room == "Blacksmith":
             print("You meet a grizzled blacksmith hammering at a forge.")
             if self.player.weapon:
-                print(f"Your weapon: {self.player.weapon.name} ({self.player.weapon.min_damage}-{self.player.weapon.max_damage})")
-                print("Would you like to upgrade your weapon for 50 gold? +3 min/max damage")
+                print(
+                    f"Your weapon: {self.player.weapon.name} ({self.player.weapon.min_damage}-{self.player.weapon.max_damage})"
+                )
+                print(
+                    "Would you like to upgrade your weapon for 50 gold? +3 min/max damage"
+                )
                 confirm = input("Upgrade? (y/n): ")
                 if confirm.lower() == "y" and self.player.gold >= 50:
                     self.player.weapon.min_damage += 3
@@ -743,7 +924,9 @@ class DungeonBase:
                 else:
                     print("Maybe next time.")
             else:
-                print("The blacksmith scoffs. 'No weapon? Come back when you have something worth forging.'")
+                print(
+                    "The blacksmith scoffs. 'No weapon? Come back when you have something worth forging.'"
+                )
             self.rooms[y][x] = None
             self.room_names[y][x] = "Blacksmith Forge"
 
@@ -783,11 +966,13 @@ class DungeonBase:
         self.audience_gift()
 
     def battle(self, enemy):
-        print(f"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability else ''} Boss incoming!")
+        print(
+            f"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability else ''} Boss incoming!"
+        )
         self.announce(f"{self.player.name} engages {enemy.name}!")
         while self.player.is_alive() and enemy.is_alive():
             skip_player = self.player.apply_status_effects()
-            for companion in getattr(self.player, 'companions', []):
+            for companion in getattr(self.player, "companions", []):
                 companion.assist(self.player, enemy)
             if not enemy.is_alive():
                 break
@@ -925,7 +1110,7 @@ class DungeonBase:
                     print("You can't sell that item.")
                     return
                 confirm = input(f"Sell {item.name} for {sale_price} gold? (y/n) ")
-                if confirm.lower() == 'y':
+                if confirm.lower() == "y":
                     self.player.inventory.pop(choice - 1)
                     self.player.gold += sale_price
                     print(f"You sold {item.name}.")

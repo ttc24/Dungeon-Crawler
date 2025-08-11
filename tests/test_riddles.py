@@ -11,7 +11,8 @@ def test_riddles_loaded_and_used(monkeypatch, capsys):
     assert len(constants.RIDDLES) >= 5
 
     chosen = constants.RIDDLES[-1]
-    # Restrict the riddles list in the dungeon module so the trap must use our chosen riddle
+    # Restrict the riddles list in the dungeon module so the trap
+    # must use our chosen riddle
     monkeypatch.setattr(dungeon_module, "RIDDLES", [chosen])
     monkeypatch.setattr(builtins, "input", lambda _: chosen["answer"])
 

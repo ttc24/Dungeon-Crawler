@@ -6,9 +6,9 @@ race and guild selections are deferred to later floors and offered by the
 ``DungeonBase`` floor events.
 """
 
+from .config import load_config
 from .dungeon import DungeonBase
 from .entities import Player
-from .config import load_config
 
 
 def build_character():

@@ -1,11 +1,11 @@
 import os
-import sys
 import random
+import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from dungeoncrawler.dungeon import DungeonBase
-from dungeoncrawler.entities import Player, Enemy, Companion
+from dungeoncrawler.entities import Companion, Enemy, Player
 
 
 def test_attack_companion_deals_damage(monkeypatch):
@@ -15,8 +15,8 @@ def test_attack_companion_deals_damage(monkeypatch):
     wolf = Companion("Wolf", attack_power=5)
     game.player.companions.append(wolf)
 
-    monkeypatch.setattr('builtins.input', lambda _: '2')  # defend
-    monkeypatch.setattr(random, 'randint', lambda a, b: b)
+    monkeypatch.setattr("builtins.input", lambda _: "2")  # defend
+    monkeypatch.setattr(random, "randint", lambda a, b: b)
 
     game.battle(enemy)
 
@@ -31,8 +31,8 @@ def test_healer_companion_restores_health(monkeypatch):
     healer = Companion("Cleric", heal_amount=10)
     game.player.companions.append(healer)
 
-    monkeypatch.setattr('builtins.input', lambda _: '1')  # attack
-    monkeypatch.setattr(random, 'randint', lambda a, b: b)
+    monkeypatch.setattr("builtins.input", lambda _: "1")  # attack
+    monkeypatch.setattr(random, "randint", lambda a, b: b)
 
     game.battle(enemy)
 

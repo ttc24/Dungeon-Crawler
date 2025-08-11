@@ -3,6 +3,7 @@ class Item:
         self.name = name
         self.description = description
 
+
 class Weapon(Item):
     def __init__(self, name, description, min_damage, max_damage, price=50):
         super().__init__(name, description)

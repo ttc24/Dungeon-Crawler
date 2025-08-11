@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import random
-from .items import Item, Weapon
+
 from .constants import ANNOUNCER_LINES
+from .items import Item, Weapon
 
 
 class Entity:
@@ -89,7 +90,14 @@ class Player(Entity):
         return any(item.name == name for item in self.inventory)
 
     def use_health_potion(self):
-        potion = next((item for item in self.inventory if isinstance(item, Item) and item.name == "Health Potion"), None)
+        potion = next(
+            (
+                item
+                for item in self.inventory
+                if isinstance(item, Item) and item.name == "Health Potion"
+            ),
+            None,
+        )
         if potion:
             self.inventory.remove(potion)
             healed_amount = min(20, self.max_health - self.health)
@@ -144,65 +152,65 @@ class Player(Entity):
         print(f"The {enemy.name} attacked you and dealt {damage} damage.")
 
     def take_damage(self, damage):
-        if 'shield' in self.status_effects:
+        if "shield" in self.status_effects:
             damage = max(0, damage - 5)
             print("Your shield absorbs 5 damage!")
         self.health = max(0, self.health - damage)
 
     def apply_status_effects(self):
         skip_turn = False
-        if 'poison' in self.status_effects:
-            poison_turns = self.status_effects['poison']
+        if "poison" in self.status_effects:
+            poison_turns = self.status_effects["poison"]
             if poison_turns > 0:
                 self.health -= 3
                 print("You take 3 poison damage!")
-                self.status_effects['poison'] -= 1
-            if self.status_effects['poison'] <= 0:
-                del self.status_effects['poison']
-        if 'burn' in self.status_effects:
-            burn_turns = self.status_effects['burn']
+                self.status_effects["poison"] -= 1
+            if self.status_effects["poison"] <= 0:
+                del self.status_effects["poison"]
+        if "burn" in self.status_effects:
+            burn_turns = self.status_effects["burn"]
             if burn_turns > 0:
                 self.health -= 4
                 print("You suffer 4 burn damage!")
-                self.status_effects['burn'] -= 1
-            if self.status_effects['burn'] <= 0:
-                del self.status_effects['burn']
-        if 'bleed' in self.status_effects:
-            bleed_turns = self.status_effects['bleed']
+                self.status_effects["burn"] -= 1
+            if self.status_effects["burn"] <= 0:
+                del self.status_effects["burn"]
+        if "bleed" in self.status_effects:
+            bleed_turns = self.status_effects["bleed"]
             if bleed_turns > 0:
                 self.health -= 2
                 print("You bleed for 2 damage!")
-                self.status_effects['bleed'] -= 1
-            if self.status_effects['bleed'] <= 0:
-                del self.status_effects['bleed']
-        if 'freeze' in self.status_effects:
-            freeze_turns = self.status_effects['freeze']
+                self.status_effects["bleed"] -= 1
+            if self.status_effects["bleed"] <= 0:
+                del self.status_effects["bleed"]
+        if "freeze" in self.status_effects:
+            freeze_turns = self.status_effects["freeze"]
             if freeze_turns > 0:
                 print("You're frozen and lose your turn!")
-                self.status_effects['freeze'] -= 1
+                self.status_effects["freeze"] -= 1
                 skip_turn = True
-            if self.status_effects['freeze'] <= 0:
-                del self.status_effects['freeze']
-        if 'stun' in self.status_effects:
-            stun_turns = self.status_effects['stun']
+            if self.status_effects["freeze"] <= 0:
+                del self.status_effects["freeze"]
+        if "stun" in self.status_effects:
+            stun_turns = self.status_effects["stun"]
             if stun_turns > 0:
                 print("You're stunned and can't move!")
-                self.status_effects['stun'] -= 1
+                self.status_effects["stun"] -= 1
                 skip_turn = True
-            if self.status_effects['stun'] <= 0:
-                del self.status_effects['stun']
-        if 'shield' in self.status_effects:
-            self.status_effects['shield'] -= 1
-            if self.status_effects['shield'] <= 0:
+            if self.status_effects["stun"] <= 0:
+                del self.status_effects["stun"]
+        if "shield" in self.status_effects:
+            self.status_effects["shield"] -= 1
+            if self.status_effects["shield"] <= 0:
                 print("Your shield fades.")
-                del self.status_effects['shield']
-        if 'inspire' in self.status_effects:
-            if self.status_effects['inspire'] == 3:
+                del self.status_effects["shield"]
+        if "inspire" in self.status_effects:
+            if self.status_effects["inspire"] == 3:
                 self.attack_power += 3
-            self.status_effects['inspire'] -= 1
-            if self.status_effects['inspire'] <= 0:
+            self.status_effects["inspire"] -= 1
+            if self.status_effects["inspire"] <= 0:
                 self.attack_power -= 3
-                del self.status_effects['inspire']
+                del self.status_effects["inspire"]
         return skip_turn
 
     def decrement_cooldowns(self):
@@ -221,8 +229,8 @@ class Player(Entity):
             damage = self.attack_power + random.randint(10, 15)
             print(f"You cast Fireball dealing {damage} damage!")
             enemy.take_damage(damage)
-            enemy.status_effects = getattr(enemy, 'status_effects', {})
-            enemy.status_effects['burn'] = 3
+            enemy.status_effects = getattr(enemy, "status_effects", {})
+            enemy.status_effects["burn"] = 3
         elif self.class_type == "Rogue":
             damage = self.attack_power + random.randint(5, 10)
             print(f"You perform a sneaky Backstab for {damage} damage!")
@@ -241,7 +249,7 @@ class Player(Entity):
                 print(f"Divine power heals you for {heal} HP!")
         elif self.class_type == "Bard":
             print("You play an inspiring tune, bolstering your spirit!")
-            self.status_effects['inspire'] = 3
+            self.status_effects["inspire"] = 3
         elif self.class_type == "Barbarian":
             damage = self.attack_power + random.randint(8, 12)
             enemy.take_damage(damage)
@@ -251,19 +259,19 @@ class Player(Entity):
         elif self.class_type == "Druid":
             damage = self.attack_power + random.randint(5, 10)
             enemy.take_damage(damage)
-            enemy.status_effects['freeze'] = 1
+            enemy.status_effects["freeze"] = 1
             heal = min(5, self.max_health - self.health)
             self.health += heal
             print(f"Nature's wrath deals {damage} damage and restores {heal} health!")
         elif self.class_type == "Ranger":
             damage = self.attack_power + random.randint(6, 12)
             enemy.take_damage(damage)
-            enemy.status_effects['poison'] = 3
+            enemy.status_effects["poison"] = 3
             print(f"A volley of arrows hits for {damage} damage and poisons the foe!")
         elif self.class_type == "Sorcerer":
             damage = self.attack_power + random.randint(12, 18)
             enemy.take_damage(damage)
-            enemy.status_effects['burn'] = 3
+            enemy.status_effects["burn"] = 3
             print(f"You unleash Arcane Blast for {damage} damage!")
         elif self.class_type == "Monk":
             damage = self.attack_power + random.randint(4, 8)
@@ -291,8 +299,10 @@ class Player(Entity):
         elif self.class_type == "Alchemist":
             damage = self.attack_power + random.randint(8, 12)
             enemy.take_damage(damage)
-            enemy.status_effects['burn'] = 3
-            print(f"An explosive flask bursts for {damage} damage and sets the foe ablaze!")
+            enemy.status_effects["burn"] = 3
+            print(
+                f"An explosive flask bursts for {damage} damage and sets the foe ablaze!"
+            )
         else:
             print("You don't have a special skill.")
             return
@@ -400,6 +410,7 @@ class Player(Entity):
     def get_score(self):
         return self.level * 100 + len(self.inventory) * 10 + self.gold
 
+
 class Enemy(Entity):
     """Adversary encountered within the dungeon.
 
@@ -407,7 +418,9 @@ class Enemy(Entity):
     :meth:`attack` method applies damage and effects to the player.
     """
 
-    def __init__(self, name, health, attack_power, defense, gold, ability=None, ai=None):
+    def __init__(
+        self, name, health, attack_power, defense, gold, ability=None, ai=None
+    ):
         super().__init__(name, "")
         self.health = health
         self.max_health = health
@@ -423,7 +436,7 @@ class Enemy(Entity):
         return self.health > 0
 
     def take_damage(self, damage):
-        if 'shield' in self.status_effects:
+        if "shield" in self.status_effects:
             damage = max(0, damage - 5)
             print(f"The {self.name}'s shield absorbs 5 damage!")
         self.health = max(0, self.health - damage)
@@ -434,57 +447,57 @@ class Enemy(Entity):
     def apply_status_effects(self):
         """Apply ongoing status effects and decrement their duration."""
         skip_turn = False
-        if 'poison' in self.status_effects:
-            if self.status_effects['poison'] > 0:
+        if "poison" in self.status_effects:
+            if self.status_effects["poison"] > 0:
                 self.health -= 3
                 print(f"The {self.name} takes 3 poison damage!")
-                self.status_effects['poison'] -= 1
-            if self.status_effects['poison'] <= 0:
-                del self.status_effects['poison']
-        if 'burn' in self.status_effects:
-            if self.status_effects['burn'] > 0:
+                self.status_effects["poison"] -= 1
+            if self.status_effects["poison"] <= 0:
+                del self.status_effects["poison"]
+        if "burn" in self.status_effects:
+            if self.status_effects["burn"] > 0:
                 self.health -= 4
                 print(f"The {self.name} suffers 4 burn damage!")
-                self.status_effects['burn'] -= 1
-            if self.status_effects['burn'] <= 0:
-                del self.status_effects['burn']
-        if 'bleed' in self.status_effects:
-            if self.status_effects['bleed'] > 0:
+                self.status_effects["burn"] -= 1
+            if self.status_effects["burn"] <= 0:
+                del self.status_effects["burn"]
+        if "bleed" in self.status_effects:
+            if self.status_effects["bleed"] > 0:
                 self.health -= 2
                 print(f"The {self.name} bleeds for 2 damage!")
-                self.status_effects['bleed'] -= 1
-            if self.status_effects['bleed'] <= 0:
-                del self.status_effects['bleed']
-        if 'freeze' in self.status_effects:
-            if self.status_effects['freeze'] > 0:
+                self.status_effects["bleed"] -= 1
+            if self.status_effects["bleed"] <= 0:
+                del self.status_effects["bleed"]
+        if "freeze" in self.status_effects:
+            if self.status_effects["freeze"] > 0:
                 print(f"The {self.name} is frozen and can't move!")
-                self.status_effects['freeze'] -= 1
+                self.status_effects["freeze"] -= 1
                 skip_turn = True
-            if self.status_effects['freeze'] <= 0:
-                del self.status_effects['freeze']
-        if 'stun' in self.status_effects:
-            if self.status_effects['stun'] > 0:
+            if self.status_effects["freeze"] <= 0:
+                del self.status_effects["freeze"]
+        if "stun" in self.status_effects:
+            if self.status_effects["stun"] > 0:
                 print(f"The {self.name} is stunned and can't move!")
-                self.status_effects['stun'] -= 1
+                self.status_effects["stun"] -= 1
                 skip_turn = True
-            if self.status_effects['stun'] <= 0:
-                del self.status_effects['stun']
-        if 'shield' in self.status_effects:
-            self.status_effects['shield'] -= 1
-            if self.status_effects['shield'] <= 0:
+            if self.status_effects["stun"] <= 0:
+                del self.status_effects["stun"]
+        if "shield" in self.status_effects:
+            self.status_effects["shield"] -= 1
+            if self.status_effects["shield"] <= 0:
                 print(f"The {self.name}'s shield fades.")
-                del self.status_effects['shield']
+                del self.status_effects["shield"]
         return skip_turn
 
     def defend(self):
-        self.status_effects['shield'] = 1
+        self.status_effects["shield"] = 1
         print(f"The {self.name} raises its guard!")
 
     def take_turn(self, player):
-        action = 'attack'
+        action = "attack"
         if self.ai:
             action = self.ai.choose_action(self, player)
-        if action == 'defend':
+        if action == "defend":
             self.defend()
         else:
             self.attack(player)
@@ -495,22 +508,23 @@ class Enemy(Entity):
             self.health += damage // 3
             print(f"The {self.name} drains life and heals for {damage // 3}!")
         elif self.ability == "poison":
-            player.status_effects['poison'] = 3
+            player.status_effects["poison"] = 3
         elif self.ability == "burn":
-            player.status_effects['burn'] = 3
+            player.status_effects["burn"] = 3
         elif self.ability == "stun":
-            player.status_effects['stun'] = 1
+            player.status_effects["stun"] = 1
             print(f"The {self.name} stuns you!")
         elif self.ability == "bleed":
-            player.status_effects['bleed'] = 3
+            player.status_effects["bleed"] = 3
         elif self.ability == "freeze":
-            player.status_effects['freeze'] = 1
+            player.status_effects["freeze"] = 1
             print(f"The {self.name} freezes you for 1 turns!")
         elif self.ability == "double_strike" and random.random() < 0.25:
             print(f"The {self.name} strikes twice!")
             player.take_damage(damage)
         player.take_damage(damage)
         print(f"The {self.name} attacked you and dealt {damage} damage.")
+
 
 class Companion(Entity):
     """NPC ally that can aid the player during combat.
