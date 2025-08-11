@@ -1,5 +1,5 @@
-from pathlib import Path
 import json
+from pathlib import Path
 
 SAVE_FILE = "savegame.json"
 SCORE_FILE = "scores.json"

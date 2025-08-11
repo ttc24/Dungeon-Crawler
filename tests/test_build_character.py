@@ -1,16 +1,15 @@
-import os
-import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
+from dungeoncrawler.entities import Enemy, Player
 from dungeoncrawler.main import build_character
-from dungeoncrawler.entities import Player, Enemy
 
 
 def test_build_character(monkeypatch):
-    inputs = iter([
-        "", "Alice",  # name (invalid then valid)
-    ])
-    monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+    inputs = iter(
+        [
+            "",
+            "Alice",  # name (invalid then valid)
+        ]
+    )
+    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
 
     player = build_character()
     assert isinstance(player, Player)
@@ -34,7 +33,7 @@ def test_warlock_skill_lifesteal(monkeypatch):
     enemy = Enemy("Dummy", 100, 5, 0, 0)
     player.health = 70
 
-    monkeypatch.setattr('random.randint', lambda a, b: 10)
+    monkeypatch.setattr("random.randint", lambda a, b: 10)
     player.use_skill(enemy)
     expected_damage = player.attack_power + 10
     assert enemy.health == 100 - expected_damage

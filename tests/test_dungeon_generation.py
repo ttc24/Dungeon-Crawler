@@ -1,10 +1,7 @@
-import os
-import sys
 import random
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from dungeoncrawler.dungeon import DungeonBase
-from dungeoncrawler.entities import Player, Enemy
+from dungeoncrawler.entities import Enemy, Player
 
 
 def test_generate_dungeon_size_and_population():

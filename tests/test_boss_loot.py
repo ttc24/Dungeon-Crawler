@@ -1,11 +1,7 @@
-import os
-import sys
 import random
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from dungeoncrawler.dungeon import DungeonBase, BOSS_LOOT
-from dungeoncrawler.entities import Player, Enemy
+from dungeoncrawler.dungeon import BOSS_LOOT, DungeonBase
+from dungeoncrawler.entities import Enemy, Player
 
 
 def test_boss_drops_loot(monkeypatch):
@@ -14,8 +10,8 @@ def test_boss_drops_loot(monkeypatch):
     boss_name = next(iter(BOSS_LOOT))
     enemy = Enemy(boss_name, 1, 0, 0, 0)
 
-    monkeypatch.setattr('builtins.input', lambda _: '1')
-    monkeypatch.setattr(random, 'choice', lambda seq: seq[0])
+    monkeypatch.setattr("builtins.input", lambda _: "1")
+    monkeypatch.setattr(random, "choice", lambda seq: seq[0])
 
     game.battle(enemy)
 

@@ -1,11 +1,8 @@
-import os
-import sys
 import random
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import pytest
 
-from dungeoncrawler.entities import Player, Enemy, Weapon
+from dungeoncrawler.entities import Enemy, Player, Weapon
 
 
 @pytest.fixture
@@ -42,7 +39,7 @@ def test_enemy_attack_applies_status(player):
 def test_status_effects_tick():
     p = Player("Hero")
     p.health = 50
-    p.status_effects['poison'] = 2
+    p.status_effects["poison"] = 2
     p.apply_status_effects()
     assert p.health == 47
-    assert p.status_effects['poison'] == 1
+    assert p.status_effects["poison"] == 1

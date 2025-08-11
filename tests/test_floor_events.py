@@ -1,8 +1,4 @@
-import os
-import sys
 from unittest.mock import patch
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.entities import Player
@@ -29,8 +25,9 @@ def test_floor_twelve_event_calls_shop():
 
 def test_floor_fifteen_event_riddle_rewards_gold():
     dungeon = setup_dungeon()
-    with patch("dungeoncrawler.dungeon.random.choice", return_value=("riddle", "answer")), \
-         patch("builtins.input", return_value="answer"):
+    with patch(
+        "dungeoncrawler.dungeon.random.choice", return_value=("riddle", "answer")
+    ), patch("builtins.input", return_value="answer"):
         gold_before = dungeon.player.gold
         dungeon.trigger_floor_event(15)
         assert dungeon.player.gold == gold_before + 50
