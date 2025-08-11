@@ -53,3 +53,6 @@ scores.json
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Sphinx build output
+docs/_build/
