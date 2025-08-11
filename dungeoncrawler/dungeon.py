@@ -1,219 +1,72 @@
 import json
 import os
 import random
+from pathlib import Path
 
 from .constants import SAVE_FILE, SCORE_FILE, ANNOUNCER_LINES, RIDDLES
 from .entities import Player, Enemy, Companion
 from .items import Item, Weapon
 
-# Enemy stats keyed by name so floor configs can easily reference them
-ENEMY_STATS = {
-    "Goblin": (40, 70, 5, 12, 2),
-    "Skeleton": (60, 90, 7, 14, 3),
-    "Orc": (80, 110, 10, 18, 4),
-    "Wraith": (100, 140, 12, 22, 6),
-    "Demon": (120, 160, 15, 26, 8),
-    "Bandit": (50, 80, 6, 14, 3),
-    "Cultist": (65, 95, 9, 16, 3),
-    "Ghoul": (70, 100, 8, 15, 4),
-    "Vampire": (90, 130, 10, 20, 5),
-    "Troll": (110, 150, 13, 23, 6),
-    "Lich": (130, 170, 14, 26, 7),
-    "Minotaur": (140, 180, 16, 28, 8),
-    "Harpy": (70, 110, 10, 18, 4),
-    "Werewolf": (100, 140, 12, 20, 5),
-    "Gargoyle": (90, 130, 10, 22, 6),
-    "Basilisk": (120, 160, 14, 24, 7),
-    "Shade": (80, 120, 11, 19, 4),
-    "Warlock": (110, 150, 15, 25, 6),
-    "Zombie": (60, 100, 6, 14, 3),
-    "Revenant": (150, 190, 18, 28, 9),
-    "Phoenix": (160, 200, 20, 30, 10),
-    "Giant Spider": (70, 110, 9, 17, 4),
-    "Slime King": (130, 170, 13, 21, 6),
-    "Hydra": (180, 220, 22, 32, 11),
-    "Dark Knight": (170, 210, 21, 29, 10),
-    "Cyclops": (190, 230, 24, 34, 12),
-    "Beholder": (200, 240, 26, 36, 13),
-    "Astral Dragon": (220, 260, 30, 40, 15),
-    "Babababoon": (80, 120, 10, 20, 5),
-    "Bactrian": (80, 120, 10, 20, 5),
-    "Bad Llama": (80, 120, 10, 20, 5),
-    "Big Boy Blue": (80, 120, 10, 20, 5),
-    "Blender Fiend": (80, 120, 10, 20, 5),
-    "Blister Ghoul": (80, 120, 10, 20, 5),
-    "Blood and Ink Elemental": (80, 120, 10, 20, 5),
-    "Brindle Grub": (80, 120, 10, 20, 5),
-    "Bugaboo": (80, 120, 10, 20, 5),
-    "Cave Mudge Bonker": (80, 120, 10, 20, 5),
-    "Chee": (80, 120, 10, 20, 5),
-    "Children of Inpewt": (80, 120, 10, 20, 5),
-    "Chilly Goat": (80, 120, 10, 20, 5),
-    "Clurichaun": (80, 120, 10, 20, 5),
-    "Concierge Shark": (80, 120, 10, 20, 5),
-    "Cornets": (80, 120, 10, 20, 5),
-    "Crest": (80, 120, 10, 20, 5),
-    "Danger Dingo": (80, 120, 10, 20, 5),
-    "Demons": (80, 120, 10, 20, 5),
-    "Drek": (80, 120, 10, 20, 5),
-    "Experience (Mob)": (80, 120, 10, 20, 5),
-    "Festering Ghoul": (80, 120, 10, 20, 5),
-    "Flesher": (80, 120, 10, 20, 5),
-    "Former Circus Lemur": (80, 120, 10, 20, 5),
-    "Frenzied Gerbil": (80, 120, 10, 20, 5),
-    "Ghommid": (80, 120, 10, 20, 5),
-    "Glamoured Fragment": (80, 120, 10, 20, 5),
-    "Goblin Bomb Bard": (80, 120, 10, 20, 5),
-    "Goblin Engineer": (80, 120, 10, 20, 5),
-    "Goblin Shamanka": (80, 120, 10, 20, 5),
-    "Goblins": (80, 120, 10, 20, 5),
-    "Gross Atomizers": (80, 120, 10, 20, 5),
-    "Hellspawn Familiar": (80, 120, 10, 20, 5),
-    "Hills Cyclops": (80, 120, 10, 20, 5),
-    "Incubus": (80, 120, 10, 20, 5),
-    "Jikininki Janitor Ghouls": (80, 120, 10, 20, 5),
-    "Kobold": (80, 120, 10, 20, 5),
-    "Krakaren Clone (Fourth Floor)": (80, 120, 10, 20, 5),
-    "Krakaren Clone (Second Floor)": (80, 120, 10, 20, 5),
-    "Krakaren Crotch Dumplings": (80, 120, 10, 20, 5),
-    "Krasue": (80, 120, 10, 20, 5),
-    "Kravyad": (80, 120, 10, 20, 5),
-    "Laminak": (80, 120, 10, 20, 5),
-    "Lesser Demon": (80, 120, 10, 20, 5),
-    "Literal Fire Ants": (80, 120, 10, 20, 5),
-    "Male Thorny Devil": (80, 120, 10, 20, 5),
-    "ManTauR": (80, 120, 10, 20, 5),
-    "Mind Horror": (80, 120, 10, 20, 5),
-    "Mold Lion": (80, 120, 10, 20, 5),
-    "Mongoliensis": (80, 120, 10, 20, 5),
-    "Monk Seal": (80, 120, 10, 20, 5),
-    "Naiad": (80, 120, 10, 20, 5),
-    "Night Weasel": (80, 120, 10, 20, 5),
-    "Octo-Shark": (80, 120, 10, 20, 5),
-    "Odius Creeper": (80, 120, 10, 20, 5),
-    "Ogre": (80, 120, 10, 20, 5),
-    "Pain Amplifier Jellyfish": (80, 120, 10, 20, 5),
-    "Pollyslog": (80, 120, 10, 20, 5),
-    "Pooka": (80, 120, 10, 20, 5),
-    "Pox Slug": (80, 120, 10, 20, 5),
-    "Psycho Sticker": (80, 120, 10, 20, 5),
-    "Pterolykos": (80, 120, 10, 20, 5),
-    "Rage Elemental": (80, 120, 10, 20, 5),
-    "Rat-kin": (80, 120, 10, 20, 5),
-    "Rats": (80, 120, 10, 20, 5),
-    "Razor Fox": (80, 120, 10, 20, 5),
-    "Reaper Spider Minion": (80, 120, 10, 20, 5),
-    "Rot Stickers": (80, 120, 10, 20, 5),
-    "Satan's Lil' Hedgehog": (80, 120, 10, 20, 5),
-    "Scat Thug": (80, 120, 10, 20, 5),
-    "Scatterer": (80, 120, 10, 20, 5),
-    "Shambling Acid Impaler": (80, 120, 10, 20, 5),
-    "Shambling Berseker": (80, 120, 10, 20, 5),
-    "Shock Chomper": (80, 120, 10, 20, 5),
-    "Skellie": (80, 120, 10, 20, 5),
-    "Skyfowl": (80, 120, 10, 20, 5),
-    "Slime": (80, 120, 10, 20, 5),
-    "Sluggalo": (80, 120, 10, 20, 5),
-    "Squonk": (80, 120, 10, 20, 5),
-    "Stone Hawk": (80, 120, 10, 20, 5),
-    "Street Urchin": (80, 120, 10, 20, 5),
-    "Succubus": (80, 120, 10, 20, 5),
-    "Superior Fire Demon": (80, 120, 10, 20, 5),
-    "Swordfish Interlopers": (80, 120, 10, 20, 5),
-    "Terror the Clown": (80, 120, 10, 20, 5),
-    "Troglodyte": (80, 120, 10, 20, 5),
-    "Troglodyte Pygmy": (80, 120, 10, 20, 5),
-    "Tummy Acher": (80, 120, 10, 20, 5),
-    "Turkey": (80, 120, 10, 20, 5),
-    "Tuskling": (80, 120, 10, 20, 5),
-    "Unvaccinated Clurichaun Rev-Up Consultant": (80, 120, 10, 20, 5),
-    "Ursine": (80, 120, 10, 20, 5),
-    "Village Guard Swordsman": (80, 120, 10, 20, 5),
-    "Vine Creepers": (80, 120, 10, 20, 5),
-    "Visitor": (80, 120, 10, 20, 5),
-    "Vorpal": (80, 120, 10, 20, 5),
-    "Wall Monitor": (80, 120, 10, 20, 5),
-    "War Mage": (80, 120, 10, 20, 5),
-    "Wrath Ghouls": (80, 120, 10, 20, 5),
-    "Zlurpies": (80, 120, 10, 20, 5),
-}
+# ---------------------------------------------------------------------------
+# Data loading utilities
+# ---------------------------------------------------------------------------
+# ``data/enemies.json`` schema:
+# {
+#   "EnemyName": {
+#     "stats": [hp_min, hp_max, atk_min, atk_max, defense],
+#     "ability": "optional"
+#   },
+#   ...
+# }
+#
+# ``data/bosses.json`` schema:
+# {
+#   "BossName": {
+#     "stats": [hp, atk, defense, gold],
+#     "ability": "optional",
+#     "loot": [
+#       {
+#         "name": str,
+#         "description": str,
+#         "min_damage": int,
+#         "max_damage": int,
+#         "price": int
+#       }
+#     ]
+#   },
+#   ...
+# }
 
-# Special abilities for certain enemies
-ENEMY_ABILITIES = {
-    "Vampire": "lifesteal",
-    "Wraith": "poison",
-    "Dark Knight": "double_strike",
-    "Lich": "lifesteal",
-    "Warlock": "burn",
-    "Werewolf": "double_strike",
-    "Basilisk": "freeze",
-    "Phoenix": "burn",
-    "Hydra": "poison",
-}
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
-# Boss stats and loot tables keyed by name
-BOSS_STATS = {
-    "Bone Tyrant": (250, 30, 12, 120, "lifesteal"),
-    "Inferno Golem": (270, 35, 14, 140, "burn"),
-    "Frost Warden": (260, 28, 13, 130, "freeze"),
-    "Shadow Reaver": (280, 33, 15, 150, "poison"),
-    "Doom Bringer": (300, 38, 16, 160, "double_strike"),
-    "Void Serpent": (290, 36, 17, 155, "poison"),
-    "Ember Lord": (295, 37, 16, 158, "burn"),
-    "Glacier Fiend": (265, 29, 14, 133, "freeze"),
-    "Grave Monarch": (275, 32, 15, 138, "lifesteal"),
-    "Storm Reaper": (285, 34, 15, 145, "double_strike"),
-    "Asojano": (260, 35, 15, 150, None),
-    "Ball of Swine": (260, 35, 15, 150, None),
-    "Big Tina": (260, 35, 15, 150, None),
-    "Boss": (260, 35, 15, 150, None),
-    "Claude Sludgington the Fourth": (260, 35, 15, 150, None),
-    "Denise": (260, 35, 15, 150, None),
-    "Dismember": (260, 35, 15, 150, None),
-    "Dispenser": (260, 35, 15, 150, None),
-    "Feral Goose": (260, 35, 15, 150, None),
-    "Ferdinand": (260, 35, 15, 150, None),
-    "Gore-Gore": (260, 35, 15, 150, None),
-    "Grimaldi": (260, 35, 15, 150, None),
-    "Heather the Bear": (260, 35, 15, 150, None),
-    "Hoarder": (260, 35, 15, 150, None),
-    "Imogen": (260, 35, 15, 150, None),
-    "Juicer": (260, 35, 15, 150, None),
-    "Krakaren Clone (Fourth Floor)": (260, 35, 15, 150, None),
-    "Krakaren Clone (Second Floor)": (260, 35, 15, 150, None),
-    "Lusca": (260, 35, 15, 150, None),
-    "Madre de Aguas": (260, 35, 15, 150, None),
-    "Mrs. Ghazi": (260, 35, 15, 150, None),
-    "Odious Creepers": (260, 35, 15, 150, None),
-    "Pooka": (260, 35, 15, 150, None),
-    "Quetzalcoatlus": (260, 35, 15, 150, None),
-    "Ralph": (260, 35, 15, 150, None),
-    "Reef Explorer": (260, 35, 15, 150, None),
-    "Reminiscence Hydra of Malicious Compliance": (260, 35, 15, 150, None),
-    "Ruckus": (260, 35, 15, 150, None),
-    "Rude-Dolph the Blood-Nosed Slay-Deer": (260, 35, 15, 150, None),
-    "Scolopendra": (260, 35, 15, 150, None),
-    "Sentinel gun": (260, 35, 15, 150, None),
-    "Shi Maria": (260, 35, 15, 150, None),
-    "Sierra": (260, 35, 15, 150, None),
-    "Station Mimic": (260, 35, 15, 150, None),
-    "Thorn Room Boss Battle": (260, 35, 15, 150, None),
-    "Tom": (260, 35, 15, 150, None),
-}
 
-BOSS_LOOT = {
-    "Bone Tyrant": [Weapon("Skullcrusher", "A mace adorned with bone fragments.", 24, 32, 0)],
-    "Inferno Golem": [Weapon("Molten Blade", "Red-hot sword that scorches foes.", 26, 34, 0)],
-    "Frost Warden": [Weapon("Glacier Edge", "Chilling blade that slows enemies.", 23, 31, 0)],
-    "Shadow Reaver": [Weapon("Nightfang", "A dagger that thrives in shadows.", 22, 30, 0)],
-    "Doom Bringer": [Weapon("Cataclysm", "Heavy axe with devastating power.", 28, 36, 0)],
-    "Void Serpent": [Weapon("Venom Spire", "Spear coated in lethal toxins.", 24, 32, 0)],
-    "Ember Lord": [Weapon("Flame Lash", "Whip of living fire.", 25, 33, 0)],
-    "Glacier Fiend": [Weapon("Frozen Talon", "Ice-forged claw that freezes.", 24, 31, 0)],
-    "Grave Monarch": [Weapon("Cryptblade", "Blade of necrotic energy.", 25, 34, 0)],
-    "Storm Reaper": [Weapon("Thunder Cleaver", "Sword crackling with lightning.", 26, 35, 0)],
-}
+def load_enemies():
+    """Load enemy stats and abilities from ``enemies.json``."""
+    path = DATA_DIR / "enemies.json"
+    with open(path) as f:
+        data = json.load(f)
+    stats = {name: tuple(v["stats"]) for name, v in data.items()}
+    abilities = {name: v.get("ability") for name, v in data.items() if v.get("ability")}
+    return stats, abilities
 
+
+def load_bosses():
+    """Load boss stats and loot tables from ``bosses.json``."""
+    path = DATA_DIR / "bosses.json"
+    with open(path) as f:
+        data = json.load(f)
+    stats = {}
+    loot = {}
+    for name, cfg in data.items():
+        hp, atk, dfs, gold = cfg["stats"]
+        stats[name] = (hp, atk, dfs, gold, cfg.get("ability"))
+        if "loot" in cfg:
+            loot[name] = [Weapon(**item) for item in cfg["loot"]]
+    return stats, loot
+
+
+ENEMY_STATS, ENEMY_ABILITIES = load_enemies()
+BOSS_STATS, BOSS_LOOT = load_bosses()
 # Floor specific configuration
 FLOOR_CONFIGS = {
     1: {
@@ -600,7 +453,7 @@ class DungeonBase:
                     print(f"Guild: {self.player.guild}")
                 if self.player.race:
                     print(f"Race: {self.player.race}")
-                print("1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit")
+                print("1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit 8. Show Map")
                 choice = input("Action: ")
 
                 if choice == "1":
@@ -618,6 +471,8 @@ class DungeonBase:
                 elif choice == "7":
                     print("Thanks for playing!")
                     return
+                elif choice == "8":
+                    self.render_map()
                 else:
                     print("Invalid choice!")
 
@@ -652,6 +507,19 @@ class DungeonBase:
             self.handle_room(x, y)
         else:
             print("You can't move that way.")
+
+    def render_map(self):
+        for y in range(self.height):
+            row = ""
+            for x in range(self.width):
+                pos = (x, y)
+                if pos == (self.player.x, self.player.y):
+                    row += "@"
+                elif pos in self.visited_rooms or pos == self.exit_coords:
+                    row += "."
+                else:
+                    row += "#"
+            print(row)
 
     def handle_room(self, x, y):
         room = self.rooms[y][x]
