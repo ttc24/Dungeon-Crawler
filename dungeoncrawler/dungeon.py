@@ -606,17 +606,16 @@ class DungeonBase:
             print("You can't move that way.")
 
     def render_map(self):
-        for y in range(self.height):
-            row = ""
-            for x in range(self.width):
-                pos = (x, y)
-                if pos == (self.player.x, self.player.y):
-                    row += "@"
-                elif pos in self.visited_rooms or pos == self.exit_coords:
-                    row += "."
-                else:
-                    row += "#"
-            print(row)
+        """Display a coloured map using :mod:`curses`.
+
+        This delegates to :class:`dungeoncrawler.map.MapRenderer` which
+        handles colour output and the optional legend that can be toggled by
+        pressing ``?``.  Press ``q`` or ``ESC`` to exit the map view.
+        """
+
+        from .map import MapRenderer
+
+        MapRenderer(self).run()
 
     def handle_room(self, x, y):
         room = self.rooms[y][x]

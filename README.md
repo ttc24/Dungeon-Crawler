@@ -19,7 +19,16 @@ floor one, a guild becomes available on floor two, and races are unlocked on
 floor three. Use the number menu to explore rooms, fight monsters, visit
 shops, and descend deeper into the dungeon.
 
-At any time you may choose **8. Show Map** to display a grid of the dungeon. The map marks your location with `@`, rooms you've visited with `.`, and unexplored or blocked rooms with `#`.
+At any time you may choose **8. Show Map** to display a grid of the dungeon.
+The map is rendered using ``curses`` with coloured symbols:
+
+- `@` – your current position (cyan)
+- `.` – rooms you have visited (white)
+- `#` – unexplored or blocked rooms (grey)
+- `E` – the exit to the next floor (magenta)
+
+While viewing the map press `?` to toggle a legend describing these symbols.
+Press `q` (or `ESC`) to exit the map view and return to the game.
 
 Progress is automatically saved whenever you clear a floor. On the next launch you will be asked if you want to continue.
 
