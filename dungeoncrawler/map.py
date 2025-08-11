@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import random
+import curses
 from typing import TYPE_CHECKING
 
 from .entities import Companion, Enemy
@@ -143,20 +144,68 @@ def move_player(game: "DungeonBase", direction: str) -> None:
         print("You can't move that way.")
 
 
-def render_map(game: "DungeonBase") -> None:
-    """Render a simple textual representation of the map."""
+def render_map_string(game: "DungeonBase") -> str:
+    """Return a string representation of the current dungeon map."""
 
+    rows = []
     for y in range(game.height):
         row = ""
         for x in range(game.width):
             pos = (x, y)
             if pos == (game.player.x, game.player.y):
                 row += "@"
-            elif pos in game.visited_rooms or pos == game.exit_coords:
+            elif pos == game.exit_coords:
+                row += "E"
+            elif pos in game.visited_rooms:
                 row += "."
             else:
                 row += "#"
-        print(row)
+        rows.append(row)
+    return "\n".join(rows)
+
+
+def render_map(game: "DungeonBase") -> None:
+    """Render the map using curses with basic colors and a toggleable legend."""
+
+    def _render(stdscr):
+        curses.curs_set(0)
+        curses.start_color()
+        curses.init_pair(1, curses.COLOR_YELLOW, curses.COLOR_BLACK)  # player
+        curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_BLACK)    # explored
+        curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)   # exit
+        curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_BLACK)   # unknown
+
+        show_legend = False
+        while True:
+            stdscr.clear()
+            rows = render_map_string(game).splitlines()
+            for y, row in enumerate(rows):
+                for x, ch in enumerate(row):
+                    if ch == "@":
+                        color = curses.color_pair(1)
+                    elif ch == ".":
+                        color = curses.color_pair(2)
+                    elif ch == "E":
+                        color = curses.color_pair(3)
+                    else:
+                        color = curses.color_pair(4)
+                    stdscr.addstr(y, x, ch, color)
+
+            offset = len(rows) + 1
+            stdscr.addstr(offset, 0, "Press '?' for legend, q to exit")
+            if show_legend:
+                legend = ["@: Player", "E: Exit", ".: Explored", "#: Unexplored"]
+                for i, entry in enumerate(legend):
+                    stdscr.addstr(offset + 1 + i, 0, entry)
+
+            stdscr.refresh()
+            key = stdscr.getch()
+            if key in (ord("q"), ord("Q")):
+                break
+            if key == ord("?"):
+                show_legend = not show_legend
+
+    curses.wrapper(_render)
 
 
 def handle_room(game: "DungeonBase", x: int, y: int) -> None:
