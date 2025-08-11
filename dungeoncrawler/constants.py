@@ -5,10 +5,17 @@ from pathlib import Path
 from .config import config
 
 # Configuration-driven values
-SAVE_DIR = Path.home() / ".dungeon_crawler" / "saves"
+# Base directory for all persistent data
+BASE_DIR = Path.home() / ".dungeon_crawler"
+BASE_DIR.mkdir(parents=True, exist_ok=True)
+
+# Save files remain in a subdirectory to keep things tidy
+SAVE_DIR = BASE_DIR / "saves"
 SAVE_DIR.mkdir(parents=True, exist_ok=True)
 SAVE_FILE = SAVE_DIR / config.save_file
-SCORE_FILE = SAVE_DIR / config.score_file
+
+# Leaderboard is stored directly in ``~/.dungeon_crawler``
+SCORE_FILE = BASE_DIR / config.score_file
 MAX_FLOORS = config.max_floors
 SCREEN_WIDTH = config.screen_width
 SCREEN_HEIGHT = config.screen_height
