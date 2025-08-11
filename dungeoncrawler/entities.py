@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import random
+from gettext import gettext as _
 
 from .constants import ANNOUNCER_LINES
 from .items import Item, Weapon
@@ -78,7 +79,7 @@ class Player(Entity):
 
         self.health = self.max_health
         if announce:
-            print(f"Class selected: {self.class_type}.")
+            print(_(f"Class selected: {self.class_type}."))
 
     def is_alive(self):
         return self.health > 0
@@ -102,9 +103,9 @@ class Player(Entity):
             self.inventory.remove(potion)
             healed_amount = min(20, self.max_health - self.health)
             self.health += healed_amount
-            print(f"You used a Health Potion and gained {healed_amount} health.")
+            print(_(f"You used a Health Potion and gained {healed_amount} health."))
         else:
-            print("You don't have a Health Potion to use.")
+            print(_("You don't have a Health Potion to use."))
 
     def attack(self, enemy: Enemy) -> None:
         """Attack ``enemy`` using the equipped weapon or base attack power.
@@ -114,7 +115,7 @@ class Player(Entity):
         """
         damage: int = self.calculate_damage()
         self.apply_weapon_effect(enemy)
-        print(f"You attacked the {enemy.name} and dealt {damage} damage!")
+        print(_(f"You attacked the {enemy.name} and dealt {damage} damage!"))
         enemy.take_damage(damage)
         if not enemy.is_alive():
             self.process_enemy_defeat(enemy)
@@ -131,7 +132,7 @@ class Player(Entity):
             effect = self.weapon.effect
             enemy.status_effects = getattr(enemy, "status_effects", {})
             enemy.status_effects[effect] = 3
-            print(f"Your weapon inflicts {effect} on the {enemy.name}!")
+            print(_(f"Your weapon inflicts {effect} on the {enemy.name}!"))
 
     def process_enemy_defeat(self, enemy: Enemy) -> None:
         """Handle rewards for defeating ``enemy`` such as XP and gold."""
@@ -140,8 +141,8 @@ class Player(Entity):
         if self.level >= 3:
             gold_dropped += 5
         self.gold += gold_dropped
-        print(f"You defeated the {enemy.name}!")
-        print(f"You gained {enemy.xp} XP and {gold_dropped} gold.")
+        print(_(f"You defeated the {enemy.name}!"))
+        print(_(f"You gained {enemy.xp} XP and {gold_dropped} gold."))
         while self.xp >= self.level * 20:
             self.xp -= self.level * 20
             self.level_up()
@@ -149,12 +150,12 @@ class Player(Entity):
     def defend(self, enemy):
         damage = max(0, enemy.attack_power - 5)
         self.health -= damage
-        print(f"The {enemy.name} attacked you and dealt {damage} damage.")
+        print(_(f"The {enemy.name} attacked you and dealt {damage} damage."))
 
     def take_damage(self, damage):
         if "shield" in self.status_effects:
             damage = max(0, damage - 5)
-            print("Your shield absorbs 5 damage!")
+            print(_("Your shield absorbs 5 damage!"))
         self.health = max(0, self.health - damage)
 
     def apply_status_effects(self):
@@ -163,7 +164,7 @@ class Player(Entity):
             poison_turns = self.status_effects["poison"]
             if poison_turns > 0:
                 self.health -= 3
-                print("You take 3 poison damage!")
+                print(_("You take 3 poison damage!"))
                 self.status_effects["poison"] -= 1
             if self.status_effects["poison"] <= 0:
                 del self.status_effects["poison"]
@@ -171,7 +172,7 @@ class Player(Entity):
             burn_turns = self.status_effects["burn"]
             if burn_turns > 0:
                 self.health -= 4
-                print("You suffer 4 burn damage!")
+                print(_("You suffer 4 burn damage!"))
                 self.status_effects["burn"] -= 1
             if self.status_effects["burn"] <= 0:
                 del self.status_effects["burn"]
@@ -179,14 +180,14 @@ class Player(Entity):
             bleed_turns = self.status_effects["bleed"]
             if bleed_turns > 0:
                 self.health -= 2
-                print("You bleed for 2 damage!")
+                print(_("You bleed for 2 damage!"))
                 self.status_effects["bleed"] -= 1
             if self.status_effects["bleed"] <= 0:
                 del self.status_effects["bleed"]
         if "freeze" in self.status_effects:
             freeze_turns = self.status_effects["freeze"]
             if freeze_turns > 0:
-                print("You're frozen and lose your turn!")
+                print(_("You're frozen and lose your turn!"))
                 self.status_effects["freeze"] -= 1
                 skip_turn = True
             if self.status_effects["freeze"] <= 0:
@@ -194,7 +195,7 @@ class Player(Entity):
         if "stun" in self.status_effects:
             stun_turns = self.status_effects["stun"]
             if stun_turns > 0:
-                print("You're stunned and can't move!")
+                print(_("You're stunned and can't move!"))
                 self.status_effects["stun"] -= 1
                 skip_turn = True
             if self.status_effects["stun"] <= 0:
@@ -202,7 +203,7 @@ class Player(Entity):
         if "shield" in self.status_effects:
             self.status_effects["shield"] -= 1
             if self.status_effects["shield"] <= 0:
-                print("Your shield fades.")
+                print(_("Your shield fades."))
                 del self.status_effects["shield"]
         if "inspire" in self.status_effects:
             if self.status_effects["inspire"] == 3:
@@ -219,92 +220,92 @@ class Player(Entity):
 
     def use_skill(self, enemy):
         if self.skill_cooldown > 0:
-            print(f"Your skill is on cooldown for {self.skill_cooldown} more turn(s).")
+            print(_(f"Your skill is on cooldown for {self.skill_cooldown} more turn(s)."))
             return
         if self.class_type == "Warrior":
             damage = self.attack_power * 2
-            print(f"You unleash a mighty Power Strike dealing {damage} damage!")
+            print(_(f"You unleash a mighty Power Strike dealing {damage} damage!"))
             enemy.take_damage(damage)
         elif self.class_type == "Mage":
             damage = self.attack_power + random.randint(10, 15)
-            print(f"You cast Fireball dealing {damage} damage!")
+            print(_(f"You cast Fireball dealing {damage} damage!"))
             enemy.take_damage(damage)
             enemy.status_effects = getattr(enemy, "status_effects", {})
             enemy.status_effects["burn"] = 3
         elif self.class_type == "Rogue":
             damage = self.attack_power + random.randint(5, 10)
-            print(f"You perform a sneaky Backstab for {damage} damage!")
+            print(_(f"You perform a sneaky Backstab for {damage} damage!"))
             enemy.take_damage(damage)
         elif self.class_type == "Cleric":
             heal = min(20, self.max_health - self.health)
             self.health += heal
-            print(f"You invoke Healing Light and recover {heal} health!")
+            print(_(f"You invoke Healing Light and recover {heal} health!"))
         elif self.class_type == "Paladin":
             damage = self.attack_power + random.randint(5, 12)
-            print(f"You smite the {enemy.name} for {damage} holy damage!")
+            print(_(f"You smite the {enemy.name} for {damage} holy damage!"))
             enemy.take_damage(damage)
             heal = min(10, self.max_health - self.health)
             if heal:
                 self.health += heal
-                print(f"Divine power heals you for {heal} HP!")
+                print(_(f"Divine power heals you for {heal} HP!"))
         elif self.class_type == "Bard":
-            print("You play an inspiring tune, bolstering your spirit!")
+            print(_("You play an inspiring tune, bolstering your spirit!"))
             self.status_effects["inspire"] = 3
         elif self.class_type == "Barbarian":
             damage = self.attack_power + random.randint(8, 12)
             enemy.take_damage(damage)
             heal = min(10, self.max_health - self.health)
             self.health += heal
-            print(f"You enter a rage, dealing {damage} damage and healing {heal}!")
+            print(_(f"You enter a rage, dealing {damage} damage and healing {heal}!"))
         elif self.class_type == "Druid":
             damage = self.attack_power + random.randint(5, 10)
             enemy.take_damage(damage)
             enemy.status_effects["freeze"] = 1
             heal = min(5, self.max_health - self.health)
             self.health += heal
-            print(f"Nature's wrath deals {damage} damage and restores {heal} health!")
+            print(_(f"Nature's wrath deals {damage} damage and restores {heal} health!"))
         elif self.class_type == "Ranger":
             damage = self.attack_power + random.randint(6, 12)
             enemy.take_damage(damage)
             enemy.status_effects["poison"] = 3
-            print(f"A volley of arrows hits for {damage} damage and poisons the foe!")
+            print(_(f"A volley of arrows hits for {damage} damage and poisons the foe!"))
         elif self.class_type == "Sorcerer":
             damage = self.attack_power + random.randint(12, 18)
             enemy.take_damage(damage)
             enemy.status_effects["burn"] = 3
-            print(f"You unleash Arcane Blast for {damage} damage!")
+            print(_(f"You unleash Arcane Blast for {damage} damage!"))
         elif self.class_type == "Monk":
             damage = self.attack_power + random.randint(4, 8)
             enemy.take_damage(damage)
             enemy.take_damage(damage)
-            print(f"You strike twice with a flurry for {damage * 2} total damage!")
+            print(_(f"You strike twice with a flurry for {damage * 2} total damage!"))
         elif self.class_type == "Warlock":
             damage = self.attack_power + random.randint(8, 12)
             enemy.take_damage(damage)
             heal = min(damage // 2, self.max_health - self.health)
             self.health += heal
-            print(f"Eldritch energy deals {damage} damage and heals you for {heal}!")
+            print(_(f"Eldritch energy deals {damage} damage and heals you for {heal}!"))
         elif self.class_type == "Necromancer":
             damage = self.attack_power + random.randint(5, 10)
             enemy.take_damage(damage)
             heal = min(damage // 2, self.max_health - self.health)
             self.health += heal
-            print(f"You siphon the enemy's soul for {damage} damage and {heal} health!")
+            print(_(f"You siphon the enemy's soul for {damage} damage and {heal} health!"))
         elif self.class_type == "Shaman":
             heal = min(15, self.max_health - self.health)
             self.health += heal
             damage = self.attack_power + random.randint(4, 8)
             enemy.take_damage(damage)
-            print(f"Spirits mend you for {heal} and shock the foe for {damage} damage!")
+            print(_(f"Spirits mend you for {heal} and shock the foe for {damage} damage!"))
         elif self.class_type == "Alchemist":
             damage = self.attack_power + random.randint(8, 12)
             enemy.take_damage(damage)
             enemy.status_effects["burn"] = 3
             print(
-                f"An explosive flask bursts for {damage} damage and sets the foe ablaze!"
+                _(f"An explosive flask bursts for {damage} damage and sets the foe ablaze!")
             )
         else:
-            print("You don't have a special skill.")
+            print(_("You don't have a special skill."))
             return
         if not enemy.is_alive():
             self.process_enemy_defeat(enemy)
@@ -315,14 +316,14 @@ class Player(Entity):
         self.max_health += 10
         self.health = self.max_health
         self.attack_power += 3
-        print(f"\nYou leveled up to level {self.level}!")
-        print(f"Max Health increased to {self.max_health}")
-        print(f"Attack Power increased to {self.attack_power}")
+        print(_(f"\nYou leveled up to level {self.level}!"))
+        print(_(f"Max Health increased to {self.max_health}"))
+        print(_(f"Attack Power increased to {self.attack_power}"))
         print(random.choice(ANNOUNCER_LINES))
         if self.level == 3:
-            print("You've unlocked Gold Finder: +5 gold after each kill.")
+            print(_("You've unlocked Gold Finder: +5 gold after each kill."))
         if self.level == 5:
-            print("You've unlocked Passive Regen: Heal 1 HP per move.")
+            print(_("You've unlocked Passive Regen: Heal 1 HP per move."))
 
     def join_guild(self, guild):
         self.guild = guild
@@ -347,7 +348,7 @@ class Player(Entity):
             self.attack_power += 1
         elif guild == "Berserkers' Clan":
             self.attack_power += 3
-        print(f"You have joined the {guild}!")
+        print(_(f"You have joined the {guild}!"))
 
     def choose_race(self, race):
         self.race = race
@@ -394,18 +395,18 @@ class Player(Entity):
         elif race == "Triton":
             self.max_health += 3
             self.health += 3
-        print(f"Race selected: {race}.")
+        print(_(f"Race selected: {race}."))
 
     def equip_weapon(self, weapon):
         if weapon in self.inventory and isinstance(weapon, Weapon):
             if self.weapon:
                 self.inventory.append(self.weapon)
-                print(f"You unequipped the {self.weapon.name}")
+                print(_(f"You unequipped the {self.weapon.name}"))
             self.weapon = weapon
             self.inventory.remove(weapon)
-            print(f"You equipped the {weapon.name}")
+            print(_(f"You equipped the {weapon.name}"))
         else:
-            print("You don't have a valid weapon to equip.")
+            print(_("You don't have a valid weapon to equip."))
 
     def get_score(self):
         return self.level * 100 + len(self.inventory) * 10 + self.gold
@@ -438,7 +439,7 @@ class Enemy(Entity):
     def take_damage(self, damage):
         if "shield" in self.status_effects:
             damage = max(0, damage - 5)
-            print(f"The {self.name}'s shield absorbs 5 damage!")
+            print(_(f"The {self.name}'s shield absorbs 5 damage!"))
         self.health = max(0, self.health - damage)
 
     def drop_gold(self):
@@ -450,34 +451,34 @@ class Enemy(Entity):
         if "poison" in self.status_effects:
             if self.status_effects["poison"] > 0:
                 self.health -= 3
-                print(f"The {self.name} takes 3 poison damage!")
+                print(_(f"The {self.name} takes 3 poison damage!"))
                 self.status_effects["poison"] -= 1
             if self.status_effects["poison"] <= 0:
                 del self.status_effects["poison"]
         if "burn" in self.status_effects:
             if self.status_effects["burn"] > 0:
                 self.health -= 4
-                print(f"The {self.name} suffers 4 burn damage!")
+                print(_(f"The {self.name} suffers 4 burn damage!"))
                 self.status_effects["burn"] -= 1
             if self.status_effects["burn"] <= 0:
                 del self.status_effects["burn"]
         if "bleed" in self.status_effects:
             if self.status_effects["bleed"] > 0:
                 self.health -= 2
-                print(f"The {self.name} bleeds for 2 damage!")
+                print(_(f"The {self.name} bleeds for 2 damage!"))
                 self.status_effects["bleed"] -= 1
             if self.status_effects["bleed"] <= 0:
                 del self.status_effects["bleed"]
         if "freeze" in self.status_effects:
             if self.status_effects["freeze"] > 0:
-                print(f"The {self.name} is frozen and can't move!")
+                print(_(f"The {self.name} is frozen and can't move!"))
                 self.status_effects["freeze"] -= 1
                 skip_turn = True
             if self.status_effects["freeze"] <= 0:
                 del self.status_effects["freeze"]
         if "stun" in self.status_effects:
             if self.status_effects["stun"] > 0:
-                print(f"The {self.name} is stunned and can't move!")
+                print(_(f"The {self.name} is stunned and can't move!"))
                 self.status_effects["stun"] -= 1
                 skip_turn = True
             if self.status_effects["stun"] <= 0:
@@ -485,13 +486,13 @@ class Enemy(Entity):
         if "shield" in self.status_effects:
             self.status_effects["shield"] -= 1
             if self.status_effects["shield"] <= 0:
-                print(f"The {self.name}'s shield fades.")
+                print(_(f"The {self.name}'s shield fades."))
                 del self.status_effects["shield"]
         return skip_turn
 
     def defend(self):
         self.status_effects["shield"] = 1
-        print(f"The {self.name} raises its guard!")
+        print(_(f"The {self.name} raises its guard!"))
 
     def take_turn(self, player):
         action = "attack"
@@ -506,24 +507,24 @@ class Enemy(Entity):
         damage = random.randint(self.attack_power // 2, self.attack_power)
         if self.ability == "lifesteal":
             self.health += damage // 3
-            print(f"The {self.name} drains life and heals for {damage // 3}!")
+            print(_(f"The {self.name} drains life and heals for {damage // 3}!"))
         elif self.ability == "poison":
             player.status_effects["poison"] = 3
         elif self.ability == "burn":
             player.status_effects["burn"] = 3
         elif self.ability == "stun":
             player.status_effects["stun"] = 1
-            print(f"The {self.name} stuns you!")
+            print(_(f"The {self.name} stuns you!"))
         elif self.ability == "bleed":
             player.status_effects["bleed"] = 3
         elif self.ability == "freeze":
             player.status_effects["freeze"] = 1
-            print(f"The {self.name} freezes you for 1 turns!")
+            print(_(f"The {self.name} freezes you for 1 turns!"))
         elif self.ability == "double_strike" and random.random() < 0.25:
-            print(f"The {self.name} strikes twice!")
+            print(_(f"The {self.name} strikes twice!"))
             player.take_damage(damage)
         player.take_damage(damage)
-        print(f"The {self.name} attacked you and dealt {damage} damage.")
+        print(_(f"The {self.name} attacked you and dealt {damage} damage."))
 
 
 class Companion(Entity):
@@ -556,9 +557,9 @@ class Companion(Entity):
         if self.attack_power and enemy.is_alive():
             dmg = random.randint(max(1, self.attack_power // 2), self.attack_power)
             enemy.take_damage(dmg)
-            print(f"{self.name} strikes {enemy.name} for {dmg} damage!")
+            print(_(f"{self.name} strikes {enemy.name} for {dmg} damage!"))
         if self.heal_amount and player.is_alive():
             heal = min(self.heal_amount, player.max_health - player.health)
             if heal > 0:
                 player.health += heal
-                print(f"{self.name} heals {player.name} for {heal} HP!")
+                print(_(f"{self.name} heals {player.name} for {heal} HP!"))

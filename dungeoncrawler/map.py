@@ -5,6 +5,7 @@ from __future__ import annotations
 import random
 import curses
 from typing import TYPE_CHECKING
+from gettext import gettext as _
 
 from .entities import Companion, Enemy
 from .items import Item, Weapon
@@ -22,10 +23,10 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
         raise ValueError(f"Floor {floor} is not configured")
     size = cfg.get("size", (min(15, 8 + floor), min(15, 8 + floor)))
     game.width, game.height = size
-    game.rooms = [[None for _ in range(game.width)] for _ in range(game.height)]
+    game.rooms = [[None for __ in range(game.width)] for __ in range(game.height)]
     game.room_names = [
-        [game.generate_room_name() for _ in range(game.width)]
-        for _ in range(game.height)
+        [game.generate_room_name() for __ in range(game.width)]
+        for __ in range(game.height)
     ]
     visited = set()
     path = []
@@ -67,7 +68,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
 
     enemy_names = cfg["enemies"]
     early_game_bonus = 5 if floor <= 3 else 0
-    for _ in range(5 + floor):
+    for __ in range(5 + floor):
         name = random.choice(enemy_names)
         hp_min, hp_max, atk_min, atk_max, defense = game.enemy_stats[name]
 
@@ -94,7 +95,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     boss_names = cfg["bosses"]
     name = random.choice(boss_names)
     hp, atk, dfs, gold, ability = game.boss_stats[name]
-    print(f"A powerful boss guards this floor! The {name} lurks nearby...")
+    print(_(f"A powerful boss guards this floor! The {name} lurks nearby..."))
     boss = Enemy(
         name,
         hp + floor * 10,
@@ -107,7 +108,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     boss_drop = game.boss_loot.get(name, [])
     if boss_drop and random.random() < 0.5:
         loot = random.choice(boss_drop)
-        print(f"✨ The boss dropped a unique weapon: {loot.name}!")
+        print(_(f"✨ The boss dropped a unique weapon: {loot.name}!"))
         place(loot)
 
     place(Item("Key", "A magical key dropped by the boss"))
@@ -126,7 +127,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     place_counts = default_places.copy()
     place_counts.update(cfg.get("places", {}))
     for pname, count in place_counts.items():
-        for _ in range(count):
+        for __ in range(count):
             place(pname)
     # Key is now tied to boss drop; don't place it separately
 
@@ -141,7 +142,7 @@ def move_player(game: "DungeonBase", direction: str) -> None:
     if 0 <= x < game.width and 0 <= y < game.height and game.rooms[y][x] is not None:
         handle_room(game, x, y)
     else:
-        print("You can't move that way.")
+        print(_("You can't move that way."))
 
 
 def render_map_string(game: "DungeonBase") -> str:
@@ -192,9 +193,9 @@ def render_map(game: "DungeonBase") -> None:
                     stdscr.addstr(y, x, ch, color)
 
             offset = len(rows) + 1
-            stdscr.addstr(offset, 0, "Press '?' for legend, q to exit")
+            stdscr.addstr(offset, 0, _("Press '?' for legend, q to exit"))
             if show_legend:
-                legend = ["@: Player", "E: Exit", ".: Explored", "#: Unexplored"]
+                legend = [_("@: Player"), _("E: Exit"), _(".: Explored"), _("#: Unexplored")]
                 for i, entry in enumerate(legend):
                     stdscr.addstr(offset + 1 + i, 0, entry)
 
@@ -223,15 +224,15 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
         "Sacred Sanctuary": "A peaceful place that heals weary adventurers.",
     }
     if name in lore:
-        print(f"{lore[name]}")
+        print(_(f"{lore[name]}"))
 
     if isinstance(room, Enemy):
         battle(game, room)
         if not room.is_alive():
             game.rooms[y][x] = None
     elif isinstance(room, Companion):
-        print(f"You meet {room.name}. {room.description}")
-        recruit = input("Recruit this companion? (y/n): ")
+        print(_(f"You meet {room.name}. {room.description}"))
+        recruit = input(_("Recruit this companion? (y/n): "))
         if recruit.lower() == "y":
             game.player.companions.append(room)
             if room.effect == "attack":
@@ -239,101 +240,101 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
             elif room.effect == "heal":
                 game.player.max_health += 5
                 game.player.health += 5
-            game.announce(f"{game.player.name} gains a companion!")
+            game.announce(_(f"{game.player.name} gains a companion!"))
         game.rooms[y][x] = None
     elif isinstance(room, Item):
-        print(f"You found a {room.name}!")
+        print(_(f"You found a {room.name}!"))
         game.player.collect_item(room)
-        game.announce(f"{game.player.name} obtained {room.name}!")
+        game.announce(_(f"{game.player.name} obtained {room.name}!"))
         game.rooms[y][x] = None
         if room.name == "Key":
             game.room_names[y][x] = "Hidden Niche"
     elif room == "Treasure":
         gold = random.randint(20, 50)
         game.player.gold += gold
-        print(f"You found a treasure chest with {gold} gold!")
+        print(_(f"You found a treasure chest with {gold} gold!"))
         if random.random() < 0.3:
             loot = random.choice(game.rare_loot)
-            print(f"Inside you also discover {loot.name}!")
+            print(_(f"Inside you also discover {loot.name}!"))
             game.player.collect_item(loot)
-            game.announce(f"{game.player.name} picks up {loot.name}!")
+            game.announce(_(f"{game.player.name} picks up {loot.name}!"))
         game.rooms[y][x] = None
         game.room_names[y][x] = "Glittering Vault"
     elif room == "Enchantment":
-        print("You enter a glowing chamber with ancient runes etched in the stone.")
+        print(_("You enter a glowing chamber with ancient runes etched in the stone."))
         if game.player.weapon:
-            print(f"Your current weapon is: {game.player.weapon.name}")
-            print("You may enchant it with a status effect for 30 gold.")
-            print("1. Poison  2. Burn  3. Freeze  4. Cancel")
-            choice = input("Choose enchantment: ")
+            print(_(f"Your current weapon is: {game.player.weapon.name}"))
+            print(_("You may enchant it with a status effect for 30 gold."))
+            print(_("1. Poison  2. Burn  3. Freeze  4. Cancel"))
+            choice = input(_("Choose enchantment: "))
             if game.player.weapon.effect:
-                print("Your weapon is already enchanted! You can't add another enchantment.")
+                print(_("Your weapon is already enchanted! You can't add another enchantment."))
             elif game.player.gold >= 30 and choice in ["1", "2", "3"]:
                 effect = {"1": "poison", "2": "burn", "3": "freeze"}[choice]
                 game.player.weapon.description += f" (Enchanted: {effect})"
                 game.player.weapon.effect = effect
                 game.player.gold -= 30
-                print(f"Your weapon is now enchanted with {effect}!")
+                print(_(f"Your weapon is now enchanted with {effect}!"))
             elif choice == "4":
-                print("You leave the enchantment chamber untouched.")
+                print(_("You leave the enchantment chamber untouched."))
             else:
-                print("Not enough gold or invalid choice.")
+                print(_("Not enough gold or invalid choice."))
         else:
-            print("You need a weapon to enchant.")
+            print(_("You need a weapon to enchant."))
         game.rooms[y][x] = None
         game.room_names[y][x] = "Enchantment Chamber"
     elif room == "Blacksmith":
-        print("You meet a grizzled blacksmith hammering at a forge.")
+        print(_("You meet a grizzled blacksmith hammering at a forge."))
         if game.player.weapon:
             print(
-                f"Your weapon: {game.player.weapon.name} ({game.player.weapon.min_damage}-{game.player.weapon.max_damage})"
+                _(f"Your weapon: {game.player.weapon.name} ({game.player.weapon.min_damage}-{game.player.weapon.max_damage})")
             )
-            print("Would you like to upgrade your weapon for 50 gold? +3 min/max damage")
-            confirm = input("Upgrade? (y/n): ")
+            print(_("Would you like to upgrade your weapon for 50 gold? +3 min/max damage"))
+            confirm = input(_("Upgrade? (y/n): "))
             if confirm.lower() == "y" and game.player.gold >= 50:
                 game.player.weapon.min_damage += 3
                 game.player.weapon.max_damage += 3
                 game.player.gold -= 50
-                print("Your weapon has been reforged and is stronger!")
+                print(_("Your weapon has been reforged and is stronger!"))
             elif game.player.gold < 50:
-                print("You don't have enough gold.")
+                print(_("You don't have enough gold."))
             else:
-                print("Maybe next time.")
+                print(_("Maybe next time."))
         else:
             print(
-                "The blacksmith scoffs. 'No weapon? Come back when you have something worth forging.'"
+                _("The blacksmith scoffs. 'No weapon? Come back when you have something worth forging.'")
             )
         game.rooms[y][x] = None
         game.room_names[y][x] = "Blacksmith Forge"
 
     elif room == "Sanctuary":
         game.player.health = game.player.max_health
-        print("A soothing warmth envelops you. Your wounds are fully healed.")
+        print(_("A soothing warmth envelops you. Your wounds are fully healed."))
         game.rooms[y][x] = None
         game.room_names[y][x] = "Sacred Sanctuary"
 
     elif room == "Trap":
         riddle = random.choice(game.riddles)
-        print("A trap springs! Solve this riddle to escape unharmed:")
+        print(_("A trap springs! Solve this riddle to escape unharmed:"))
         print(riddle["question"])
-        response = input("Answer: ").strip().lower()
+        response = input(_("Answer: ")).strip().lower()
         if response == riddle["answer"].lower():
-            print("The mechanism clicks harmlessly. You solved it!")
-            game.announce("Brilliant puzzle solving!")
+            print(_("The mechanism clicks harmlessly. You solved it!"))
+            game.announce(_("Brilliant puzzle solving!"))
         else:
             damage = random.randint(10, 30)
             game.player.take_damage(damage)
-            print(f"Wrong answer! You take {damage} damage.")
+            print(_(f"Wrong answer! You take {damage} damage."))
         game.rooms[y][x] = None
         game.room_names[y][x] = "Booby-Trapped Passage"
     elif room == "Exit":
         game.room_names[y][x] = "Sealed Gate"
         if game.player.has_item("Key"):
-            print("🎉 You unlocked the exit and escaped the dungeon!")
-            print(f"Final Score: {game.player.get_score()}")
+            print(_("🎉 You unlocked the exit and escaped the dungeon!"))
+            print(_(f"Final Score: {game.player.get_score()}"))
             exit()
         else:
-            print("The exit is locked. You need a key!")
+            print(_("The exit is locked. You need a key!"))
 
     game.rooms[game.player.y][game.player.x] = None
     game.player.x, game.player.y = x, y

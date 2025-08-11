@@ -4,6 +4,7 @@ import random
 import time
 from functools import lru_cache
 from pathlib import Path
+from gettext import gettext as _
 
 from .constants import ANNOUNCER_LINES, RIDDLES, SAVE_FILE, SCORE_FILE
 from .entities import Companion, Player
@@ -362,9 +363,9 @@ class DungeonBase:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.rooms = [[None for _ in range(width)] for _ in range(height)]
+        self.rooms = [[None for __ in range(width)] for __ in range(height)]
         self.room_names = [
-            [self.generate_room_name() for _ in range(width)] for _ in range(height)
+            [self.generate_room_name() for __ in range(width)] for __ in range(height)
         ]
         self.visited_rooms = set()
         self.player = None
@@ -398,7 +399,7 @@ class DungeonBase:
         self.seed = None
 
     def announce(self, msg):
-        print(f"[Announcer] {random.choice(ANNOUNCER_LINES)} {msg}")
+        print(_(f"[Announcer] {random.choice(ANNOUNCER_LINES)} {msg}"))
 
     def save_game(self, floor):
         def serialize_item(item):
@@ -541,23 +542,23 @@ class DungeonBase:
                 except (IOError, json.JSONDecodeError):
                     records = []
 
-        print("-- Leaderboard --")
+        print(_("-- Leaderboard --"))
         if not records:
-            print("No scores yet.")
+            print(_("No scores yet."))
             return
         for r in records:
             print(
-                f"{r.get('player_name', '?')}: {r.get('score', 0)} "
-                f"(Floor {r.get('floor_reached', '?')}, {r.get('run_duration', 0):.0f}s, Seed {r.get('seed', '?')})"
+                _(f"{r.get('player_name', '?')}: {r.get('score', 0)} "
+                  f"(Floor {r.get('floor_reached', '?')}, {r.get('run_duration', 0):.0f}s, Seed {r.get('seed', '?')})")
             )
 
     def offer_class(self):
         if self.player.class_type != "Novice":
             return
-        print("It's time to choose your class!")
-        print("1. Warrior 2. Mage 3. Rogue 4. Cleric 5. Paladin 6. Bard")
-        print("7. Barbarian 8. Druid 9. Ranger 10. Sorcerer 11. Monk")
-        print("12. Warlock 13. Necromancer 14. Shaman 15. Alchemist")
+        print(_("It's time to choose your class!"))
+        print(_("1. Warrior 2. Mage 3. Rogue 4. Cleric 5. Paladin 6. Bard"))
+        print(_("7. Barbarian 8. Druid 9. Ranger 10. Sorcerer 11. Monk"))
+        print(_("12. Warlock 13. Necromancer 14. Shaman 15. Alchemist"))
         classes = {
             "1": "Warrior",
             "2": "Mage",
@@ -577,24 +578,24 @@ class DungeonBase:
         }
         choice = ""
         while choice not in classes:
-            choice = input("Class: ")
+            choice = input(_("Class: "))
             if choice not in classes:
-                print("Invalid choice. Please try again.")
+                print(_("Invalid choice. Please try again."))
         self.player.choose_class(classes[choice])
 
     def offer_guild(self):
         if self.player.guild:
             return
-        print("Guilds now accept new members!")
-        print("1. Warriors' Guild - Bonus Health")
-        print("2. Mages' Guild - Bonus Attack")
-        print("3. Rogues' Guild - Faster Skills")
-        print("4. Healers' Circle - Extra Vitality")
-        print("5. Shadow Brotherhood - Heavy Strikes")
-        print("6. Arcane Order - Arcane Mastery")
-        print("7. Rangers' Lodge - Balanced Training")
-        print("8. Berserkers' Clan - Brutal Strength")
-        choice = input("Join which guild? (1-8 or skip): ")
+        print(_("Guilds now accept new members!"))
+        print(_("1. Warriors' Guild - Bonus Health"))
+        print(_("2. Mages' Guild - Bonus Attack"))
+        print(_("3. Rogues' Guild - Faster Skills"))
+        print(_("4. Healers' Circle - Extra Vitality"))
+        print(_("5. Shadow Brotherhood - Heavy Strikes"))
+        print(_("6. Arcane Order - Arcane Mastery"))
+        print(_("7. Rangers' Lodge - Balanced Training"))
+        print(_("8. Berserkers' Clan - Brutal Strength"))
+        choice = input(_("Join which guild? (1-8 or skip): "))
         guilds = {
             "1": "Warriors' Guild",
             "2": "Mages' Guild",
@@ -611,11 +612,11 @@ class DungeonBase:
     def offer_race(self):
         if self.player.race:
             return
-        print("New races are available to you!")
-        print("1. Human 2. Elf 3. Dwarf 4. Orc 5. Gnome 6. Halfling")
-        print("7. Catfolk 8. Lizardfolk 9. Tiefling 10. Aasimar 11. Goblin")
-        print("12. Dragonborn 13. Half-Elf 14. Kobold 15. Triton")
-        choice = input("Choose your race: ")
+        print(_("New races are available to you!"))
+        print(_("1. Human 2. Elf 3. Dwarf 4. Orc 5. Gnome 6. Halfling"))
+        print(_("7. Catfolk 8. Lizardfolk 9. Tiefling 10. Aasimar 11. Goblin"))
+        print(_("12. Dragonborn 13. Half-Elf 14. Kobold 15. Triton"))
+        choice = input(_("Choose your race: "))
         races = {
             "1": "Human",
             "2": "Elf",
@@ -683,7 +684,7 @@ class DungeonBase:
         if self.player is None:
             floor = self.load_game()
             if self.player:
-                cont = input("Continue your last adventure? (y/n): ")
+                cont = input(_("Continue your last adventure? (y/n): "))
                 if cont.lower() != "y":
                     self.player = None
                     floor = 1
@@ -695,27 +696,27 @@ class DungeonBase:
         self.seed = random.randrange(2**32)
         random.seed(self.seed)
         self.run_start = time.time()
-        print("Welcome to Dungeon Crawler!")
+        print(_("Welcome to Dungeon Crawler!"))
         while self.player.is_alive() and floor <= 18:
-            print(f"===== Entering Floor {floor} =====")
+            print(_(f"===== Entering Floor {floor} ====="))
             self.generate_dungeon(floor)
             self.trigger_floor_event(floor)
 
             while self.player.is_alive():
                 print(
-                    f"Position: ({self.player.x}, {self.player.y}) - {self.room_names[self.player.y][self.player.x]}"
+                    _(f"Position: ({self.player.x}, {self.player.y}) - {self.room_names[self.player.y][self.player.x]}")
                 )
                 print(
-                    f"Health: {self.player.health} | XP: {self.player.xp} | Gold: {self.player.gold} | Level: {self.player.level} | Floor: {floor} | Skill CD: {self.player.skill_cooldown}"
+                    _(f"Health: {self.player.health} | XP: {self.player.xp} | Gold: {self.player.gold} | Level: {self.player.level} | Floor: {floor} | Skill CD: {self.player.skill_cooldown}")
                 )
                 if self.player.guild:
-                    print(f"Guild: {self.player.guild}")
+                    print(_(f"Guild: {self.player.guild}"))
                 if self.player.race:
-                    print(f"Race: {self.player.race}")
+                    print(_(f"Race: {self.player.race}"))
                 print(
-                    "1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit 8. Show Map 9. View Leaderboard"
+                    _("1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit 8. Show Map 9. View Leaderboard")
                 )
-                choice = input("Action: ")
+                choice = input(_("Action: "))
 
                 if choice == "1":
                     self.move_player("left")
@@ -730,14 +731,14 @@ class DungeonBase:
                 elif choice == "6":
                     self.show_inventory()
                 elif choice == "7":
-                    print("Thanks for playing!")
+                    print(_("Thanks for playing!"))
                     return
                 elif choice == "8":
                     self.render_map()
                 elif choice == "9":
                     self.view_leaderboard()
                 else:
-                    print("Invalid choice!")
+                    print(_("Invalid choice!"))
 
                 if (
                     self.player.level >= 5
@@ -750,17 +751,17 @@ class DungeonBase:
                     and self.player.y == self.exit_coords[1]
                     and self.player.has_item("Key")
                 ):
-                    print("You reach the Sealed Gate.")
+                    print(_("You reach the Sealed Gate."))
                     proceed = input(
-                        "Would you like to descend to the next floor? (y/n): "
+                        _("Would you like to descend to the next floor? (y/n): ")
                     ).lower()
                     if proceed == "y":
                         floor += 1
                         self.save_game(floor)
                         break
                     else:
-                        print("You chose to exit the dungeon.")
-                        print(f"Final Score: {self.player.get_score()}")
+                        print(_("You chose to exit the dungeon."))
+                        print(_(f"Final Score: {self.player.get_score()}"))
                         self.record_score(floor)
                         if os.path.exists(SAVE_FILE):
                             try:
@@ -769,8 +770,8 @@ class DungeonBase:
                                 pass
                         return
 
-        print("You have died. Game Over!")
-        print(f"Final Score: {self.player.get_score()}")
+        print(_("You have died. Game Over!"))
+        print(_(f"Final Score: {self.player.get_score()}"))
         self.record_score(floor)
         if os.path.exists(SAVE_FILE):
             try:
@@ -792,16 +793,16 @@ class DungeonBase:
 
     def audience_gift(self):
         if random.random() < 0.1:
-            print("A package falls from above! It's a gift from the audience.")
+            print(_("A package falls from above! It's a gift from the audience."))
             if random.random() < 0.5:
                 item = Item("Health Potion", "Restores 20 health")
                 self.player.collect_item(item)
-                print(f"You received a {item.name}.")
+                print(_(f"You received a {item.name}."))
                 self.announce(f"{self.player.name} gains a helpful item!")
             else:
                 damage = random.randint(5, 15)
                 self.player.take_damage(damage)
-                print(f"Uh-oh! It explodes and deals {damage} damage.")
+                print(_(f"Uh-oh! It explodes and deals {damage} damage."))
                 self.announce("The crowd loves a good prank!")
 
     def grant_inspiration(self, turns=3):
@@ -823,14 +824,14 @@ class DungeonBase:
     def riddle_challenge(self):
         """Present the player with a riddle for a potential reward."""
         riddle, answer = random.choice(self.riddles)
-        print("A sage poses a riddle:\n" + riddle)
-        response = input("Answer: ").strip().lower()
+        print(_("A sage poses a riddle:\n") + riddle)
+        response = input(_("Answer: ")).strip().lower()
         if response == answer:
             reward = 50
-            print(f"Correct! You receive {reward} gold.")
+            print(_(f"Correct! You receive {reward} gold."))
             self.player.gold += reward
         else:
-            print("Incorrect! The sage vanishes in disappointment.")
+            print(_("Incorrect! The sage vanishes in disappointment."))
 
     def trigger_random_event(self, floor):
         """Randomly select and trigger an event for ``floor``."""
@@ -857,7 +858,7 @@ class DungeonBase:
             events[floor]()
 
     def _floor_one_event(self):
-        print("The crowd roars as you step into the arena for the first time.")
+        print(_("The crowd roars as you step into the arena for the first time."))
         self.offer_class()
 
     def _floor_two_event(self):
@@ -867,16 +868,16 @@ class DungeonBase:
         self.offer_race()
 
     def _floor_five_event(self):
-        print("A mysterious merchant sets up shop, selling exotic wares.")
+        print(_("A mysterious merchant sets up shop, selling exotic wares."))
 
     def _floor_eight_event(self):
-        print("You stumble upon a radiant shrine, filling you with determination.")
+        print(_("You stumble upon a radiant shrine, filling you with determination."))
         self.grant_inspiration()
 
     def _floor_twelve_event(self):
-        print("An elusive merchant appears, offering rare goods.")
+        print(_("An elusive merchant appears, offering rare goods."))
         self.shop()
 
     def _floor_fifteen_event(self):
-        print("A robed sage blocks your path, offering a riddle challenge.")
+        print(_("A robed sage blocks your path, offering a riddle challenge."))
         self.riddle_challenge()

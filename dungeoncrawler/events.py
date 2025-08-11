@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import random
 from typing import TYPE_CHECKING
+from gettext import gettext as _
 
 if TYPE_CHECKING:  # pragma: no cover - for type checkers only
     from .dungeon import DungeonBase
@@ -28,14 +29,14 @@ class PuzzleEvent(BaseEvent):
 
     def trigger(self, game: "DungeonBase") -> None:
         riddle, answer = random.choice(game.riddles)
-        print("A sage presents a riddle:\n" + riddle)
-        response = input("Answer: ").strip().lower()
+        print(_("A sage presents a riddle:\n") + riddle)
+        response = input(_("Answer: ")).strip().lower()
         if response == answer:
             reward = 50
-            print(f"Correct! You receive {reward} gold.")
+            print(_(f"Correct! You receive {reward} gold."))
             game.player.gold += reward
         else:
-            print("Incorrect! The sage vanishes in disappointment.")
+            print(_("Incorrect! The sage vanishes in disappointment."))
 
 
 class TrapEvent(BaseEvent):
@@ -44,4 +45,4 @@ class TrapEvent(BaseEvent):
     def trigger(self, game: "DungeonBase") -> None:
         damage = random.randint(5, 20)
         game.player.take_damage(damage)
-        print(f"A trap is sprung! You take {damage} damage.")
+        print(_(f"A trap is sprung! You take {damage} damage."))

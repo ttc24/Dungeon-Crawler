@@ -1,6 +1,7 @@
 """Interactive tutorial for basic game mechanics."""
 
 from __future__ import annotations
+from gettext import gettext as _
 
 
 def run(game) -> None:
@@ -12,32 +13,32 @@ def run(game) -> None:
     the next section.
     """
 
-    print("=== Welcome to the Dungeon Crawler tutorial! ===")
-    print("Let's begin with movement. Use '1' (left), '2' (right), '3' (up) or '4' (down).")
+    print(_("=== Welcome to the Dungeon Crawler tutorial! ==="))
+    print(_("Let's begin with movement. Use '1' (left), '2' (right), '3' (up) or '4' (down)."))
     while True:
-        move = input("Move: ").strip()
+        move = input(_("Move: ")).strip()
         if move in {"1", "2", "3", "4"}:
-            print("Good job! You can navigate the dungeon using those keys.")
+            print(_("Good job! You can navigate the dungeon using those keys."))
             break
-        print("Please use one of 1, 2, 3 or 4 to move.")
+        print(_("Please use one of 1, 2, 3 or 4 to move."))
 
-    print("Now let's practice combat. Type 'attack' to strike the training dummy.")
+    print(_("Now let's practice combat. Type 'attack' to strike the training dummy."))
     while True:
-        action = input("Action: ").strip().lower()
+        action = input(_("Action: ")).strip().lower()
         if action == "attack":
-            print("The dummy falls apart. A solid hit!")
+            print(_("The dummy falls apart. A solid hit!"))
             break
-        print("Type 'attack' to perform an attack.")
+        print(_("Type 'attack' to perform an attack."))
 
-    print("Finally, open your inventory by typing 'inventory'.")
+    print(_("Finally, open your inventory by typing 'inventory'."))
     while True:
-        action = input("Command: ").strip().lower()
+        action = input(_("Command: ")).strip().lower()
         if action == "inventory":
-            print("Your empty bag opens. You'll fill it with loot soon enough.")
+            print(_("Your empty bag opens. You'll fill it with loot soon enough."))
             break
-        print("Type 'inventory' to check your belongings.")
+        print(_("Type 'inventory' to check your belongings."))
 
-    print("That's it for the basics. Good luck in the dungeon!")
+    print(_("That's it for the basics. Good luck in the dungeon!"))
     game.tutorial_complete = True
 
 
