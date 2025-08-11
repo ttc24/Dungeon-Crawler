@@ -830,6 +830,12 @@ class DungeonBase:
 
         if not enemy.is_alive():
             self.announce(f"{enemy.name} has been defeated!")
+            # Award boss-specific loot directly to the player
+            if enemy.name in BOSS_LOOT:
+                loot = random.choice(BOSS_LOOT[enemy.name])
+                self.player.collect_item(loot)
+                print(f"The {enemy.name} dropped {loot.name}!")
+                self.announce(f"{self.player.name} obtains {loot.name}!")
 
     def audience_gift(self):
         if random.random() < 0.1:
