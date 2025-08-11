@@ -453,7 +453,7 @@ class DungeonBase:
                     print(f"Guild: {self.player.guild}")
                 if self.player.race:
                     print(f"Race: {self.player.race}")
-                print("1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit")
+                print("1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit 8. Show Map")
                 choice = input("Action: ")
 
                 if choice == "1":
@@ -471,6 +471,8 @@ class DungeonBase:
                 elif choice == "7":
                     print("Thanks for playing!")
                     return
+                elif choice == "8":
+                    self.render_map()
                 else:
                     print("Invalid choice!")
 
@@ -505,6 +507,19 @@ class DungeonBase:
             self.handle_room(x, y)
         else:
             print("You can't move that way.")
+
+    def render_map(self):
+        for y in range(self.height):
+            row = ""
+            for x in range(self.width):
+                pos = (x, y)
+                if pos == (self.player.x, self.player.y):
+                    row += "@"
+                elif pos in self.visited_rooms or pos == self.exit_coords:
+                    row += "."
+                else:
+                    row += "#"
+            print(row)
 
     def handle_room(self, x, y):
         room = self.rooms[y][x]
