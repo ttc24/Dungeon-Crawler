@@ -499,20 +499,7 @@ class DungeonBase:
             self.rooms[y][x] = "Empty"
 
         if self.player is None:
-            name = input("Enter your name: ")
-            print("Choose your class: 1. Warrior 2. Mage 3. Rogue 4. Cleric 5. Paladin 6. Bard")
-            choice = input("Class: ")
-            classes = {
-                "1": "Warrior",
-                "2": "Mage",
-                "3": "Rogue",
-                "4": "Cleric",
-                "5": "Paladin",
-                "6": "Bard",
-            }
-            class_type = classes.get(choice, "Warrior")
-            self.player = Player(name, class_type)
-            print(f"Welcome {self.player.name} the {class_type}! Try not to die horribly.")
+            raise ValueError("Player must be created before generating the dungeon.")
         self.rooms[start[1]][start[0]] = self.player
         self.player.x, self.player.y = start
         self.visited_rooms.add(start)
@@ -581,14 +568,19 @@ class DungeonBase:
         # Key is now tied to boss drop; don't place it separately
 
     def play_game(self):
-        floor = self.load_game()
-        if self.player:
-            cont = input("Continue your last adventure? (y/n): ")
-            if cont.lower() != "y":
-                self.player = None
-                floor = 1
+        if self.player is None:
+            floor = self.load_game()
+            if self.player:
+                cont = input("Continue your last adventure? (y/n): ")
+                if cont.lower() != "y":
+                    self.player = None
+                    floor = 1
+        else:
+            floor = 1
+        if self.player is None:
+            raise ValueError("Player must be created before starting the game.")
         print("Welcome to Dungeon Crawler!")
-        while (self.player is None or self.player.is_alive()) and floor <= 18:
+        while self.player.is_alive() and floor <= 18:
             print(f"===== Entering Floor {floor} =====")
             self.generate_dungeon(floor)
             self.trigger_floor_event(floor)

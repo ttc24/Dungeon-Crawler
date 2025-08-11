@@ -14,7 +14,9 @@ Make sure the file is executable if you wish to launch it with `./dungeon_crawle
 
 ## Running the Game
 
-You will be prompted for a character name. Use the number menu to explore rooms, fight monsters, visit shops, and descend deeper into the dungeon.
+When launching the game you will first create your hero by choosing a name,
+class, race and optionally a guild. Use the number menu to explore rooms,
+fight monsters, visit shops, and descend deeper into the dungeon.
 
 Progress is automatically saved whenever you clear a floor. On the next launch you will be asked if you want to continue.
 
@@ -26,9 +28,22 @@ Progress is automatically saved whenever you clear a floor. On the next launch y
 
 ## Features
 
-- Join a guild starting on the second floor to gain unique bonuses.
-- Unlock new playable races when reaching the third floor.
+- Fully fledged character creation with multiple classes, races and guilds.
 - Choose from additional classes like Cleric, Paladin and Bard.
 - Special floor events add variety as you progress deeper.
 - Floors grow in size and feature unique enemy and boss sets.
 - Battle through 18 floors of escalating challenge.
+
+## Example
+
+The game can also be driven programmatically:
+
+```python
+from dungeoncrawler.main import build_character
+from dungeoncrawler.dungeon import DungeonBase
+
+player = build_character()
+game = DungeonBase(10, 10)
+game.player = player
+game.play_game()
+```
