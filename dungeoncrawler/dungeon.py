@@ -218,6 +218,21 @@ class DungeonBase:
         print(f"[Announcer] {random.choice(ANNOUNCER_LINES)} {msg}")
 
     def save_game(self, floor):
+        def serialize_item(item):
+            if item is None:
+                return None
+            data = {"name": item.name, "description": item.description}
+            if isinstance(item, Weapon):
+                data.update(
+                    {
+                        "min_damage": item.min_damage,
+                        "max_damage": item.max_damage,
+                        "price": item.price,
+                        "effect": item.effect,
+                    }
+                )
+            return data
+
         data = {
             "floor": floor,
             "player": {
@@ -232,7 +247,12 @@ class DungeonBase:
                 "cooldown": self.player.skill_cooldown,
                 "guild": self.player.guild,
                 "race": self.player.race,
-            }
+                "inventory": [serialize_item(it) for it in self.player.inventory],
+                "weapon": serialize_item(self.player.weapon),
+                "companions": [
+                    {"name": c.name, "effect": c.effect} for c in self.player.companions
+                ],
+            },
         }
         with open(SAVE_FILE, "w") as f:
             json.dump(data, f)
@@ -252,6 +272,37 @@ class DungeonBase:
             self.player.skill_cooldown = p.get("cooldown", 0)
             self.player.guild = p.get("guild")
             self.player.race = p.get("race")
+            for item_data in p.get("inventory", []):
+                if "min_damage" in item_data:
+                    item = Weapon(
+                        item_data["name"],
+                        item_data["description"],
+                        item_data["min_damage"],
+                        item_data["max_damage"],
+                        item_data.get("price", 50),
+                    )
+                    item.effect = item_data.get("effect")
+                else:
+                    item = Item(item_data["name"], item_data["description"])
+                self.player.inventory.append(item)
+
+            weapon_data = p.get("weapon")
+            if weapon_data:
+                weapon = Weapon(
+                    weapon_data["name"],
+                    weapon_data["description"],
+                    weapon_data["min_damage"],
+                    weapon_data["max_damage"],
+                    weapon_data.get("price", 50),
+                )
+                weapon.effect = weapon_data.get("effect")
+                self.player.weapon = weapon
+
+            for comp_data in p.get("companions", []):
+                self.player.companions.append(
+                    Companion(comp_data["name"], comp_data["effect"])
+                )
+
             return data.get("floor", 1)
         return 1
 

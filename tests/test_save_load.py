@@ -5,7 +5,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 import dungeoncrawler.dungeon as dungeon_module
 from dungeoncrawler.dungeon import DungeonBase
-from dungeoncrawler.entities import Player
+from dungeoncrawler.entities import Player, Companion
+from dungeoncrawler.items import Item, Weapon
 
 
 def test_save_and_load(tmp_path, monkeypatch):
@@ -15,6 +16,14 @@ def test_save_and_load(tmp_path, monkeypatch):
     dungeon = DungeonBase(1, 1)
     dungeon.player = Player("Saver")
     dungeon.player.gold = 42
+    potion = Item("Potion", "Heals")
+    dungeon.player.collect_item(potion)
+    sword = Weapon("Sword", "Sharp", 3, 5)
+    sword.effect = "burn"
+    dungeon.player.collect_item(sword)
+    dungeon.player.equip_weapon(sword)
+    ally = Companion("Wolf", "boost")
+    dungeon.player.companions.append(ally)
     dungeon.save_game(floor=3)
 
     new_dungeon = DungeonBase(1, 1)
@@ -22,3 +31,14 @@ def test_save_and_load(tmp_path, monkeypatch):
     assert floor == 3
     assert new_dungeon.player.name == "Saver"
     assert new_dungeon.player.gold == 42
+    assert len(new_dungeon.player.inventory) == 1
+    loaded_item = new_dungeon.player.inventory[0]
+    assert isinstance(loaded_item, Item)
+    assert loaded_item.name == "Potion"
+    assert new_dungeon.player.weapon.name == "Sword"
+    assert new_dungeon.player.weapon.effect == "burn"
+    assert all(it.name != "Sword" for it in new_dungeon.player.inventory)
+    assert len(new_dungeon.player.companions) == 1
+    loaded_companion = new_dungeon.player.companions[0]
+    assert loaded_companion.name == "Wolf"
+    assert loaded_companion.effect == "boost"
