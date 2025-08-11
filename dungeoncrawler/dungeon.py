@@ -525,7 +525,9 @@ class DungeonBase:
                 place(pname)
         # Key is now tied to boss drop; don't place it separately
 
-    def play_game(self):
+    def play_game(self) -> None:
+        """Run the main game loop until the player quits or dies."""
+
         if self.player is None:
             floor = self.load_game()
             if self.player:
