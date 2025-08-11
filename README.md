@@ -43,6 +43,17 @@ Progress is automatically saved whenever you clear a floor. On the next launch y
 - Floors grow in size and feature unique enemy and boss sets.
 - Battle through 18 floors of escalating challenge.
 
+## Floor Events
+
+Some floors can trigger a random special event:
+
+- **Merchant** – a travelling trader who opens the shop.
+- **Puzzle** – answer a riddle correctly to gain 50 gold.
+- **Trap** – a hidden device springs and harms the player.
+
+Events are configured per floor through `FLOOR_CONFIGS` and one is
+selected at random when the floor is reached.
+
 ## Example
 
 The game can also be driven programmatically:

@@ -6,6 +6,7 @@ from pathlib import Path
 from .constants import SAVE_FILE, SCORE_FILE, ANNOUNCER_LINES, RIDDLES
 from .entities import Player, Enemy, Companion
 from .items import Item, Weapon
+from .events import EVENT_TYPES
 
 # ---------------------------------------------------------------------------
 # Data loading utilities
@@ -92,6 +93,7 @@ FLOOR_CONFIGS = {
         "enemies": ["Basilisk", "Gargoyle", "Troll", "Lich"],
         "bosses": ["Void Serpent", "Ember Lord", "Glacier Fiend"],
         "places": {"Trap": 4, "Treasure": 4, "Enchantment": 2, "Sanctuary": 2, "Blacksmith": 1},
+        "events": ["Merchant", "Puzzle", "Trap"],
     },
     5: {
         "size": (12, 12),
@@ -938,6 +940,13 @@ class DungeonBase:
     # Floor-specific events keep gameplay varied without hardcoding logic in
     # play_game. Additional floors can be added here easily.
     def trigger_floor_event(self, floor):
+        config = FLOOR_CONFIGS.get(floor, {})
+        if "events" in config:
+            event_name = random.choice(config["events"])
+            event_cls = EVENT_TYPES[event_name]
+            event = event_cls()
+            event.trigger(self)
+            return
         events = {
             1: self._floor_one_event,
             2: self._floor_two_event,
