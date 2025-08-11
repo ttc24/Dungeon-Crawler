@@ -1,6 +1,7 @@
 import json
 import os
 import random
+from functools import lru_cache
 from pathlib import Path
 
 from .constants import SAVE_FILE, SCORE_FILE, ANNOUNCER_LINES, RIDDLES
@@ -39,7 +40,45 @@ from .items import Item, Weapon
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
+# Predefined word lists used for random room name generation. Keeping them at
+# module scope avoids recreating the lists on every call to
+# ``generate_room_name`` which occurs hundreds of times per floor.
+ROOM_NAME_ADJECTIVES = [
+    "Collapsed",
+    "Echoing",
+    "Gloomy",
+    "Withered",
+    "Fungal",
+    "Whispering",
+    "Icy",
+    "Dust-choked",
+    "Ancient",
+    "Haunted",
+    "Buried",
+    "Broken",
+    "Wretched",
+    "Twisting",
+]
 
+ROOM_NAME_NOUNS = [
+    "Passage",
+    "Fissure",
+    "Grotto",
+    "Vault",
+    "Sanctum",
+    "Shrine",
+    "Cellar",
+    "Refuge",
+    "Gallery",
+    "Crypt",
+    "Atrium",
+    "Chapel",
+    "Workshop",
+    "Quarters",
+]
+
+
+@lru_cache(maxsize=None)
 def load_enemies():
     """Load enemy stats and abilities from ``enemies.json``."""
     path = DATA_DIR / "enemies.json"
@@ -50,6 +89,7 @@ def load_enemies():
     return stats, abilities
 
 
+@lru_cache(maxsize=None)
 def load_bosses():
     """Load boss stats and loot tables from ``bosses.json``."""
     path = DATA_DIR / "bosses.json"
@@ -419,15 +459,7 @@ class DungeonBase:
         if room_type in lore:
             return lore[room_type][0]
 
-        adjectives = [
-            "Collapsed", "Echoing", "Gloomy", "Withered", "Fungal", "Whispering", "Icy",
-            "Dust-choked", "Ancient", "Haunted", "Buried", "Broken", "Wretched", "Twisting"
-        ]
-        nouns = [
-            "Passage", "Fissure", "Grotto", "Vault", "Sanctum", "Shrine",
-            "Cellar", "Refuge", "Gallery", "Crypt", "Atrium", "Chapel", "Workshop", "Quarters"
-        ]
-        return f"{random.choice(adjectives)} {random.choice(nouns)}"
+        return f"{random.choice(ROOM_NAME_ADJECTIVES)} {random.choice(ROOM_NAME_NOUNS)}"
 
     def generate_dungeon(self, floor=1):
         cfg = FLOOR_CONFIGS.get(floor)
