@@ -9,6 +9,10 @@ race and guild selections are deferred to later floors and offered by the
 from .config import load_config
 from .dungeon import DungeonBase
 from .entities import Player
+# Explicitly import modules that now host game subsystems.
+from . import combat as combat_module  # noqa: F401
+from . import map as dungeon_map  # noqa: F401
+from . import shop as shop_module  # noqa: F401
 
 
 def build_character():
