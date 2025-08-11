@@ -417,13 +417,19 @@ class DungeonBase:
                 ],
             },
         }
-        with open(SAVE_FILE, "w") as f:
-            json.dump(data, f)
+        try:
+            with open(SAVE_FILE, "w") as f:
+                json.dump(data, f)
+        except IOError:
+            pass
 
     def load_game(self):
         if os.path.exists(SAVE_FILE):
-            with open(SAVE_FILE) as f:
-                data = json.load(f)
+            try:
+                with open(SAVE_FILE) as f:
+                    data = json.load(f)
+            except (IOError, json.JSONDecodeError):
+                return 1
             self.player = Player(
                 data["player"]["name"], data["player"].get("class", "Novice")
             )
@@ -474,14 +480,20 @@ class DungeonBase:
     def record_score(self, floor):
         records = []
         if os.path.exists(SCORE_FILE):
-            with open(SCORE_FILE) as f:
-                records = json.load(f)
+            try:
+                with open(SCORE_FILE) as f:
+                    records = json.load(f)
+            except (IOError, json.JSONDecodeError):
+                records = []
         records.append(
             {"name": self.player.name, "score": self.player.get_score(), "floor": floor}
         )
         records = sorted(records, key=lambda x: x["score"], reverse=True)[:10]
-        with open(SCORE_FILE, "w") as f:
-            json.dump(records, f, indent=2)
+        try:
+            with open(SCORE_FILE, "w") as f:
+                json.dump(records, f, indent=2)
+        except IOError:
+            pass
         print("-- Leaderboard --")
         for r in records:
             print(f"{r['name']}: {r['score']} (Floor {r.get('floor', '?')})")
@@ -692,14 +704,20 @@ class DungeonBase:
                         print(f"Final Score: {self.player.get_score()}")
                         self.record_score(floor)
                         if os.path.exists(SAVE_FILE):
-                            os.remove(SAVE_FILE)
+                            try:
+                                os.remove(SAVE_FILE)
+                            except OSError:
+                                pass
                         return
 
         print("You have died. Game Over!")
         print(f"Final Score: {self.player.get_score()}")
         self.record_score(floor)
         if os.path.exists(SAVE_FILE):
-            os.remove(SAVE_FILE)
+            try:
+                os.remove(SAVE_FILE)
+            except OSError:
+                pass
 
     def move_player(self, direction):
         map_module.move_player(self, direction)
