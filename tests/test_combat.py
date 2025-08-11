@@ -87,3 +87,23 @@ def test_defensive_ai_defends(player):
     enemy.health = 5
     enemy.take_turn(player)
     assert "shield" in enemy.status_effects
+
+
+def test_player_damage_range():
+    player = Player("Hero")
+    player.weapon = Weapon("Variance Blade", "", 10, 20, 0)
+    enemy = Enemy("Training Dummy", 100, 0, 0, 0)
+    random.seed(0)
+    start = enemy.health
+    player.attack(enemy)
+    damage = start - enemy.health
+    assert 10 <= damage <= 20
+
+
+def test_enemy_damage_range(player):
+    enemy = Enemy("Orc", 30, 20, 0, 0)
+    random.seed(0)
+    start = player.health
+    enemy.attack(player)
+    damage = start - player.health
+    assert 10 <= damage <= 20
