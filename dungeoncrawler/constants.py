@@ -2,7 +2,8 @@ from pathlib import Path
 import json
 
 SAVE_FILE = "savegame.json"
-SCORE_FILE = "scores.json"
+# Default location for storing persistent leaderboard
+SCORE_FILE = Path.home() / ".dungeon_crawler" / "scores.json"
 ANNOUNCER_LINES = [
     "A decisive blow!",
     "You fight with determination.",

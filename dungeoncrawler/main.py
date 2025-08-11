@@ -31,10 +31,25 @@ def build_character():
 
 def main():
     game = DungeonBase(10, 10)
-    cont = input("Load existing save? (y/n): ").strip().lower()
-    if cont != "y":
-        game.player = build_character()
-    game.play_game()
+    while True:
+        print("1. Start New Game")
+        print("2. Load Game")
+        print("3. View Leaderboard")
+        print("4. Quit")
+        choice = input("Select an option: ").strip()
+        if choice == "1":
+            game.player = build_character()
+            game.play_game()
+        elif choice == "2":
+            game.player = None
+            game.play_game()
+        elif choice == "3":
+            game.view_leaderboard()
+        elif choice == "4":
+            print("Goodbye!")
+            return
+        else:
+            print("Invalid choice.")
 
 
 if __name__ == "__main__":

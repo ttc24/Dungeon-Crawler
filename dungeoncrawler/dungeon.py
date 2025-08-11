@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import time
 from pathlib import Path
 
 from .constants import SAVE_FILE, SCORE_FILE, ANNOUNCER_LINES, RIDDLES
@@ -306,18 +307,66 @@ class DungeonBase:
             return data.get("floor", 1)
         return 1
 
-    def record_score(self, floor):
+    def record_score(self, floor, run_duration, seed):
+        """Persist the run to the leaderboard.
+
+        Parameters
+        ----------
+        floor: int
+            Highest floor reached in the run.
+        run_duration: int or float
+            Duration of the run in seconds.
+        seed: int
+            Random seed used for the run.
+        """
+
+        path = Path(SCORE_FILE).expanduser()
         records = []
-        if os.path.exists(SCORE_FILE):
-            with open(SCORE_FILE) as f:
-                records = json.load(f)
-        records.append({"name": self.player.name, "score": self.player.get_score(), "floor": floor})
+        try:
+            if path.exists():
+                with open(path) as f:
+                    records = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            records = []
+
+        records.append(
+            {
+                "player_name": self.player.name,
+                "score": self.player.get_score(),
+                "floor_reached": floor,
+                "run_duration": int(run_duration),
+                "seed": seed,
+            }
+        )
         records = sorted(records, key=lambda x: x["score"], reverse=True)[:10]
-        with open(SCORE_FILE, "w") as f:
-            json.dump(records, f, indent=2)
+
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with open(path, "w") as f:
+                json.dump(records, f, indent=2)
+        except OSError:
+            print("Failed to save leaderboard.")
+            return
+
+        self._print_leaderboard(records)
+
+    def _print_leaderboard(self, records):
         print("-- Leaderboard --")
         for r in records:
-            print(f"{r['name']}: {r['score']} (Floor {r.get('floor', '?')})")
+            print(
+                f"{r.get('player_name')}: {r.get('score')} (Floor {r.get('floor_reached', '?')}, "
+                f"Duration {r.get('run_duration', '?')}s, Seed {r.get('seed', '?')})"
+            )
+
+    def view_leaderboard(self):
+        path = Path(SCORE_FILE).expanduser()
+        try:
+            with open(path) as f:
+                records = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            print("No leaderboard data found.")
+            return
+        self._print_leaderboard(records)
 
     def offer_class(self):
         if self.player.class_type != "Novice":
@@ -537,6 +586,11 @@ class DungeonBase:
             floor = 1
         if self.player is None:
             raise ValueError("Player must be created before starting the game.")
+
+        start_time = time.time()
+        seed = random.randint(0, 2**32 - 1)
+        random.seed(seed)
+
         print("Welcome to Dungeon Crawler!")
         while self.player.is_alive() and floor <= 18:
             print(f"===== Entering Floor {floor} =====")
@@ -586,14 +640,14 @@ class DungeonBase:
                     else:
                         print("You chose to exit the dungeon.")
                         print(f"Final Score: {self.player.get_score()}")
-                        self.record_score(floor)
+                        self.record_score(floor, time.time() - start_time, seed)
                         if os.path.exists(SAVE_FILE):
                             os.remove(SAVE_FILE)
                         return
 
         print("You have died. Game Over!")
         print(f"Final Score: {self.player.get_score()}")
-        self.record_score(floor)
+        self.record_score(floor, time.time() - start_time, seed)
         if os.path.exists(SAVE_FILE):
             os.remove(SAVE_FILE)
 
