@@ -6,6 +6,7 @@ from pathlib import Path
 from .constants import SAVE_FILE, SCORE_FILE, ANNOUNCER_LINES, RIDDLES
 from .entities import Player, Enemy, Companion
 from .items import Item, Weapon
+from .plugins import apply_enemy_plugins, apply_item_plugins
 
 # ---------------------------------------------------------------------------
 # Data loading utilities
@@ -67,6 +68,7 @@ def load_bosses():
 
 ENEMY_STATS, ENEMY_ABILITIES = load_enemies()
 BOSS_STATS, BOSS_LOOT = load_bosses()
+apply_enemy_plugins(ENEMY_STATS, ENEMY_ABILITIES)
 # Floor specific configuration
 FLOOR_CONFIGS = {
     1: {
@@ -213,6 +215,7 @@ class DungeonBase:
             Weapon("Dwarven Waraxe", "Forged in the deep halls.", 12, 20, 0),
             Item("Shadow Cloak", "Grants an air of mystery")
         ]
+        apply_item_plugins(self.shop_items)
 
     def announce(self, msg):
         print(f"[Announcer] {random.choice(ANNOUNCER_LINES)} {msg}")
