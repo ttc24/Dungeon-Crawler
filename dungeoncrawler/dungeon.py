@@ -822,9 +822,12 @@ class DungeonBase:
         for i, item in enumerate(self.shop_items, 1):
             price = item.price if isinstance(item, Weapon) else 10
             print(f"{i}. {item.name} - {price} Gold")
-        print(f"{len(self.shop_items)+1}. Exit")
+        sell_option = len(self.shop_items) + 1
+        exit_option = sell_option + 1
+        print(f"{sell_option}. Sell Items")
+        print(f"{exit_option}. Exit")
 
-        choice = input("Buy what?")
+        choice = input("Choose an option:")
         if choice.isdigit():
             choice = int(choice)
             if 1 <= choice <= len(self.shop_items):
@@ -836,8 +839,55 @@ class DungeonBase:
                     print(f"You bought {item.name}.")
                 else:
                     print("Not enough gold.")
-            elif choice == len(self.shop_items) + 1:
+            elif choice == sell_option:
+                self.sell_items()
+            elif choice == exit_option:
                 print("Leaving the shop.")
+            else:
+                print("Invalid choice.")
+        else:
+            print("Invalid input.")
+
+    def get_sale_price(self, item):
+        if isinstance(item, Weapon):
+            price = getattr(item, "price", 0)
+            if price > 0:
+                return price // 2
+            return None
+        if isinstance(item, Item):
+            return 5
+        return None
+
+    def sell_items(self):
+        if not self.player.inventory:
+            print("You have nothing to sell.")
+            return
+
+        print("Your Items:")
+        for i, item in enumerate(self.player.inventory, 1):
+            sale_price = self.get_sale_price(item)
+            if sale_price is None:
+                print(f"{i}. {item.name} - Cannot sell")
+            else:
+                print(f"{i}. {item.name} - {sale_price} Gold")
+        print(f"{len(self.player.inventory)+1}. Back")
+
+        choice = input("Sell what?")
+        if choice.isdigit():
+            choice = int(choice)
+            if 1 <= choice <= len(self.player.inventory):
+                item = self.player.inventory[choice - 1]
+                sale_price = self.get_sale_price(item)
+                if sale_price is None:
+                    print("You can't sell that item.")
+                    return
+                confirm = input(f"Sell {item.name} for {sale_price} gold? (y/n) ")
+                if confirm.lower() == 'y':
+                    self.player.inventory.pop(choice - 1)
+                    self.player.gold += sale_price
+                    print(f"You sold {item.name}.")
+            elif choice == len(self.player.inventory) + 1:
+                return
             else:
                 print("Invalid choice.")
         else:
