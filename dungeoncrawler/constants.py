@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+from functools import lru_cache
 
 from .config import config
 
@@ -22,6 +23,7 @@ ANNOUNCER_LINES = [
 ]
 
 
+@lru_cache(maxsize=None)
 def load_riddles():
     """Load riddles from the JSON data file.
 
