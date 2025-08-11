@@ -32,3 +32,11 @@ Progress is automatically saved whenever you clear a floor. On the next launch y
 - Special floor events add variety as you progress deeper.
 - Floors grow in size and feature unique enemy and boss sets.
 - Battle through 18 floors of escalating challenge.
+
+## Running Tests
+
+This project uses `pytest` for its test suite. After installing the dependencies, run the tests from the repository root:
+
+```bash
+pytest
+```
