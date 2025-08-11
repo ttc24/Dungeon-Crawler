@@ -666,11 +666,11 @@ class DungeonBase:
             self.room_names[y][x] = "Sacred Sanctuary"
 
         elif room == "Trap":
-            riddle, answer = random.choice(RIDDLES)
+            riddle = random.choice(RIDDLES)
             print("A trap springs! Solve this riddle to escape unharmed:")
-            print(riddle)
+            print(riddle["question"])
             response = input("Answer: ").strip().lower()
-            if response == answer:
+            if response == riddle["answer"].lower():
                 print("The mechanism clicks harmlessly. You solved it!")
                 self.announce("Brilliant puzzle solving!")
             else:

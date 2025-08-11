@@ -1,3 +1,6 @@
+from pathlib import Path
+import json
+
 SAVE_FILE = "savegame.json"
 SCORE_FILE = "scores.json"
 ANNOUNCER_LINES = [
@@ -12,14 +15,24 @@ ANNOUNCER_LINES = [
     "Another thrilling moment for our contestant.",
 ]
 
+
+def load_riddles():
+    """Load riddles from the JSON data file.
+
+    The file is expected to contain a list of objects with ``question`` and
+    ``answer`` fields.  Answers are stored in lower case for easy
+    comparisons during gameplay.
+    """
+
+    data_dir = Path(__file__).resolve().parent.parent / "data"
+    path = data_dir / "riddles.json"
+    with open(path) as f:
+        riddles = json.load(f)
+    # Normalise answers for case-insensitive comparison
+    for r in riddles:
+        r["answer"] = r["answer"].lower()
+    return riddles
+
+
 # Simple riddles used for trap rooms. Answer correctly to avoid damage.
-RIDDLES = [
-    (
-        "What walks on four legs in the morning, two legs at noon, and three legs in the evening?",
-        "human",
-    ),
-    (
-        "I speak without a mouth and hear without ears. I have nobody, but I come alive with wind. What am I?",
-        "echo",
-    ),
-]
+RIDDLES = load_riddles()
