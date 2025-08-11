@@ -749,18 +749,16 @@ class DungeonBase:
         print(f"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability else ''} Boss incoming!")
         self.announce(f"{self.player.name} engages {enemy.name}!")
         while self.player.is_alive() and enemy.is_alive():
-            self.player.apply_status_effects()
+            skip_player = self.player.apply_status_effects()
             for companion in getattr(self.player, 'companions', []):
                 companion.assist(self.player, enemy)
             if not enemy.is_alive():
                 break
-            if 'freeze' in self.player.status_effects:
-                print("\u2744\ufe0f You are frozen and skip this turn!")
-                self.player.status_effects['freeze'] -= 1
-                if self.player.status_effects['freeze'] <= 0:
-                    del self.player.status_effects['freeze']
+            if skip_player:
                 if enemy.is_alive():
-                    enemy.attack(self.player)
+                    skip = enemy.apply_status_effects()
+                    if enemy.is_alive() and not skip:
+                        enemy.take_turn(self.player)
                 continue
 
             print(f"Player Health: {self.player.health}")
@@ -773,26 +771,26 @@ class DungeonBase:
                 if enemy.is_alive():
                     skip = enemy.apply_status_effects()
                     if enemy.is_alive() and not skip:
-                        enemy.attack(self.player)
+                        enemy.take_turn(self.player)
             elif choice == "2":
                 self.player.defend(enemy)
                 if enemy.is_alive():
                     skip = enemy.apply_status_effects()
                     if enemy.is_alive() and not skip:
-                        enemy.attack(self.player)
+                        enemy.take_turn(self.player)
             elif choice == "3":
                 self.player.use_health_potion()
                 if enemy.is_alive():
                     skip = enemy.apply_status_effects()
                     if enemy.is_alive() and not skip:
-                        enemy.attack(self.player)
+                        enemy.take_turn(self.player)
             elif choice == "4":
                 self.player.use_skill(enemy)
                 self.announce("Special skill unleashed!")
                 if enemy.is_alive():
                     skip = enemy.apply_status_effects()
                     if enemy.is_alive() and not skip:
-                        enemy.attack(self.player)
+                        enemy.take_turn(self.player)
             else:
                 print("Invalid choice!")
             self.player.decrement_cooldowns()
