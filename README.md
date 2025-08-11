@@ -14,9 +14,10 @@ Make sure the file is executable if you wish to launch it with `./dungeon_crawle
 
 ## Running the Game
 
-When launching the game you will first create your hero by choosing a name,
-class, race and optionally a guild. Use the number menu to explore rooms,
-fight monsters, visit shops, and descend deeper into the dungeon.
+When launching the game you start by entering a name. Your class is chosen on
+floor one, a guild becomes available on floor two, and races are unlocked on
+floor three. Use the number menu to explore rooms, fight monsters, visit
+shops, and descend deeper into the dungeon.
 
 At any time you may choose **8. Show Map** to display a grid of the dungeon. The map marks your location with `@`, rooms you've visited with `.`, and unexplored or blocked rooms with `#`.
 
@@ -30,8 +31,14 @@ Progress is automatically saved whenever you clear a floor. On the next launch y
 
 ## Features
 
-- Fully fledged character creation with multiple classes, races and guilds.
-- Choose from additional classes like Cleric, Paladin and Bard.
+- Gradual character creation that unlocks classes, guilds and races as you
+  descend.
+- Wide class roster including Barbarian, Druid, Ranger, Sorcerer, Monk,
+  Warlock, Necromancer, Shaman and Alchemist in addition to classics like
+  Warrior and Mage.
+- Expanded guild and race options featuring groups such as the Healers'
+  Circle or Shadow Brotherhood and races like Tiefling, Dragonborn and
+  Goblin.
 - Special floor events add variety as you progress deeper.
 - Floors grow in size and feature unique enemy and boss sets.
 - Battle through 18 floors of escalating challenge.

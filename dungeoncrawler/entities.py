@@ -2,10 +2,12 @@ import random
 from .items import Item, Weapon
 from .constants import ANNOUNCER_LINES
 
+
 class Entity:
     def __init__(self, name, description):
         self.name = name
         self.description = description
+
 
 class Player(Entity):
     """Represents the hero controlled by the player.
@@ -13,42 +15,13 @@ class Player(Entity):
     Tracks stats, inventory and equipped weapon while providing combat
     actions such as :meth:`attack`, :meth:`defend`, :meth:`use_health_potion`
     and :meth:`use_skill`. Leveling and character progression are handled via
-    :meth:`level_up`, :meth:`join_guild` and :meth:`choose_race`.
+    :meth:`level_up`, :meth:`join_guild`, :meth:`choose_race` and
+    :meth:`choose_class`.
     """
-    def __init__(self, name, class_type="Warrior"):
+
+    def __init__(self, name, class_type="Novice"):
         super().__init__(name, "The player")
-        self.class_type = class_type
-        if class_type == "Mage":
-            self.level = 1
-            self.health = 80
-            self.max_health = 80
-            self.attack_power = 14
-        elif class_type == "Rogue":
-            self.level = 1
-            self.health = 90
-            self.max_health = 90
-            self.attack_power = 12
-        elif class_type == "Cleric":
-            self.level = 1
-            self.health = 110
-            self.max_health = 110
-            self.attack_power = 9
-        elif class_type == "Paladin":
-            self.level = 1
-            self.health = 120
-            self.max_health = 120
-            self.attack_power = 11
-        elif class_type == "Bard":
-            self.level = 1
-            self.health = 90
-            self.max_health = 90
-            self.attack_power = 10
-        else:
-            # Default to Warrior stats
-            self.level = 1
-            self.health = 100
-            self.max_health = 100
-            self.attack_power = 10
+        self.level = 1
         self.xp = 0
         self.gold = 0
         self.inventory = []
@@ -60,6 +33,47 @@ class Player(Entity):
         self.race = None
         self.x = 0
         self.y = 0
+        # Start as an untrained crawler. Specific classes can be chosen later
+        # via ``choose_class``.
+        self.choose_class(class_type, announce=False)
+
+    def choose_class(self, class_type, announce=True):
+        """Select a class and update core stats accordingly.
+
+        A large selection of classes is available, each inspired by the
+        Dungeon Crawl Classics canon and providing its own stat profile.
+        """
+
+        self.class_type = class_type
+        stats = {
+            "Mage": (80, 14),
+            "Rogue": (90, 12),
+            "Cleric": (110, 9),
+            "Paladin": (120, 11),
+            "Bard": (90, 10),
+            "Warrior": (100, 10),
+            # New classes inspired by the tabletop source material
+            "Barbarian": (130, 12),
+            "Druid": (105, 11),
+            "Ranger": (105, 11),
+            "Sorcerer": (85, 15),
+            "Monk": (95, 11),
+            "Warlock": (85, 14),
+            "Necromancer": (90, 13),
+            "Shaman": (100, 12),
+            "Alchemist": (95, 12),
+        }
+
+        if class_type not in stats:
+            self.class_type = "Novice"
+            self.max_health = 100
+            self.attack_power = 10
+        else:
+            self.max_health, self.attack_power = stats[class_type]
+
+        self.health = self.max_health
+        if announce:
+            print(f"Class selected: {self.class_type}.")
 
     def is_alive(self):
         return self.health > 0
@@ -189,6 +203,57 @@ class Player(Entity):
         elif self.class_type == "Bard":
             print("You play an inspiring tune, bolstering your spirit!")
             self.status_effects['inspire'] = 3
+        elif self.class_type == "Barbarian":
+            damage = self.attack_power + random.randint(8, 12)
+            enemy.take_damage(damage)
+            heal = min(10, self.max_health - self.health)
+            self.health += heal
+            print(f"You enter a rage, dealing {damage} damage and healing {heal}!")
+        elif self.class_type == "Druid":
+            damage = self.attack_power + random.randint(5, 10)
+            enemy.take_damage(damage)
+            enemy.status_effects['freeze'] = 1
+            heal = min(5, self.max_health - self.health)
+            self.health += heal
+            print(f"Nature's wrath deals {damage} damage and restores {heal} health!")
+        elif self.class_type == "Ranger":
+            damage = self.attack_power + random.randint(6, 12)
+            enemy.take_damage(damage)
+            enemy.status_effects['poison'] = 3
+            print(f"A volley of arrows hits for {damage} damage and poisons the foe!")
+        elif self.class_type == "Sorcerer":
+            damage = self.attack_power + random.randint(12, 18)
+            enemy.take_damage(damage)
+            enemy.status_effects['burn'] = 3
+            print(f"You unleash Arcane Blast for {damage} damage!")
+        elif self.class_type == "Monk":
+            damage = self.attack_power + random.randint(4, 8)
+            enemy.take_damage(damage)
+            enemy.take_damage(damage)
+            print(f"You strike twice with a flurry for {damage * 2} total damage!")
+        elif self.class_type == "Warlock":
+            damage = self.attack_power + random.randint(8, 12)
+            enemy.take_damage(damage)
+            heal = min(damage // 2, self.max_health - self.health)
+            self.health += heal
+            print(f"Eldritch energy deals {damage} damage and heals you for {heal}!")
+        elif self.class_type == "Necromancer":
+            damage = self.attack_power + random.randint(5, 10)
+            enemy.take_damage(damage)
+            heal = min(damage // 2, self.max_health - self.health)
+            self.health += heal
+            print(f"You siphon the enemy's soul for {damage} damage and {heal} health!")
+        elif self.class_type == "Shaman":
+            heal = min(15, self.max_health - self.health)
+            self.health += heal
+            damage = self.attack_power + random.randint(4, 8)
+            enemy.take_damage(damage)
+            print(f"Spirits mend you for {heal} and shock the foe for {damage} damage!")
+        elif self.class_type == "Alchemist":
+            damage = self.attack_power + random.randint(8, 12)
+            enemy.take_damage(damage)
+            enemy.status_effects['burn'] = 3
+            print(f"An explosive flask bursts for {damage} damage and sets the foe ablaze!")
         else:
             print("You don't have a special skill.")
             return
@@ -219,11 +284,29 @@ class Player(Entity):
             self.attack_power += 3
         elif guild == "Rogues' Guild":
             self.skill_cooldown = max(0, self.skill_cooldown - 1)
+        elif guild == "Healers' Circle":
+            self.max_health += 8
+            self.health += 8
+        elif guild == "Shadow Brotherhood":
+            self.attack_power += 4
+        elif guild == "Arcane Order":
+            self.attack_power += 2
+            self.skill_cooldown = max(0, self.skill_cooldown - 1)
+        elif guild == "Rangers' Lodge":
+            self.max_health += 5
+            self.health += 5
+            self.attack_power += 1
+        elif guild == "Berserkers' Clan":
+            self.attack_power += 3
         print(f"You have joined the {guild}!")
 
     def choose_race(self, race):
         self.race = race
-        if race == "Elf":
+        if race == "Human":
+            self.max_health += 1
+            self.health += 1
+            self.attack_power += 1
+        elif race == "Elf":
             self.attack_power += 2
         elif race == "Dwarf":
             self.max_health += 5
@@ -242,6 +325,26 @@ class Player(Entity):
         elif race == "Lizardfolk":
             self.max_health += 4
             self.health += 4
+        elif race == "Tiefling":
+            self.attack_power += 2
+        elif race == "Aasimar":
+            self.max_health += 4
+            self.health += 4
+        elif race == "Goblin":
+            self.skill_cooldown = max(0, self.skill_cooldown - 1)
+        elif race == "Dragonborn":
+            self.attack_power += 2
+            self.max_health += 2
+            self.health += 2
+        elif race == "Half-Elf":
+            self.attack_power += 1
+            self.max_health += 2
+            self.health += 2
+        elif race == "Kobold":
+            self.attack_power += 1
+        elif race == "Triton":
+            self.max_health += 3
+            self.health += 3
         print(f"Race selected: {race}.")
 
     def equip_weapon(self, weapon):
