@@ -1,0 +1,7 @@
+{
+  "save_file": "savegame.json",
+  "score_file": "scores.json",
+  "max_floors": 18,
+  "screen_width": 10,
+  "screen_height": 10
+}
