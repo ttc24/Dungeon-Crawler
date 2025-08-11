@@ -1,8 +1,14 @@
 from pathlib import Path
 import json
 
-SAVE_FILE = "savegame.json"
-SCORE_FILE = "scores.json"
+from .config import config
+
+# Configuration-driven values
+SAVE_FILE = config.save_file
+SCORE_FILE = config.score_file
+MAX_FLOORS = config.max_floors
+SCREEN_WIDTH = config.screen_width
+SCREEN_HEIGHT = config.screen_height
 ANNOUNCER_LINES = [
     "A decisive blow!",
     "You fight with determination.",

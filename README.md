@@ -12,6 +12,18 @@ python3 -m dungeoncrawler
 
 Make sure the file is executable if you wish to launch it with `./dungeon_crawler.py`.
 
+## Configuration
+
+Game settings are loaded from `config.json` if present. Copy the provided
+`config.example.json` and adjust values as needed:
+
+```bash
+cp config.example.json config.json
+```
+
+The defaults mirror previous hard-coded values so the game will run even if
+no custom configuration is supplied.
+
 ## Running the Game
 
 When launching the game you start by entering a name. Your class is chosen on

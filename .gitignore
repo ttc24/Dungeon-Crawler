@@ -49,6 +49,7 @@ profile_default/
 # Temporary Save Files
 savegame.json
 scores.json
+config.json
 
 # OS generated files
 .DS_Store

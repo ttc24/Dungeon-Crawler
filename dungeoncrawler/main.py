@@ -8,6 +8,7 @@ race and guild selections are deferred to later floors and offered by the
 
 from .dungeon import DungeonBase
 from .entities import Player
+from .config import load_config
 
 
 def build_character():
@@ -30,7 +31,8 @@ def build_character():
 
 
 def main():
-    game = DungeonBase(10, 10)
+    cfg = load_config()
+    game = DungeonBase(cfg.screen_width, cfg.screen_height)
     cont = input("Load existing save? (y/n): ").strip().lower()
     if cont != "y":
         game.player = build_character()
