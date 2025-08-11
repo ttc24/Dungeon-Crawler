@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import time
 from functools import lru_cache
 from pathlib import Path
 
@@ -392,6 +393,9 @@ class DungeonBase:
         self.boss_stats = BOSS_STATS
         self.boss_loot = BOSS_LOOT
         self.floor_configs = FLOOR_CONFIGS
+        # Tracking for leaderboard entries
+        self.run_start = None
+        self.seed = None
 
     def announce(self, msg):
         print(f"[Announcer] {random.choice(ANNOUNCER_LINES)} {msg}")
@@ -496,6 +500,8 @@ class DungeonBase:
         return 1
 
     def record_score(self, floor):
+        """Persist the current run to the leaderboard file and display it."""
+
         records = []
         if os.path.exists(SCORE_FILE):
             try:
@@ -503,18 +509,47 @@ class DungeonBase:
                     records = json.load(f)
             except (IOError, json.JSONDecodeError):
                 records = []
+
+        duration = time.time() - self.run_start if self.run_start else 0
         records.append(
-            {"name": self.player.name, "score": self.player.get_score(), "floor": floor}
+            {
+                "player_name": self.player.name,
+                "score": self.player.get_score(),
+                "floor_reached": floor,
+                "run_duration": duration,
+                "seed": self.seed,
+            }
         )
         records = sorted(records, key=lambda x: x["score"], reverse=True)[:10]
         try:
             with open(SCORE_FILE, "w") as f:
                 json.dump(records, f, indent=2)
         except IOError:
-            pass
+            return
+
+        self.view_leaderboard(records)
+
+    def view_leaderboard(self, records=None):
+        """Display leaderboard entries stored on disk."""
+
+        if records is None:
+            records = []
+            if os.path.exists(SCORE_FILE):
+                try:
+                    with open(SCORE_FILE) as f:
+                        records = json.load(f)
+                except (IOError, json.JSONDecodeError):
+                    records = []
+
         print("-- Leaderboard --")
+        if not records:
+            print("No scores yet.")
+            return
         for r in records:
-            print(f"{r['name']}: {r['score']} (Floor {r.get('floor', '?')})")
+            print(
+                f"{r.get('player_name', '?')}: {r.get('score', 0)} "
+                f"(Floor {r.get('floor_reached', '?')}, {r.get('run_duration', 0):.0f}s, Seed {r.get('seed', '?')})"
+            )
 
     def offer_class(self):
         if self.player.class_type != "Novice":
@@ -656,6 +691,10 @@ class DungeonBase:
             floor = 1
         if self.player is None:
             raise ValueError("Player must be created before starting the game.")
+        # Begin a new run with a fresh seed and timestamp
+        self.seed = random.randrange(2**32)
+        random.seed(self.seed)
+        self.run_start = time.time()
         print("Welcome to Dungeon Crawler!")
         while self.player.is_alive() and floor <= 18:
             print(f"===== Entering Floor {floor} =====")
@@ -674,7 +713,7 @@ class DungeonBase:
                 if self.player.race:
                     print(f"Race: {self.player.race}")
                 print(
-                    "1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit 8. Show Map"
+                    "1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit 8. Show Map 9. View Leaderboard"
                 )
                 choice = input("Action: ")
 
@@ -695,6 +734,8 @@ class DungeonBase:
                     return
                 elif choice == "8":
                     self.render_map()
+                elif choice == "9":
+                    self.view_leaderboard()
                 else:
                     print("Invalid choice!")
 
