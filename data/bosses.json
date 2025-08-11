@@ -1,0 +1,182 @@
+{
+  "Bone Tyrant": {
+    "stats": [
+      250,
+      30,
+      12,
+      120
+    ],
+    "ability": "lifesteal",
+    "loot": [
+      {
+        "name": "Skullcrusher",
+        "description": "A mace adorned with bone fragments.",
+        "min_damage": 24,
+        "max_damage": 32,
+        "price": 0
+      }
+    ]
+  },
+  "Doom Bringer": {
+    "stats": [
+      300,
+      38,
+      16,
+      160
+    ],
+    "ability": "double_strike",
+    "loot": [
+      {
+        "name": "Cataclysm",
+        "description": "Heavy axe with devastating power.",
+        "min_damage": 28,
+        "max_damage": 36,
+        "price": 0
+      }
+    ]
+  },
+  "Ember Lord": {
+    "stats": [
+      295,
+      37,
+      16,
+      158
+    ],
+    "ability": "burn",
+    "loot": [
+      {
+        "name": "Flame Lash",
+        "description": "Whip of living fire.",
+        "min_damage": 25,
+        "max_damage": 33,
+        "price": 0
+      }
+    ]
+  },
+  "Frost Warden": {
+    "stats": [
+      260,
+      28,
+      13,
+      130
+    ],
+    "ability": "freeze",
+    "loot": [
+      {
+        "name": "Glacier Edge",
+        "description": "Chilling blade that slows enemies.",
+        "min_damage": 23,
+        "max_damage": 31,
+        "price": 0
+      }
+    ]
+  },
+  "Glacier Fiend": {
+    "stats": [
+      265,
+      29,
+      14,
+      133
+    ],
+    "ability": "freeze",
+    "loot": [
+      {
+        "name": "Frozen Talon",
+        "description": "Ice-forged claw that freezes.",
+        "min_damage": 24,
+        "max_damage": 31,
+        "price": 0
+      }
+    ]
+  },
+  "Grave Monarch": {
+    "stats": [
+      275,
+      32,
+      15,
+      138
+    ],
+    "ability": "lifesteal",
+    "loot": [
+      {
+        "name": "Cryptblade",
+        "description": "Blade of necrotic energy.",
+        "min_damage": 25,
+        "max_damage": 34,
+        "price": 0
+      }
+    ]
+  },
+  "Inferno Golem": {
+    "stats": [
+      270,
+      35,
+      14,
+      140
+    ],
+    "ability": "burn",
+    "loot": [
+      {
+        "name": "Molten Blade",
+        "description": "Red-hot sword that scorches foes.",
+        "min_damage": 26,
+        "max_damage": 34,
+        "price": 0
+      }
+    ]
+  },
+  "Shadow Reaver": {
+    "stats": [
+      280,
+      33,
+      15,
+      150
+    ],
+    "ability": "poison",
+    "loot": [
+      {
+        "name": "Nightfang",
+        "description": "A dagger that thrives in shadows.",
+        "min_damage": 22,
+        "max_damage": 30,
+        "price": 0
+      }
+    ]
+  },
+  "Storm Reaper": {
+    "stats": [
+      285,
+      34,
+      15,
+      145
+    ],
+    "ability": "double_strike",
+    "loot": [
+      {
+        "name": "Thunder Cleaver",
+        "description": "Sword crackling with lightning.",
+        "min_damage": 26,
+        "max_damage": 35,
+        "price": 0
+      }
+    ]
+  },
+  "Void Serpent": {
+    "stats": [
+      290,
+      36,
+      17,
+      155
+    ],
+    "ability": "poison",
+    "loot": [
+      {
+        "name": "Venom Spire",
+        "description": "Spear coated in lethal toxins.",
+        "min_damage": 24,
+        "max_damage": 32,
+        "price": 0
+      }
+    ]
+  }
+}
