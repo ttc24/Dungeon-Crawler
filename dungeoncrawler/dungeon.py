@@ -213,6 +213,7 @@ class DungeonBase:
             Weapon("Dwarven Waraxe", "Forged in the deep halls.", 12, 20, 0),
             Item("Shadow Cloak", "Grants an air of mystery")
         ]
+        self.tutorial_complete = False
 
     def announce(self, msg):
         print(f"[Announcer] {random.choice(ANNOUNCER_LINES)} {msg}")
@@ -235,6 +236,7 @@ class DungeonBase:
 
         data = {
             "floor": floor,
+            "tutorial_complete": self.tutorial_complete,
             "player": {
                 "name": self.player.name,
                 "level": self.player.level,
@@ -303,6 +305,7 @@ class DungeonBase:
                     Companion(comp_data["name"], comp_data["effect"])
                 )
 
+            self.tutorial_complete = data.get("tutorial_complete", False)
             return data.get("floor", 1)
         return 1
 
