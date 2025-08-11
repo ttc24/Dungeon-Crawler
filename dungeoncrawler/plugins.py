@@ -1,17 +1,22 @@
 import importlib
+import json
 import pkgutil
 from pathlib import Path
-import json
 
 from .items import Item, Weapon
 
 MODS_DIR = Path(__file__).resolve().parent.parent / "mods"
 
+
 def discover_plugins():
     """Return imported plugin modules found under :mod:`mods` package."""
     if not MODS_DIR.exists():
         return []
-    return [importlib.import_module(f"mods.{m.name}") for m in pkgutil.iter_modules([str(MODS_DIR)])]
+    return [
+        importlib.import_module(f"mods.{m.name}")
+        for m in pkgutil.iter_modules([str(MODS_DIR)])
+    ]
+
 
 def _load_json_from_mod(mod, filename):
     mod_path = Path(mod.__file__).parent
@@ -20,6 +25,7 @@ def _load_json_from_mod(mod, filename):
         with open(json_path) as f:
             return json.load(f)
     return None
+
 
 def apply_enemy_plugins(enemy_stats, enemy_abilities):
     """Augment enemy dictionaries with contributions from mods."""
@@ -33,6 +39,7 @@ def apply_enemy_plugins(enemy_stats, enemy_abilities):
                     enemy_abilities[name] = ability
         if hasattr(mod, "register_enemies"):
             mod.register_enemies(enemy_stats, enemy_abilities)
+
 
 def apply_item_plugins(shop_items):
     """Append new items to ``shop_items`` list via JSON or hooks."""
