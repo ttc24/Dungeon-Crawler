@@ -8,6 +8,9 @@ from .constants import ANNOUNCER_LINES, RIDDLES, SAVE_FILE, SCORE_FILE
 from .entities import Companion, Enemy, Player
 from .items import Item, Weapon
 from .plugins import apply_enemy_plugins, apply_item_plugins
+from . import combat as combat_module
+from . import map as map_module
+from . import shop as shop_module
 
 # ---------------------------------------------------------------------------
 # Data loading utilities
@@ -367,6 +370,12 @@ class DungeonBase:
             Item("Shadow Cloak", "Grants an air of mystery"),
         ]
         apply_item_plugins(self.shop_items)
+        self.riddles = RIDDLES
+        self.enemy_stats = ENEMY_STATS
+        self.enemy_abilities = ENEMY_ABILITIES
+        self.boss_stats = BOSS_STATS
+        self.boss_loot = BOSS_LOOT
+        self.floor_configs = FLOOR_CONFIGS
 
     def announce(self, msg):
         print(f"[Announcer] {random.choice(ANNOUNCER_LINES)} {msg}")
@@ -601,118 +610,7 @@ class DungeonBase:
         return f"{random.choice(ROOM_NAME_ADJECTIVES)} {random.choice(ROOM_NAME_NOUNS)}"
 
     def generate_dungeon(self, floor=1):
-        cfg = FLOOR_CONFIGS.get(floor)
-        if cfg is None:
-            raise ValueError(f"Floor {floor} is not configured")
-        size = cfg.get("size", (min(15, 8 + floor), min(15, 8 + floor)))
-        self.width, self.height = size
-        self.rooms = [[None for _ in range(self.width)] for _ in range(self.height)]
-        self.room_names = [
-            [self.generate_room_name() for _ in range(self.width)]
-            for _ in range(self.height)
-        ]
-        visited = set()
-        path = []
-        x, y = self.width // 2, self.height // 2
-        start = (x, y)
-        visited.add(start)
-        path.append(start)
-
-        while len(visited) < (self.width * self.height) // 2:
-            direction = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])
-            nx, ny = x + direction[0], y + direction[1]
-            if 0 <= nx < self.width and 0 <= ny < self.height:
-                if (nx, ny) not in visited:
-                    visited.add((nx, ny))
-                    path.append((nx, ny))
-                x, y = nx, ny
-
-        for x, y in visited:
-            self.rooms[y][x] = "Empty"
-
-        if self.player is None:
-            raise ValueError("Player must be created before generating the dungeon.")
-        self.rooms[start[1]][start[0]] = self.player
-        self.player.x, self.player.y = start
-        self.visited_rooms.add(start)
-
-        visited.remove(start)
-        visited = list(visited)
-        random.shuffle(visited)
-
-        def place(obj):
-            if visited:
-                x, y = visited.pop()
-                self.rooms[y][x] = obj
-                return (x, y)
-
-        self.exit_coords = place("Exit")
-        place(Item("Key", "Opens the dungeon exit"))
-
-        enemy_names = cfg["enemies"]
-        early_game_bonus = 5 if floor <= 3 else 0
-        for _ in range(5 + floor):
-            name = random.choice(enemy_names)
-            hp_min, hp_max, atk_min, atk_max, defense = ENEMY_STATS[name]
-
-            hp_scale = 1 if floor <= 3 else 2
-            atk_scale = 1 if floor <= 3 else 2
-
-            defense = max(1, defense + floor // 3)
-
-            health = random.randint(
-                hp_min + floor * hp_scale, hp_max + floor * hp_scale
-            )
-            attack = random.randint(
-                atk_min + floor * atk_scale,
-                atk_max + floor * atk_scale,
-            )
-            gold = random.randint(15 + early_game_bonus + floor, 30 + floor * 2)
-
-            ability = ENEMY_ABILITIES.get(name)
-            enemy = Enemy(name, health, attack, defense, gold, ability)
-            enemy.xp = max(5, (health + attack + defense) // 15)
-
-            place(enemy)
-
-        boss_names = cfg["bosses"]
-        name = random.choice(boss_names)
-        hp, atk, dfs, gold, ability = BOSS_STATS[name]
-        print(f"A powerful boss guards this floor! The {name} lurks nearby...")
-        boss = Enemy(
-            name,
-            hp + floor * 10,
-            atk + floor,
-            dfs + floor // 2,
-            gold + floor * 5,
-            ability=ability,
-        )
-        place(boss)
-        boss_drop = BOSS_LOOT.get(name, [])
-        if boss_drop and random.random() < 0.5:
-            loot = random.choice(boss_drop)
-            print(f"✨ The boss dropped a unique weapon: {loot.name}!")
-            place(loot)
-
-        place(Item("Key", "A magical key dropped by the boss"))
-        companion_options = [
-            Companion("Battle Priest", "heal"),
-            Companion("Hired Blade", "attack"),
-        ]
-        place(random.choice(companion_options))
-        default_places = {
-            "Trap": 3,
-            "Treasure": 3,
-            "Enchantment": 2,
-            "Sanctuary": 2,
-            "Blacksmith": 1,
-        }
-        place_counts = default_places.copy()
-        place_counts.update(cfg.get("places", {}))
-        for pname, count in place_counts.items():
-            for _ in range(count):
-                place(pname)
-        # Key is now tied to boss drop; don't place it separately
+        map_module.generate_dungeon(self, floor)
 
     def play_game(self) -> None:
         """Run the main game loop until the player quits or dies."""
@@ -804,227 +702,16 @@ class DungeonBase:
             os.remove(SAVE_FILE)
 
     def move_player(self, direction):
-        dx, dy = {"left": (-1, 0), "right": (1, 0), "up": (0, -1), "down": (0, 1)}.get(
-            direction, (0, 0)
-        )
-        x, y = self.player.x + dx, self.player.y + dy
-        if (
-            0 <= x < self.width
-            and 0 <= y < self.height
-            and self.rooms[y][x] is not None
-        ):
-            self.handle_room(x, y)
-        else:
-            print("You can't move that way.")
+        map_module.move_player(self, direction)
 
     def render_map(self):
-        for y in range(self.height):
-            row = ""
-            for x in range(self.width):
-                pos = (x, y)
-                if pos == (self.player.x, self.player.y):
-                    row += "@"
-                elif pos in self.visited_rooms or pos == self.exit_coords:
-                    row += "."
-                else:
-                    row += "#"
-            print(row)
+        map_module.render_map(self)
 
     def handle_room(self, x, y):
-        room = self.rooms[y][x]
-        name = self.room_names[y][x]
-        lore = {
-            "Glittering Vault": "The air shimmers with unseen magic. Ancient riches may lie within.",
-            "Booby-Trapped Passage": "This corridor is riddled with pressure plates and crumbled bones.",
-            "Cursed Hall": "The shadows shift... something watches from the dark.",
-            "Sealed Gate": "Massive stone doors sealed by arcane runes. It might be the only way out.",
-            "Hidden Niche": "A hollow carved into the wall, forgotten by time. Something valuable glints inside.",
-            "Silent Chamber": "Dust covers everything. It appears long abandoned.",
-            "Sacred Sanctuary": "A peaceful place that heals weary adventurers.",
-        }
-        if name in lore:
-            print(f"{lore[name]}")
-
-        if isinstance(room, Enemy):
-            self.battle(room)
-            if not room.is_alive():
-                self.rooms[y][x] = None
-        elif isinstance(room, Companion):
-            print(f"You meet {room.name}. {room.description}")
-            recruit = input("Recruit this companion? (y/n): ")
-            if recruit.lower() == "y":
-                self.player.companions.append(room)
-                if room.effect == "attack":
-                    self.player.attack_power += 2
-                elif room.effect == "heal":
-                    self.player.max_health += 5
-                    self.player.health += 5
-                self.announce(f"{self.player.name} gains a companion!")
-            self.rooms[y][x] = None
-        elif isinstance(room, Item):
-            print(f"You found a {room.name}!")
-            self.player.collect_item(room)
-            self.announce(f"{self.player.name} obtained {room.name}!")
-            self.rooms[y][x] = None
-            if room.name == "Key":
-                self.room_names[y][x] = "Hidden Niche"
-        elif room == "Treasure":
-            gold = random.randint(20, 50)
-            self.player.gold += gold
-            print(f"You found a treasure chest with {gold} gold!")
-            if random.random() < 0.3:
-                loot = random.choice(self.rare_loot)
-                print(f"Inside you also discover {loot.name}!")
-                self.player.collect_item(loot)
-                self.announce(f"{self.player.name} picks up {loot.name}!")
-            self.rooms[y][x] = None
-            self.room_names[y][x] = "Glittering Vault"
-        elif room == "Enchantment":
-            print("You enter a glowing chamber with ancient runes etched in the stone.")
-            if self.player.weapon:
-                print(f"Your current weapon is: {self.player.weapon.name}")
-                print("You may enchant it with a status effect for 30 gold.")
-                print("1. Poison  2. Burn  3. Freeze  4. Cancel")
-                choice = input("Choose enchantment: ")
-                if self.player.weapon.effect:
-                    print(
-                        "Your weapon is already enchanted! You can't add another enchantment."
-                    )
-                elif self.player.gold >= 30 and choice in ["1", "2", "3"]:
-                    effect = {"1": "poison", "2": "burn", "3": "freeze"}[choice]
-                    self.player.weapon.description += f" (Enchanted: {effect})"
-                    self.player.weapon.effect = effect
-                    self.player.gold -= 30
-                    print(f"Your weapon is now enchanted with {effect}!")
-                elif choice == "4":
-                    print("You leave the enchantment chamber untouched.")
-                else:
-                    print("Not enough gold or invalid choice.")
-            else:
-                print("You need a weapon to enchant.")
-            self.rooms[y][x] = None
-            self.room_names[y][x] = "Enchantment Chamber"
-        elif room == "Blacksmith":
-            print("You meet a grizzled blacksmith hammering at a forge.")
-            if self.player.weapon:
-                print(
-                    f"Your weapon: {self.player.weapon.name} ({self.player.weapon.min_damage}-{self.player.weapon.max_damage})"
-                )
-                print(
-                    "Would you like to upgrade your weapon for 50 gold? +3 min/max damage"
-                )
-                confirm = input("Upgrade? (y/n): ")
-                if confirm.lower() == "y" and self.player.gold >= 50:
-                    self.player.weapon.min_damage += 3
-                    self.player.weapon.max_damage += 3
-                    self.player.gold -= 50
-                    print("Your weapon has been reforged and is stronger!")
-                elif self.player.gold < 50:
-                    print("You don't have enough gold.")
-                else:
-                    print("Maybe next time.")
-            else:
-                print(
-                    "The blacksmith scoffs. 'No weapon? Come back when you have something worth forging.'"
-                )
-            self.rooms[y][x] = None
-            self.room_names[y][x] = "Blacksmith Forge"
-
-        elif room == "Sanctuary":
-            self.player.health = self.player.max_health
-            print("A soothing warmth envelops you. Your wounds are fully healed.")
-            self.rooms[y][x] = None
-            self.room_names[y][x] = "Sacred Sanctuary"
-
-        elif room == "Trap":
-            riddle = random.choice(RIDDLES)
-            print("A trap springs! Solve this riddle to escape unharmed:")
-            print(riddle["question"])
-            response = input("Answer: ").strip().lower()
-            if response == riddle["answer"].lower():
-                print("The mechanism clicks harmlessly. You solved it!")
-                self.announce("Brilliant puzzle solving!")
-            else:
-                damage = random.randint(10, 30)
-                self.player.take_damage(damage)
-                print(f"Wrong answer! You take {damage} damage.")
-            self.rooms[y][x] = None
-            self.room_names[y][x] = "Booby-Trapped Passage"
-        elif room == "Exit":
-            self.room_names[y][x] = "Sealed Gate"
-            if self.player.has_item("Key"):
-                print("🎉 You unlocked the exit and escaped the dungeon!")
-                print(f"Final Score: {self.player.get_score()}")
-                exit()
-            else:
-                print("The exit is locked. You need a key!")
-
-        self.rooms[self.player.y][self.player.x] = None
-        self.player.x, self.player.y = x, y
-        self.rooms[y][x] = self.player
-        self.visited_rooms.add((x, y))
-        self.audience_gift()
+        map_module.handle_room(self, x, y)
 
     def battle(self, enemy):
-        print(
-            f"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability else ''} Boss incoming!"
-        )
-        self.announce(f"{self.player.name} engages {enemy.name}!")
-        while self.player.is_alive() and enemy.is_alive():
-            skip_player = self.player.apply_status_effects()
-            for companion in getattr(self.player, "companions", []):
-                companion.assist(self.player, enemy)
-            if not enemy.is_alive():
-                break
-            if skip_player:
-                if enemy.is_alive():
-                    skip = enemy.apply_status_effects()
-                    if enemy.is_alive() and not skip:
-                        enemy.take_turn(self.player)
-                continue
-
-            print(f"Player Health: {self.player.health}")
-            print(f"Enemy Health: {enemy.health}")
-            print("1. Attack\n2. Defend\n3. Use Health Potion\n4. Use Skill")
-            choice = input("Choose action: ")
-            if choice == "1":
-                self.player.attack(enemy)
-                self.announce("A fierce attack lands!")
-                if enemy.is_alive():
-                    skip = enemy.apply_status_effects()
-                    if enemy.is_alive() and not skip:
-                        enemy.take_turn(self.player)
-            elif choice == "2":
-                self.player.defend(enemy)
-                if enemy.is_alive():
-                    skip = enemy.apply_status_effects()
-                    if enemy.is_alive() and not skip:
-                        enemy.take_turn(self.player)
-            elif choice == "3":
-                self.player.use_health_potion()
-                if enemy.is_alive():
-                    skip = enemy.apply_status_effects()
-                    if enemy.is_alive() and not skip:
-                        enemy.take_turn(self.player)
-            elif choice == "4":
-                self.player.use_skill(enemy)
-                self.announce("Special skill unleashed!")
-                if enemy.is_alive():
-                    skip = enemy.apply_status_effects()
-                    if enemy.is_alive() and not skip:
-                        enemy.take_turn(self.player)
-            else:
-                print("Invalid choice!")
-            self.player.decrement_cooldowns()
-
-        if not enemy.is_alive():
-            self.announce(f"{enemy.name} has been defeated!")
-            # Award boss-specific loot directly to the player
-            if enemy.name in BOSS_LOOT:
-                loot = random.choice(BOSS_LOOT[enemy.name])
-                self.player.collect_item(loot)
-                print(f"The {enemy.name} dropped {loot.name}!")
-                self.announce(f"{self.player.name} obtains {loot.name}!")
+        combat_module.battle(self, enemy)
 
     def audience_gift(self):
         if random.random() < 0.1:
@@ -1045,107 +732,20 @@ class DungeonBase:
         self.player.status_effects["inspire"] = turns
 
     def shop(self):
-        print("Welcome to the Shop!")
-        print(f"Gold: {self.player.gold}")
-        for i, item in enumerate(self.shop_items, 1):
-            price = item.price if isinstance(item, Weapon) else 10
-            print(f"{i}. {item.name} - {price} Gold")
-        sell_option = len(self.shop_items) + 1
-        exit_option = sell_option + 1
-        print(f"{sell_option}. Sell Items")
-        print(f"{exit_option}. Exit")
-
-        choice = input("Choose an option:")
-        if choice.isdigit():
-            choice = int(choice)
-            if 1 <= choice <= len(self.shop_items):
-                item = self.shop_items[choice - 1]
-                price = item.price if isinstance(item, Weapon) else 10
-                if self.player.gold >= price:
-                    self.player.collect_item(item)
-                    self.player.gold -= price
-                    print(f"You bought {item.name}.")
-                else:
-                    print("Not enough gold.")
-            elif choice == sell_option:
-                self.sell_items()
-            elif choice == exit_option:
-                print("Leaving the shop.")
-            else:
-                print("Invalid choice.")
-        else:
-            print("Invalid input.")
+        shop_module.shop(self)
 
     def get_sale_price(self, item):
-        if isinstance(item, Weapon):
-            price = getattr(item, "price", 0)
-            if price > 0:
-                return price // 2
-            return None
-        if isinstance(item, Item):
-            return 5
-        return None
+        return shop_module.get_sale_price(item)
 
     def sell_items(self):
-        if not self.player.inventory:
-            print("You have nothing to sell.")
-            return
-
-        print("Your Items:")
-        for i, item in enumerate(self.player.inventory, 1):
-            sale_price = self.get_sale_price(item)
-            if sale_price is None:
-                print(f"{i}. {item.name} - Cannot sell")
-            else:
-                print(f"{i}. {item.name} - {sale_price} Gold")
-        print(f"{len(self.player.inventory)+1}. Back")
-
-        choice = input("Sell what?")
-        if choice.isdigit():
-            choice = int(choice)
-            if 1 <= choice <= len(self.player.inventory):
-                item = self.player.inventory[choice - 1]
-                sale_price = self.get_sale_price(item)
-                if sale_price is None:
-                    print("You can't sell that item.")
-                    return
-                confirm = input(f"Sell {item.name} for {sale_price} gold? (y/n) ")
-                if confirm.lower() == "y":
-                    self.player.inventory.pop(choice - 1)
-                    self.player.gold += sale_price
-                    print(f"You sold {item.name}.")
-            elif choice == len(self.player.inventory) + 1:
-                return
-            else:
-                print("Invalid choice.")
-        else:
-            print("Invalid input.")
+        shop_module.sell_items(self)
 
     def show_inventory(self):
-        if not self.player.inventory:
-            print("Your inventory is empty.")
-            return
-
-        print("Your Inventory:")
-        for i, item in enumerate(self.player.inventory, 1):
-            equipped = " (Equipped)" if item == self.player.weapon else ""
-            print(f"{i}. {item.name}{equipped} - {item.description}")
-
-        choice = input("Enter item number to equip weapon, or press Enter to go back: ")
-        if choice.isdigit():
-            idx = int(choice) - 1
-            if 0 <= idx < len(self.player.inventory):
-                item = self.player.inventory[idx]
-                if isinstance(item, Weapon):
-                    self.player.equip_weapon(item)
-                else:
-                    print("You can only equip weapons.")
-            else:
-                print("Invalid selection.")
+        shop_module.show_inventory(self)
 
     def riddle_challenge(self):
         """Present the player with a riddle for a potential reward."""
-        riddle, answer = random.choice(RIDDLES)
+        riddle, answer = random.choice(self.riddles)
         print("A sage poses a riddle:\n" + riddle)
         response = input("Answer: ").strip().lower()
         if response == answer:
