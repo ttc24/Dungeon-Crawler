@@ -431,8 +431,38 @@ class Enemy(Entity):
         print(f"The {self.name} attacked you and dealt {damage} damage.")
 
 class Companion(Entity):
-    """NPC ally that grants a minor permanent bonus when recruited."""
+    """NPC ally that can aid the player during combat.
 
-    def __init__(self, name, effect):
+    Companions may be offensive or supportive.  Attack-oriented
+    companions deal a small amount of damage to the enemy each round,
+    while healer companions restore a bit of the player's health.  The
+    previously existing ``effect`` attribute remains for future use
+    (e.g. passive bonuses) but is optional.
+    """
+
+    def __init__(self, name, effect=None, attack_power=0, heal_amount=0):
         super().__init__(name, "A loyal companion")
         self.effect = effect
+        self.attack_power = attack_power
+        self.heal_amount = heal_amount
+
+    def assist(self, player, enemy):
+        """Perform the companion's action for the round.
+
+        Parameters
+        ----------
+        player : :class:`Player`
+            The player being assisted.
+        enemy : :class:`Enemy`
+            The current enemy, if any.
+        """
+
+        if self.attack_power and enemy.is_alive():
+            dmg = random.randint(max(1, self.attack_power // 2), self.attack_power)
+            enemy.take_damage(dmg)
+            print(f"{self.name} strikes {enemy.name} for {dmg} damage!")
+        if self.heal_amount and player.is_alive():
+            heal = min(self.heal_amount, player.max_health - player.health)
+            if heal > 0:
+                player.health += heal
+                print(f"{self.name} heals {player.name} for {heal} HP!")
