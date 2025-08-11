@@ -1,3 +1,7 @@
+"""Game entities such as the player and enemies."""
+
+from __future__ import annotations
+
 import random
 from .items import Item, Weapon
 from .constants import ANNOUNCER_LINES
@@ -94,27 +98,35 @@ class Player(Entity):
         else:
             print("You don't have a Health Potion to use.")
 
-    def attack(self, enemy):
-        damage = self.calculate_damage()
+    def attack(self, enemy: Enemy) -> None:
+        """Attack ``enemy`` using the equipped weapon or base attack power.
+
+        Applies any weapon effects and awards experience and gold if the enemy
+        is defeated.
+        """
+        damage: int = self.calculate_damage()
         self.apply_weapon_effect(enemy)
         print(f"You attacked the {enemy.name} and dealt {damage} damage!")
         enemy.take_damage(damage)
         if not enemy.is_alive():
             self.process_enemy_defeat(enemy)
 
-    def calculate_damage(self):
+    def calculate_damage(self) -> int:
+        """Return the damage dealt by the player's current attack."""
         if self.weapon:
             return random.randint(self.weapon.min_damage, self.weapon.max_damage)
         return random.randint(self.attack_power // 2, self.attack_power)
 
-    def apply_weapon_effect(self, enemy):
-        if self.weapon and hasattr(self.weapon, 'effect') and self.weapon.effect:
+    def apply_weapon_effect(self, enemy: Enemy) -> None:
+        """Apply the equipped weapon's status effect to ``enemy`` if present."""
+        if self.weapon and hasattr(self.weapon, "effect") and self.weapon.effect:
             effect = self.weapon.effect
-            enemy.status_effects = getattr(enemy, 'status_effects', {})
+            enemy.status_effects = getattr(enemy, "status_effects", {})
             enemy.status_effects[effect] = 3
             print(f"Your weapon inflicts {effect} on the {enemy.name}!")
 
-    def process_enemy_defeat(self, enemy):
+    def process_enemy_defeat(self, enemy: Enemy) -> None:
+        """Handle rewards for defeating ``enemy`` such as XP and gold."""
         self.xp += enemy.xp
         gold_dropped = enemy.drop_gold()
         if self.level >= 3:
