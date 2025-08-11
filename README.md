@@ -4,6 +4,18 @@
 
 Dungeon Crawler is a small text-based adventure that borrows the core ideas of the *Dungeon Crawler Carl* novels while toning down the humor. Guide your hero through procedurally generated floors filled with monsters, treasure, and meaningful character choices.
 
+## Quickstart
+
+Clone the repository and start the game with Python 3:
+
+```bash
+git clone https://github.com/yourname/Dungeon-Crawler.git
+cd Dungeon-Crawler
+python -m dungeoncrawler
+```
+
+For full installation instructions, gameplay tips, API reference, and contributing guidelines, see the [documentation](https://<username>.github.io/Dungeon-Crawler/).
+
 ## Installation
 
 The game only requires Python 3. Run it directly using the main module:
