@@ -765,6 +765,10 @@ class DungeonBase:
                 print(f"Uh-oh! It explodes and deals {damage} damage.")
                 self.announce("The crowd loves a good prank!")
 
+    def grant_inspiration(self, turns=3):
+        """Give the player a temporary inspire buff."""
+        self.player.status_effects["inspire"] = turns
+
     def shop(self):
         print("Welcome to the Shop!")
         print(f"Gold: {self.player.gold}")
@@ -814,6 +818,18 @@ class DungeonBase:
             else:
                 print("Invalid selection.")
 
+    def riddle_challenge(self):
+        """Present the player with a riddle for a potential reward."""
+        riddle, answer = random.choice(RIDDLES)
+        print("A sage poses a riddle:\n" + riddle)
+        response = input("Answer: ").strip().lower()
+        if response == answer:
+            reward = 50
+            print(f"Correct! You receive {reward} gold.")
+            self.player.gold += reward
+        else:
+            print("Incorrect! The sage vanishes in disappointment.")
+
     # Floor-specific events keep gameplay varied without hardcoding logic in
     # play_game. Additional floors can be added here easily.
     def trigger_floor_event(self, floor):
@@ -822,6 +838,9 @@ class DungeonBase:
             2: self._floor_two_event,
             3: self._floor_three_event,
             5: self._floor_five_event,
+            8: self._floor_eight_event,
+            12: self._floor_twelve_event,
+            15: self._floor_fifteen_event,
         }
         if floor in events:
             events[floor]()
@@ -838,3 +857,15 @@ class DungeonBase:
 
     def _floor_five_event(self):
         print("A mysterious merchant sets up shop, selling exotic wares.")
+
+    def _floor_eight_event(self):
+        print("You stumble upon a radiant shrine, filling you with determination.")
+        self.grant_inspiration()
+
+    def _floor_twelve_event(self):
+        print("An elusive merchant appears, offering rare goods.")
+        self.shop()
+
+    def _floor_fifteen_event(self):
+        print("A robed sage blocks your path, offering a riddle challenge.")
+        self.riddle_challenge()
