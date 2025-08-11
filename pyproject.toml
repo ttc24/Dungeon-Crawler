@@ -7,6 +7,17 @@ requires-python = ">=3.8"
 authors = [{name = "Dungeon Crawler Team"}]
 dependencies = []
 
+[project.optional-dependencies]
+dev = [
+    "black",
+    "flake8",
+    "isort",
+    "pytest",
+]
+
+[project.scripts]
+dungeon-crawler = "dungeoncrawler.main:main"
+
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
@@ -14,3 +25,6 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 packages = ["dungeoncrawler"]
 include-package-data = true
+
+[tool.setuptools.package-data]
+"*" = ["data/*.json"]
