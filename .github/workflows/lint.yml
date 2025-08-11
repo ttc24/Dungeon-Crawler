@@ -16,6 +16,6 @@ jobs:
         run: pip install black isort flake8
       - name: Run linters
         run: |
-          black dungeoncrawler tests --check
-          isort dungeoncrawler tests --profile black --check-only
-          flake8 dungeoncrawler tests
+          black . --check
+          isort . --profile black --check-only
+          flake8 .
