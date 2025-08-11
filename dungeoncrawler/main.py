@@ -6,6 +6,8 @@ race and guild selections are deferred to later floors and offered by the
 ``DungeonBase`` floor events.
 """
 
+import argparse
+
 from .config import load_config
 from .dungeon import DungeonBase
 from .entities import Player
@@ -34,12 +36,28 @@ def build_character():
     return player
 
 
-def main():
+def main(argv=None):
+    """Run the game with optional command line arguments."""
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--skip-tutorial",
+        action="store_true",
+        help="Do not run the interactive tutorial",
+    )
+    args = parser.parse_args(argv)
+
     cfg = load_config()
     game = DungeonBase(cfg.screen_width, cfg.screen_height)
     cont = input("Load existing save? (y/n): ").strip().lower()
     if cont != "y":
         game.player = build_character()
+        if args.skip_tutorial:
+            game.tutorial_complete = True
+        elif not game.tutorial_complete:
+            from .tutorial import run as run_tutorial
+
+            run_tutorial(game)
     game.play_game()
 
 

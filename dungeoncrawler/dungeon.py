@@ -5,7 +5,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from .constants import ANNOUNCER_LINES, RIDDLES, SAVE_FILE, SCORE_FILE
-from .entities import Companion, Enemy, Player
+from .entities import Companion, Player
 from .items import Item, Weapon
 from .plugins import apply_enemy_plugins, apply_item_plugins
 from . import combat as combat_module
@@ -119,6 +119,7 @@ def floor_size(floor):
     """Return map size for a given floor with cap at 15x15."""
     size = min(7 + floor, 15)
     return (size, size)
+
 
 # Floor specific configuration
 FLOOR_CONFIGS = {
@@ -367,6 +368,7 @@ class DungeonBase:
         self.visited_rooms = set()
         self.player = None
         self.exit_coords = None
+        self.tutorial_complete = False
         self.shop_items = [
             Item("Health Potion", "Restores 20 health"),
             Weapon("Sword", "A sharp sword", 10, 15, 40),
@@ -412,6 +414,7 @@ class DungeonBase:
 
         data = {
             "floor": floor,
+            "tutorial_complete": self.tutorial_complete,
             "player": {
                 "name": self.player.name,
                 "level": self.player.level,
@@ -444,6 +447,7 @@ class DungeonBase:
                     data = json.load(f)
             except (IOError, json.JSONDecodeError):
                 return 1
+            self.tutorial_complete = data.get("tutorial_complete", False)
             self.player = Player(
                 data["player"]["name"], data["player"].get("class", "Novice")
             )
