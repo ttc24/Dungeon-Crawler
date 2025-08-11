@@ -241,7 +241,7 @@ class DungeonBase:
         if os.path.exists(SAVE_FILE):
             with open(SAVE_FILE) as f:
                 data = json.load(f)
-            self.player = Player(data["player"]["name"], data["player"].get("class", "Warrior"))
+            self.player = Player(data["player"]["name"], data["player"].get("class", "Novice"))
             p = data["player"]
             self.player.level = p["level"]
             self.player.health = p["health"]
@@ -268,6 +268,37 @@ class DungeonBase:
         for r in records:
             print(f"{r['name']}: {r['score']} (Floor {r.get('floor', '?')})")
 
+    def offer_class(self):
+        if self.player.class_type != "Novice":
+            return
+        print("It's time to choose your class!")
+        print("1. Warrior 2. Mage 3. Rogue 4. Cleric 5. Paladin 6. Bard")
+        print("7. Barbarian 8. Druid 9. Ranger 10. Sorcerer 11. Monk")
+        print("12. Warlock 13. Necromancer 14. Shaman 15. Alchemist")
+        classes = {
+            "1": "Warrior",
+            "2": "Mage",
+            "3": "Rogue",
+            "4": "Cleric",
+            "5": "Paladin",
+            "6": "Bard",
+            "7": "Barbarian",
+            "8": "Druid",
+            "9": "Ranger",
+            "10": "Sorcerer",
+            "11": "Monk",
+            "12": "Warlock",
+            "13": "Necromancer",
+            "14": "Shaman",
+            "15": "Alchemist",
+        }
+        choice = ""
+        while choice not in classes:
+            choice = input("Class: ")
+            if choice not in classes:
+                print("Invalid choice. Please try again.")
+        self.player.choose_class(classes[choice])
+
     def offer_guild(self):
         if self.player.guild:
             return
@@ -275,8 +306,22 @@ class DungeonBase:
         print("1. Warriors' Guild - Bonus Health")
         print("2. Mages' Guild - Bonus Attack")
         print("3. Rogues' Guild - Faster Skills")
-        choice = input("Join which guild? (1/2/3 or skip): ")
-        guilds = {"1": "Warriors' Guild", "2": "Mages' Guild", "3": "Rogues' Guild"}
+        print("4. Healers' Circle - Extra Vitality")
+        print("5. Shadow Brotherhood - Heavy Strikes")
+        print("6. Arcane Order - Arcane Mastery")
+        print("7. Rangers' Lodge - Balanced Training")
+        print("8. Berserkers' Clan - Brutal Strength")
+        choice = input("Join which guild? (1-8 or skip): ")
+        guilds = {
+            "1": "Warriors' Guild",
+            "2": "Mages' Guild",
+            "3": "Rogues' Guild",
+            "4": "Healers' Circle",
+            "5": "Shadow Brotherhood",
+            "6": "Arcane Order",
+            "7": "Rangers' Lodge",
+            "8": "Berserkers' Clan",
+        }
         if choice in guilds:
             self.player.join_guild(guilds[choice])
 
@@ -284,7 +329,9 @@ class DungeonBase:
         if self.player.race:
             return
         print("New races are available to you!")
-        print("1. Human 2. Elf 3. Dwarf 4. Orc 5. Gnome 6. Halfling 7. Catfolk 8. Lizardfolk")
+        print("1. Human 2. Elf 3. Dwarf 4. Orc 5. Gnome 6. Halfling")
+        print("7. Catfolk 8. Lizardfolk 9. Tiefling 10. Aasimar 11. Goblin")
+        print("12. Dragonborn 13. Half-Elf 14. Kobold 15. Triton")
         choice = input("Choose your race: ")
         races = {
             "1": "Human",
@@ -295,6 +342,13 @@ class DungeonBase:
             "6": "Halfling",
             "7": "Catfolk",
             "8": "Lizardfolk",
+            "9": "Tiefling",
+            "10": "Aasimar",
+            "11": "Goblin",
+            "12": "Dragonborn",
+            "13": "Half-Elf",
+            "14": "Kobold",
+            "15": "Triton",
         }
         race = races.get(choice, "Human")
         self.player.choose_race(race)
@@ -774,6 +828,7 @@ class DungeonBase:
 
     def _floor_one_event(self):
         print("The crowd roars as you step into the arena for the first time.")
+        self.offer_class()
 
     def _floor_two_event(self):
         self.offer_guild()
