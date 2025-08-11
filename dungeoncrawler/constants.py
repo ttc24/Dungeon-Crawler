@@ -5,8 +5,10 @@ from pathlib import Path
 from .config import config
 
 # Configuration-driven values
-SAVE_FILE = config.save_file
-SCORE_FILE = config.score_file
+SAVE_DIR = Path.home() / ".dungeon_crawler" / "saves"
+SAVE_DIR.mkdir(parents=True, exist_ok=True)
+SAVE_FILE = SAVE_DIR / config.save_file
+SCORE_FILE = SAVE_DIR / config.score_file
 MAX_FLOORS = config.max_floors
 SCREEN_WIDTH = config.screen_width
 SCREEN_HEIGHT = config.screen_height
@@ -34,8 +36,11 @@ def load_riddles():
 
     data_dir = Path(__file__).resolve().parent.parent / "data"
     path = data_dir / "riddles.json"
-    with open(path) as f:
-        riddles = json.load(f)
+    try:
+        with open(path) as f:
+            riddles = json.load(f)
+    except (IOError, json.JSONDecodeError):
+        return []
     # Normalise answers for case-insensitive comparison
     for r in riddles:
         r["answer"] = r["answer"].lower()

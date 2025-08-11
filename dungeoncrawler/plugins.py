@@ -22,8 +22,11 @@ def _load_json_from_mod(mod, filename):
     mod_path = Path(mod.__file__).parent
     json_path = mod_path / "data" / filename
     if json_path.exists():
-        with open(json_path) as f:
-            return json.load(f)
+        try:
+            with open(json_path) as f:
+                return json.load(f)
+        except (IOError, json.JSONDecodeError):
+            return None
     return None
 
 
