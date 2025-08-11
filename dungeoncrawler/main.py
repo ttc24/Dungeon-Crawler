@@ -8,6 +8,11 @@ race and guild selections are deferred to later floors and offered by the
 
 from .dungeon import DungeonBase
 from .entities import Player
+# Import modules to expose new separation of concerns (unused in CLI but
+# required by tests and for side effects).
+from . import combat as _combat  # noqa: F401
+from . import map as _map  # noqa: F401
+from . import shop as _shop  # noqa: F401
 
 
 def build_character():

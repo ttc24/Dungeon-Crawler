@@ -6,6 +6,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.entities import Player, Enemy, Companion
+from dungeoncrawler.combat import battle
 
 
 def test_attack_companion_deals_damage(monkeypatch):
@@ -18,7 +19,7 @@ def test_attack_companion_deals_damage(monkeypatch):
     monkeypatch.setattr('builtins.input', lambda _: '2')  # defend
     monkeypatch.setattr(random, 'randint', lambda a, b: b)
 
-    game.battle(enemy)
+    battle(game, enemy)
 
     assert enemy.health == 0
 
@@ -34,6 +35,6 @@ def test_healer_companion_restores_health(monkeypatch):
     monkeypatch.setattr('builtins.input', lambda _: '1')  # attack
     monkeypatch.setattr(random, 'randint', lambda a, b: b)
 
-    game.battle(enemy)
+    battle(game, enemy)
 
     assert game.player.health == 60

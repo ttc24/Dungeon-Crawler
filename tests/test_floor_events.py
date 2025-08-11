@@ -6,6 +6,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.entities import Player
+from dungeoncrawler import shop as shop_module
 
 
 def setup_dungeon():
@@ -22,7 +23,7 @@ def test_floor_eight_event_grants_buff():
 
 def test_floor_twelve_event_calls_shop():
     dungeon = setup_dungeon()
-    with patch.object(DungeonBase, "shop") as mock_shop:
+    with patch.object(shop_module, "shop") as mock_shop:
         dungeon.trigger_floor_event(12)
         assert mock_shop.called
 

@@ -3,6 +3,7 @@ import builtins
 from dungeoncrawler import constants
 from dungeoncrawler import dungeon as dungeon_module
 from dungeoncrawler.entities import Player
+from dungeoncrawler import map as dungeon_map
 
 
 def test_riddles_loaded_and_used(monkeypatch, capsys):
@@ -12,7 +13,7 @@ def test_riddles_loaded_and_used(monkeypatch, capsys):
 
     chosen = constants.RIDDLES[-1]
     # Restrict the riddles list in the dungeon module so the trap must use our chosen riddle
-    monkeypatch.setattr(dungeon_module, "RIDDLES", [chosen])
+    monkeypatch.setattr(dungeon_map, "RIDDLES", [chosen])
     monkeypatch.setattr(builtins, "input", lambda _: chosen["answer"])
 
     dungeon = dungeon_module.DungeonBase(2, 1)
@@ -23,6 +24,6 @@ def test_riddles_loaded_and_used(monkeypatch, capsys):
     dungeon.player.x = 1
     dungeon.player.y = 0
 
-    dungeon.handle_room(0, 0)
+    dungeon_map.handle_room(dungeon, 0, 0)
     out = capsys.readouterr().out
     assert chosen["question"] in out
