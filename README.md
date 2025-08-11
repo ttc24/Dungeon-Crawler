@@ -1,5 +1,7 @@
 # Dungeon Crawler
 
+[![CI](https://github.com/OWNER/Dungeon-Crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/Dungeon-Crawler/actions/workflows/ci.yml)
+
 Dungeon Crawler is a small text-based adventure that borrows the core ideas of the *Dungeon Crawler Carl* novels while toning down the humor. Guide your hero through procedurally generated floors filled with monsters, treasure, and meaningful character choices.
 
 ## Installation
