@@ -34,4 +34,4 @@ Progress is automatically saved whenever you clear a floor. On the next launch y
 - Special floor events add variety as you progress deeper.
 - Floors grow in size and feature unique enemy and boss sets.
 - Battle through 18 floors of escalating challenge.
-- View an ASCII map of explored rooms to track your progress.
+
