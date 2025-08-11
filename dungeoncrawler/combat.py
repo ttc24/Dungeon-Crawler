@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import random
 
-from .map import BOSS_LOOT
+from .bestiary import BOSS_LOOT
 
 
 def battle(game, enemy):

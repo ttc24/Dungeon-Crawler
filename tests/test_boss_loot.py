@@ -5,7 +5,7 @@ import random
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from dungeoncrawler.dungeon import DungeonBase
-from dungeoncrawler.map import BOSS_LOOT
+from dungeoncrawler.bestiary import BOSS_LOOT
 from dungeoncrawler.combat import battle
 from dungeoncrawler.entities import Player, Enemy
 
