@@ -699,6 +699,10 @@ class DungeonBase:
         self.announce(f"{self.player.name} engages {enemy.name}!")
         while self.player.is_alive() and enemy.is_alive():
             self.player.apply_status_effects()
+            for companion in getattr(self.player, 'companions', []):
+                companion.assist(self.player, enemy)
+            if not enemy.is_alive():
+                break
             if 'freeze' in self.player.status_effects:
                 print("\u2744\ufe0f You are frozen and skip this turn!")
                 self.player.status_effects['freeze'] -= 1
