@@ -4,9 +4,9 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+from dungeoncrawler import map as dungeon_map
 from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.entities import Player
-from dungeoncrawler import map as dungeon_map
 
 
 def test_render_map_snapshot():

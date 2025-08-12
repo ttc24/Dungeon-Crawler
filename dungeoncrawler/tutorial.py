@@ -1,6 +1,7 @@
 """Interactive tutorial for basic game mechanics."""
 
 from __future__ import annotations
+
 from gettext import gettext as _
 
 

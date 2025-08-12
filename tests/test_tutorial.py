@@ -5,8 +5,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 import dungeoncrawler.dungeon as dungeon_module
 from dungeoncrawler import tutorial as tutorial_module
-from dungeoncrawler.main import main
 from dungeoncrawler.dungeon import DungeonBase
+from dungeoncrawler.main import main
 
 
 def test_tutorial_runs_once_per_save(tmp_path, monkeypatch):

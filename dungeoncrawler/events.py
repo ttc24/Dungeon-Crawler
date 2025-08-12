@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import random
-from typing import TYPE_CHECKING
 from gettext import gettext as _
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # pragma: no cover - for type checkers only
     from .dungeon import DungeonBase
