@@ -31,3 +31,8 @@ include-package-data = true
 
 [tool.isort]
 profile = "black"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']  # or your Python version
+include = '\.pyi?$'
