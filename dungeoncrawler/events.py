@@ -117,12 +117,37 @@ class LoreNoteEvent(BaseEvent):
 
 
 class ShrineEvent(BaseEvent):
-    """Heal the player at a shrine."""
+    """Offer blessings or curses at a shrine."""
 
-    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
-        heal = random.randint(8, 12)
-        game.player.health = min(game.player.max_health, game.player.health + heal)
-        output_func(_(f"A serene shrine restores {heal} health."))
+    def trigger(
+        self, game: "DungeonBase", input_func=input, output_func=print
+    ) -> None:
+        output_func(_("You discover a tranquil shrine with two altars."))
+        output_func(_("[V] Altar of Valor (+1 STR until next floor)"))
+        output_func(_("[W] Altar of Wisdom (+1 INT until next floor)"))
+        output_func(_("[P] Pray (60% boon / 40% curse)"))
+        choice = input_func(_("Choice: ")).strip().lower()
+        if choice == "v":
+            game.player.temp_strength += 1
+            output_func(_("A surge of might flows through you."))
+        elif choice == "w":
+            game.player.temp_intelligence += 1
+            output_func(_("Your mind feels momentarily sharper."))
+        elif choice == "p":
+            output_func(_("You kneel and whisper a prayer..."))
+            output_func("    _\\/_")
+            output_func("     /\\")
+            if random.random() < 0.6:
+                heal = random.randint(8, 12)
+                game.player.health = min(
+                    game.player.max_health, game.player.health + heal
+                )
+                output_func(_(f"A warm light restores {heal} health."))
+            else:
+                add_status_effect(game.player, "cursed", 30)
+                output_func(_("A dark chill leaves you cursed."))
+        else:
+            output_func(_("You leave the shrine undisturbed."))
 
 
 class MiniQuestHookEvent(BaseEvent):
