@@ -47,9 +47,7 @@ class PuzzleEvent(BaseEvent):
 class TrapEvent(BaseEvent):
     """Hidden hazard that can be spotted and avoided."""
 
-    def trigger(
-        self, game: "DungeonBase", input_func=input, output_func=print
-    ) -> None:
+    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
         speed = getattr(game.player, "speed", 0)
         perception = getattr(game.player, "perception", 0)
         detect_chance = 0.30 + (speed + perception) * 0.05
