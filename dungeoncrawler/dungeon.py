@@ -123,231 +123,28 @@ def floor_size(floor):
     return (size, size)
 
 
-# Floor specific configuration
-FLOOR_CONFIGS = {
-    1: {
-        "size": floor_size(1),
-        "enemies": ["Goblin", "Skeleton", "Bandit"],
-        "bosses": ["Bone Tyrant"],
-        "places": {
-            "Trap": 2,
-            "Treasure": 2,
-            "Enchantment": 1,
-            "Sanctuary": 1,
-            "Blacksmith": 1,
-        },
-    },
-    2: {
-        "size": floor_size(2),
-        "enemies": ["Orc", "Cultist", "Ghoul", "Bandit"],
-        "bosses": ["Inferno Golem", "Frost Warden"],
-        "places": {
-            "Trap": 3,
-            "Treasure": 3,
-            "Enchantment": 1,
-            "Sanctuary": 1,
-            "Blacksmith": 1,
-        },
-    },
-    3: {
-        "size": floor_size(3),
-        "enemies": ["Vampire", "Warlock", "Wraith", "Werewolf"],
-        "bosses": ["Shadow Reaver", "Doom Bringer"],
-        "places": {
-            "Trap": 3,
-            "Treasure": 4,
-            "Enchantment": 2,
-            "Sanctuary": 2,
-            "Blacksmith": 1,
-        },
-    },
-    4: {
-        "size": floor_size(4),
-        "enemies": ["Basilisk", "Gargoyle", "Troll", "Lich"],
-        "bosses": ["Void Serpent", "Ember Lord", "Glacier Fiend"],
-        "places": {
-            "Trap": 4,
-            "Treasure": 4,
-            "Enchantment": 2,
-            "Sanctuary": 2,
-            "Blacksmith": 1,
-        },
-    },
-    5: {
-        "size": floor_size(5),
-        "enemies": ["Phoenix", "Hydra", "Revenant", "Beholder"],
-        "bosses": ["Grave Monarch", "Storm Reaper"],
-        "places": {
-            "Trap": 4,
-            "Treasure": 5,
-            "Enchantment": 2,
-            "Sanctuary": 2,
-            "Blacksmith": 1,
-        },
-    },
-    6: {
-        "size": floor_size(6),
-        "enemies": ["Minotaur", "Demon", "Harpy", "Shade"],
-        "bosses": ["Bone Tyrant", "Inferno Golem"],
-        "places": {
-            "Trap": 5,
-            "Treasure": 5,
-            "Enchantment": 2,
-            "Sanctuary": 2,
-            "Blacksmith": 1,
-        },
-    },
-    7: {
-        "size": floor_size(7),
-        "enemies": ["Giant Spider", "Slime King", "Zombie", "Gargoyle"],
-        "bosses": ["Frost Warden", "Shadow Reaver"],
-        "places": {
-            "Trap": 5,
-            "Treasure": 6,
-            "Enchantment": 2,
-            "Sanctuary": 2,
-            "Blacksmith": 1,
-        },
-    },
-    8: {
-        "size": floor_size(8),
-        "enemies": ["Dark Knight", "Cyclops", "Basilisk", "Werewolf"],
-        "bosses": ["Doom Bringer", "Void Serpent"],
-        "places": {
-            "Trap": 5,
-            "Treasure": 6,
-            "Enchantment": 3,
-            "Sanctuary": 2,
-            "Blacksmith": 1,
-        },
-    },
-    9: {
-        "size": floor_size(9),
-        "enemies": ["Hydra", "Beholder", "Revenant", "Warlock"],
-        "bosses": ["Ember Lord", "Glacier Fiend"],
-        "places": {
-            "Trap": 6,
-            "Treasure": 6,
-            "Enchantment": 3,
-            "Sanctuary": 2,
-            "Blacksmith": 1,
-        },
-    },
-    10: {
-        "size": floor_size(10),
-        "enemies": ["Phoenix", "Dark Knight", "Cyclops", "Minotaur"],
-        "bosses": ["Grave Monarch", "Storm Reaper"],
-        "places": {
-            "Trap": 6,
-            "Treasure": 7,
-            "Enchantment": 3,
-            "Sanctuary": 3,
-            "Blacksmith": 1,
-        },
-    },
-    11: {
-        "size": floor_size(11),
-        "enemies": ["Astral Dragon", "Demon", "Harpy", "Shade"],
-        "bosses": ["Bone Tyrant", "Inferno Golem", "Frost Warden"],
-        "places": {
-            "Trap": 7,
-            "Treasure": 7,
-            "Enchantment": 3,
-            "Sanctuary": 3,
-            "Blacksmith": 1,
-        },
-    },
-    12: {
-        "size": floor_size(12),
-        "enemies": ["Giant Spider", "Slime King", "Zombie", "Warlock"],
-        "bosses": ["Shadow Reaver", "Doom Bringer", "Void Serpent"],
-        "places": {
-            "Trap": 7,
-            "Treasure": 8,
-            "Enchantment": 4,
-            "Sanctuary": 3,
-            "Blacksmith": 1,
-        },
-    },
-    13: {
-        "size": floor_size(13),
-        "enemies": ["Basilisk", "Gargoyle", "Troll", "Lich"],
-        "bosses": ["Ember Lord", "Glacier Fiend", "Grave Monarch"],
-        "places": {
-            "Trap": 8,
-            "Treasure": 8,
-            "Enchantment": 4,
-            "Sanctuary": 3,
-            "Blacksmith": 1,
-        },
-    },
-    14: {
-        "size": floor_size(14),
-        "enemies": ["Hydra", "Beholder", "Revenant", "Dark Knight"],
-        "bosses": ["Storm Reaper"],
-        "places": {
-            "Trap": 8,
-            "Treasure": 9,
-            "Enchantment": 4,
-            "Sanctuary": 3,
-            "Blacksmith": 1,
-        },
-    },
-    15: {
-        "size": floor_size(15),
-        "enemies": ["Cyclops", "Astral Dragon", "Phoenix", "Minotaur"],
-        "bosses": ["Doom Bringer", "Void Serpent"],
-        "places": {
-            "Trap": 9,
-            "Treasure": 9,
-            "Enchantment": 5,
-            "Sanctuary": 3,
-            "Blacksmith": 1,
-        },
-    },
-    16: {
-        "size": floor_size(16),
-        "enemies": ["Demon", "Harpy", "Shade", "Giant Spider"],
-        "bosses": ["Ember Lord", "Glacier Fiend"],
-        "places": {
-            "Trap": 9,
-            "Treasure": 10,
-            "Enchantment": 5,
-            "Sanctuary": 3,
-            "Blacksmith": 1,
-        },
-    },
-    17: {
-        "size": floor_size(17),
-        "enemies": ["Slime King", "Zombie", "Gargoyle", "Warlock"],
-        "bosses": ["Grave Monarch", "Storm Reaper"],
-        "places": {
-            "Trap": 9,
-            "Treasure": 10,
-            "Enchantment": 5,
-            "Sanctuary": 4,
-            "Blacksmith": 1,
-        },
-    },
-    18: {
-        "size": floor_size(18),
-        "enemies": ["Hydra", "Beholder", "Astral Dragon", "Dark Knight"],
-        "bosses": ["Bone Tyrant", "Doom Bringer", "Void Serpent"],
-        "places": {
-            "Trap": 10,
-            "Treasure": 10,
-            "Enchantment": 6,
-            "Sanctuary": 4,
-            "Blacksmith": 1,
-        },
-    },
-}
+# Floor specific configuration loaded from data/floors.json
 
-
-# Register default event types for each floor configuration
 EVENT_TYPES = [MerchantEvent, PuzzleEvent, TrapEvent]
-for cfg in FLOOR_CONFIGS.values():
-    cfg.setdefault("events", EVENT_TYPES)
+
+
+@lru_cache(maxsize=None)
+def load_floor_configs():
+    """Load per-floor configuration from ``floors.json``."""
+    path = DATA_DIR / "floors.json"
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    configs = {}
+    for floor, cfg in data.items():
+        floor = int(floor)
+        cfg.setdefault("size", floor_size(floor))
+        cfg["size"] = tuple(cfg["size"])
+        cfg.setdefault("events", EVENT_TYPES)
+        configs[floor] = cfg
+    return configs
+
+
+FLOOR_CONFIGS = load_floor_configs()
 
 
 class DungeonBase:

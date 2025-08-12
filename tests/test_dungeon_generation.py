@@ -5,12 +5,13 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from dungeoncrawler import map as dungeon_map
-from dungeoncrawler.dungeon import DungeonBase
+from dungeoncrawler.dungeon import DungeonBase, load_floor_configs
 from dungeoncrawler.entities import Enemy, Player
 
 
 def test_generate_dungeon_size_and_population():
     random.seed(0)
+    load_floor_configs()
     dungeon = DungeonBase(1, 1)
     dungeon.player = Player("Tester")
     dungeon_map.generate_dungeon(dungeon, floor=1)
