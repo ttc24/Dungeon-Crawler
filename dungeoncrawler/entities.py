@@ -40,6 +40,8 @@ class Player(Entity):
         self.companions = []
         self.guild = None
         self.race = None
+        # Record collected lore notes
+        self.codex = []
         # Stamina based skill system
         self.max_stamina = 100
         self.stamina = 100
@@ -192,6 +194,8 @@ class Player(Entity):
             hit_chance += 10
         if "cursed" in self.status_effects:
             hit_chance -= 5
+        if "beetle_bane" in self.status_effects and "beetle" in enemy.name.lower():
+            hit_chance += 5
         roll = random.randint(1, 100)
         base = self.calculate_damage()
         str_bonus = getattr(self, "temp_strength", 0)

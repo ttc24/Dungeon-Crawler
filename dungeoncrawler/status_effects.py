@@ -14,6 +14,7 @@ EFFECT_INFO = {
     "stagger": "-20% hit.",
     "blessed": "+10% hit chance.",
     "cursed": "-5% hit chance.",
+    "beetle_bane": "+5% hit chance vs beetles.",
 }
 
 
@@ -207,6 +208,23 @@ def _handle_cursed(entity, effects, is_player, name):
     return False
 
 
+def _handle_beetle_bane(entity, effects, is_player, name):
+    effects["beetle_bane"] -= 1
+    remaining = effects.get("beetle_bane", 0)
+    if remaining > 0:
+        if is_player:
+            print(_(f"Beetle Bane ({remaining} turns left)."))
+        else:
+            print(_(f"The {name} studies beetle weaknesses ({remaining} turns left)."))
+    if effects.get("beetle_bane", 0) <= 0:
+        del effects["beetle_bane"]
+        if is_player:
+            print(_("Your beetle lore fades."))
+        else:
+            print(_(f"The {name}'s beetle lore fades."))
+    return False
+
+
 STATUS_EFFECT_HANDLERS = {
     "poison": _handle_poison,
     "burn": _handle_burn,
@@ -217,6 +235,7 @@ STATUS_EFFECT_HANDLERS = {
     "inspire": _handle_inspire,
     "blessed": _handle_blessed,
     "cursed": _handle_cursed,
+    "beetle_bane": _handle_beetle_bane,
 }
 
 
