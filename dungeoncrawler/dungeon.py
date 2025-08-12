@@ -522,58 +522,14 @@ class DungeonBase:
                     )
                 )
                 choice = input(_("Action: "))
-
-                if choice == "1":
-                    self.move_player("left")
-                elif choice == "2":
-                    self.move_player("right")
-                elif choice == "3":
-                    self.move_player("up")
-                elif choice == "4":
-                    self.move_player("down")
-                elif choice == "5":
-                    self.shop()
-                elif choice == "6":
-                    self.show_inventory()
-                elif choice == "7":
-                    print(_("Thanks for playing!"))
+                if not self.handle_input(choice):
                     return
-                elif choice == "8":
-                    self.render_map()
-                elif choice == "9":
-                    self.view_leaderboard()
-                else:
-                    print(_("Invalid choice!"))
 
-                if (
-                    self.player.level >= 5
-                    and self.player.health < self.player.max_health
-                ):
-                    self.player.health += 1
-
-                if (
-                    self.player.x == self.exit_coords[0]
-                    and self.player.y == self.exit_coords[1]
-                    and self.player.has_item("Key")
-                ):
-                    print(_("You reach the Sealed Gate."))
-                    proceed = input(
-                        _("Would you like to descend to the next floor? (y/n): ")
-                    ).lower()
-                    if proceed == "y":
-                        floor += 1
-                        self.save_game(floor)
-                        break
-                    else:
-                        print(_("You chose to exit the dungeon."))
-                        print(_(f"Final Score: {self.player.get_score()}"))
-                        self.record_score(floor)
-                        if os.path.exists(SAVE_FILE):
-                            try:
-                                os.remove(SAVE_FILE)
-                            except OSError:
-                                pass
-                        return
+                floor, continue_floor = self.process_turn(floor)
+                if continue_floor is None:
+                    return
+                if not continue_floor:
+                    break
 
         print(_("You have died. Game Over!"))
         print(_(f"Final Score: {self.player.get_score()}"))
@@ -583,6 +539,80 @@ class DungeonBase:
                 os.remove(SAVE_FILE)
             except OSError:
                 pass
+
+    def handle_input(self, choice: str) -> bool:
+        """Handle a menu ``choice`` from the player.
+
+        Returns ``False`` if the player chooses to quit the game, otherwise
+        returns ``True`` to continue playing.
+        """
+
+        if choice == "1":
+            self.move_player("left")
+        elif choice == "2":
+            self.move_player("right")
+        elif choice == "3":
+            self.move_player("up")
+        elif choice == "4":
+            self.move_player("down")
+        elif choice == "5":
+            self.shop()
+        elif choice == "6":
+            self.show_inventory()
+        elif choice == "7":
+            print(_("Thanks for playing!"))
+            return False
+        elif choice == "8":
+            self.render_map()
+        elif choice == "9":
+            self.view_leaderboard()
+        else:
+            print(_("Invalid choice!"))
+        return True
+
+    def process_turn(self, floor: int):
+        """Handle end-of-turn effects and floor completion checks.
+
+        Returns a tuple of ``(floor, status)`` where ``status`` is ``True`` to
+        continue on the current floor, ``False`` to advance to the next floor
+        and ``None`` if the player chose to exit the game.
+        """
+
+        if self.player.level >= 5 and self.player.health < self.player.max_health:
+            self.player.health += 1
+
+        return self.check_floor_completion(floor)
+
+    def check_floor_completion(self, floor: int):
+        """Determine if the current floor has been completed.
+
+        Returns ``(new_floor, status)`` similar to :meth:`process_turn`.
+        """
+
+        if (
+            self.player.x == self.exit_coords[0]
+            and self.player.y == self.exit_coords[1]
+            and self.player.has_item("Key")
+        ):
+            print(_("You reach the Sealed Gate."))
+            proceed = input(
+                _("Would you like to descend to the next floor? (y/n): ")
+            ).lower()
+            if proceed == "y":
+                floor += 1
+                self.save_game(floor)
+                return floor, False
+            print(_("You chose to exit the dungeon."))
+            print(_(f"Final Score: {self.player.get_score()}"))
+            self.record_score(floor)
+            if os.path.exists(SAVE_FILE):
+                try:
+                    os.remove(SAVE_FILE)
+                except OSError:
+                    pass
+            return floor, None
+
+        return floor, True
 
     def move_player(self, direction):
         map_module.move_player(self, direction)
