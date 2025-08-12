@@ -292,6 +292,7 @@ class DungeonBase:
                 "companions": [
                     {"name": c.name, "effect": c.effect} for c in self.player.companions
                 ],
+                "codex": self.player.codex,
             },
         }
         try:
@@ -353,6 +354,7 @@ class DungeonBase:
 
             for comp_data in p.get("companions", []):
                 self.player.companions.append(Companion(comp_data["name"], comp_data["effect"]))
+            self.player.codex = p.get("codex", [])
 
             return data.get("floor", 1)
         return 1
@@ -755,9 +757,19 @@ class DungeonBase:
             self.render_map()
         elif choice == "9":
             self.view_leaderboard()
+        elif choice == ":codex":
+            self.show_codex()
         else:
             print(_(INVALID_KEY_MSG))
         return True
+
+    def show_codex(self, output_func=print):
+        if not self.player.codex:
+            output_func(_("Codex is empty."))
+            return
+        output_func(_("Codex:"))
+        for entry in self.player.codex:
+            output_func(f"- {entry}")
 
     def process_turn(self, floor: int):
         """Handle end-of-turn effects and floor completion checks.

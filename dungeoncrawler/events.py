@@ -125,11 +125,23 @@ class LoreNoteEvent(BaseEvent):
 
     def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
         notes = [
-            _("The walls whisper of an ancient battle."),
-            _("Scrawled handwriting reads: 'Beware the shadows.'"),
-            _("A faded map hints at deeper treasures."),
+            {"text": _("The walls whisper of an ancient battle.")},
+            {"text": _("Scrawled handwriting reads: 'Beware the shadows.'")},
+            {"text": _("A faded map hints at deeper treasures.")},
+            {
+                "text": _(
+                    "A margin scribble reveals beetle weak points (+5% hit vs beetles for 10 turns)."
+                ),
+                "effect": ("beetle_bane", 10),
+            },
         ]
-        output_func(random.choice(notes))
+        note = random.choice(notes)
+        output_func(note["text"])
+        if note["text"] not in game.player.codex:
+            game.player.codex.append(note["text"])
+        if "effect" in note:
+            effect, duration = note["effect"]
+            add_status_effect(game.player, effect, duration)
 
 
 class ShrineEvent(BaseEvent):
