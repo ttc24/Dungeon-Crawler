@@ -285,9 +285,7 @@ class Player(Entity):
         enemy.status_effects = getattr(enemy, "status_effects", {})
         enemy.status_effects["burn"] = 3
         print(
-            _(
-                f"An explosive flask bursts for {damage} damage and sets the foe ablaze!"
-            )
+            _(f"An explosive flask bursts for {damage} damage and sets the foe ablaze!")
         )
 
     def use_skill(self, enemy):
