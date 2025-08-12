@@ -7,6 +7,7 @@ from gettext import gettext as _
 from typing import TYPE_CHECKING
 
 from .items import Item
+from .status_effects import add_status_effect
 
 if TYPE_CHECKING:  # pragma: no cover - for type checkers only
     from .dungeon import DungeonBase
@@ -63,19 +64,35 @@ class TrapEvent(BaseEvent):
 class FountainEvent(BaseEvent):
     """Cracked fountain that can heal or provide a potion."""
 
+    def __init__(self) -> None:
+        self.remaining_uses = 2
+
     def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
-        output_func(_("You find a cracked fountain. The water shimmers. (Press [Q] to drink.)"))
-        output_func(_("Drink (Q) / Bottle (B) / Leave (any other key)"))
-        choice = input_func(_("Choice: ")).strip().lower()
-        if choice == "q":
-            heal = random.randint(6, 10)
-            game.player.health = min(game.player.max_health, game.player.health + heal)
-            output_func(_(f"You feel refreshed and recover {heal} health."))
-        elif choice == "b":
-            game.player.inventory.append(Item("Health Potion", "Restores 20 health"))
-            output_func(_("You bottle the shimmering water for later."))
-        else:
-            output_func(_("You leave the fountain untouched."))
+        if self.remaining_uses <= 0:
+            output_func(_("The fountain is dry."))
+            return
+        while self.remaining_uses > 0:
+            output_func(_("You find a cracked fountain. The water shimmers."))
+            output_func(_("Drink (D) / Bottle (B) / Leave (any other key)"))
+            choice = input_func(_("Choice: ")).strip().lower()
+            if choice in ("d", "q"):
+                heal = random.randint(6, 10)
+                game.player.health = min(game.player.max_health, game.player.health + heal)
+                output_func(_(f"You feel refreshed and recover {heal} health."))
+                roll = random.random()
+                if roll < 0.3:
+                    add_status_effect(game.player, "blessed", 30)
+                elif roll < 0.4:
+                    add_status_effect(game.player, "cursed", 30)
+            elif choice == "b":
+                game.player.inventory.append(Item("Fountain Water", "Restores 4-6 health"))
+                output_func(_("You bottle the shimmering water for later."))
+            else:
+                output_func(_("You leave the fountain untouched."))
+                break
+            self.remaining_uses -= 1
+            if self.remaining_uses <= 0:
+                output_func(_("The fountain runs dry."))
 
 
 class CacheEvent(BaseEvent):

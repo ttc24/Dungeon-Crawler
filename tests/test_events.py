@@ -55,13 +55,31 @@ def test_fountain_event_drink_heals():
     game = setup_game()
     game.player.health = 50
     event = FountainEvent()
-    with patch("dungeoncrawler.events.random.randint", return_value=8):
+    inputs = iter(["d", "x"])
+    with (
+        patch("dungeoncrawler.events.random.randint", return_value=8),
+        patch("dungeoncrawler.events.random.random", return_value=0.5),
+    ):
         event.trigger(
             game,
-            input_func=lambda _: "q",
+            input_func=lambda _: next(inputs),
             output_func=lambda _msg: None,
         )
     assert game.player.health == 58
+    assert event.remaining_uses == 1
+
+
+def test_fountain_event_bottle_adds_item():
+    game = setup_game()
+    event = FountainEvent()
+    inputs = iter(["b", "x"])
+    event.trigger(
+        game,
+        input_func=lambda _: next(inputs),
+        output_func=lambda _msg: None,
+    )
+    assert any(item.name == "Fountain Water" for item in game.player.inventory)
+    assert event.remaining_uses == 1
 
 
 def test_random_event_selection_from_floor_config():
