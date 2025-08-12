@@ -8,7 +8,24 @@ from gettext import gettext as _
 
 if TYPE_CHECKING:  # pragma: no cover - for type hints only
     from .dungeon import DungeonBase
-    from .entities import Enemy
+    from .entities import Enemy, Player
+
+
+def enemy_turn(enemy: "Enemy", player: "Player") -> None:
+    """Handle the enemy's turn by applying status effects and attacking.
+
+    Parameters
+    ----------
+    enemy:
+        The active enemy in battle.
+    player:
+        The player being targeted.
+    """
+
+    if enemy.is_alive():
+        skip = enemy.apply_status_effects()
+        if enemy.is_alive() and not skip:
+            enemy.take_turn(player)
 
 
 def battle(game: "DungeonBase", enemy: "Enemy") -> None:
@@ -34,10 +51,7 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
         if not enemy.is_alive():
             break
         if skip_player:
-            if enemy.is_alive():
-                skip = enemy.apply_status_effects()
-                if enemy.is_alive() and not skip:
-                    enemy.take_turn(player)
+            enemy_turn(enemy, player)
             continue
 
         print(_(f"Player Health: {player.health}"))
@@ -47,29 +61,17 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
         if choice == "1":
             player.attack(enemy)
             game.announce(_("A fierce attack lands!"))
-            if enemy.is_alive():
-                skip = enemy.apply_status_effects()
-                if enemy.is_alive() and not skip:
-                    enemy.take_turn(player)
+            enemy_turn(enemy, player)
         elif choice == "2":
             player.defend(enemy)
-            if enemy.is_alive():
-                skip = enemy.apply_status_effects()
-                if enemy.is_alive() and not skip:
-                    enemy.take_turn(player)
+            enemy_turn(enemy, player)
         elif choice == "3":
             player.use_health_potion()
-            if enemy.is_alive():
-                skip = enemy.apply_status_effects()
-                if enemy.is_alive() and not skip:
-                    enemy.take_turn(player)
+            enemy_turn(enemy, player)
         elif choice == "4":
             player.use_skill(enemy)
             game.announce(_("Special skill unleashed!"))
-            if enemy.is_alive():
-                skip = enemy.apply_status_effects()
-                if enemy.is_alive() and not skip:
-                    enemy.take_turn(player)
+            enemy_turn(enemy, player)
         else:
             print(_("Invalid choice!"))
         player.decrement_cooldowns()
