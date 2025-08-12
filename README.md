@@ -36,7 +36,9 @@ cp config.example.json config.json
 ```
 
 The defaults mirror previous hard-coded values so the game will run even if
-no custom configuration is supplied.
+no custom configuration is supplied. When providing your own configuration,
+ensure numeric values like `screen_width`, `screen_height`, and `max_floors`
+are positive integers—invalid entries will raise a `ValueError` at start-up.
 
 ## Running the Game
 
