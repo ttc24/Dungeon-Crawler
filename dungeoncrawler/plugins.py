@@ -1,7 +1,7 @@
 import importlib
 import json
-import pkgutil
 import logging
+import pkgutil
 from pathlib import Path
 
 from .items import Item, Weapon
