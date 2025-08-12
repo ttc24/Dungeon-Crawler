@@ -10,7 +10,9 @@ from typing import TYPE_CHECKING
 from .ai import ARCHETYPES, IntentAI
 from .combat import battle
 from .entities import Companion, Enemy
+from .events import BaseEvent
 from .items import Item
+from .quests import EscortNPC
 
 if TYPE_CHECKING:  # pragma: no cover - type hints only
     from .dungeon import DungeonBase
@@ -231,6 +233,10 @@ def render_map(game: "DungeonBase") -> None:
 
             offset = len(rows) + 1
             stdscr.addstr(offset, 0, _("Press '?' for legend, q to exit"))
+            quest_text = (
+                f"Quest: {game.active_quest.status(game)}" if game.active_quest else "Quest: None"
+            )
+            stdscr.addstr(offset + 1, 0, quest_text)
             if show_legend:
                 legend = [
                     _("@: Player"),
@@ -239,7 +245,7 @@ def render_map(game: "DungeonBase") -> None:
                     _("#: Unexplored"),
                 ]
                 for i, entry in enumerate(legend):
-                    stdscr.addstr(offset + 1 + i, 0, entry)
+                    stdscr.addstr(offset + 2 + i, 0, entry)
 
             stdscr.refresh()
             key = stdscr.getch()
@@ -268,10 +274,27 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
     if name in lore:
         print(_(f"{lore[name]}"))
 
-    if isinstance(room, Enemy):
+    if isinstance(room, list):
+        for obj in list(room):
+            if isinstance(obj, BaseEvent):
+                obj.trigger(game)
+            elif isinstance(obj, Item):
+                print(_(f"You found a {obj.name}!"))
+                game.player.collect_item(obj)
+                game.announce(_(f"{game.player.name} obtained {obj.name}!"))
+        game.rooms[y][x] = None
+    elif isinstance(room, BaseEvent):
+        room.trigger(game)
+        game.rooms[y][x] = None
+    elif isinstance(room, Enemy):
         battle(game, room)
         if not room.is_alive():
             game.rooms[y][x] = None
+    elif isinstance(room, EscortNPC):
+        print(_(f"You find {room.name} who needs escort."))
+        room.following = True
+        game.rooms[y][x] = None
+        game.room_names[y][x] = name
     elif isinstance(room, Companion):
         print(_(f"You meet {room.name}. {room.description}"))
         recruit = input(_("Recruit this companion? (y/n): "))
@@ -398,3 +421,4 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
     game.rooms[y][x] = game.player
     game.visited_rooms.add((x, y))
     game.audience_gift()
+    game.check_quest_progress()

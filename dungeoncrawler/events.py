@@ -114,7 +114,10 @@ class MiniQuestHookEvent(BaseEvent):
     """Placeholder for mini-quest hooks."""
 
     def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
-        output_func(_("A mysterious figure hints at a quest to come."))
+        if getattr(game, "active_quest", None):
+            output_func(game.active_quest.flavor)
+        else:
+            output_func(_("A mysterious figure hints at a quest to come."))
 
 
 class HazardEvent(BaseEvent):

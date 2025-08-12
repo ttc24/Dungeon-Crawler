@@ -110,3 +110,4 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
             player.collect_item(loot)
             print(_(f"The {enemy.name} dropped {loot.name}!"))
             game.announce(_(f"{player.name} obtains {loot.name}!"))
+    game.check_quest_progress()
