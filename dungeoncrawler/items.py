@@ -1,13 +1,20 @@
+from dataclasses import dataclass, field
+from typing import Optional
+
+
+@dataclass
 class Item:
-    def __init__(self, name, description):
-        self.name = name
-        self.description = description
+    """Simple item with a name and description."""
+
+    name: str
+    description: str
 
 
+@dataclass
 class Weapon(Item):
-    def __init__(self, name, description, min_damage, max_damage, price=50):
-        super().__init__(name, description)
-        self.min_damage = min_damage
-        self.max_damage = max_damage
-        self.price = price
-        self.effect = None
+    """Weapon that can deal a range of damage and may apply an effect."""
+
+    min_damage: int
+    max_damage: int
+    price: int = 50
+    effect: Optional[str] = field(default=None)
