@@ -209,6 +209,8 @@ class DungeonBase:
             [self.generate_room_name() for __ in range(width)] for __ in range(height)
         ]
         self.visited_rooms = set()
+        self.discovered = [[False for __ in range(width)] for __ in range(height)]
+        self.visible = [[False for __ in range(width)] for __ in range(height)]
         self.player = None
         self.exit_coords = None
         self.tutorial_complete = False
