@@ -119,9 +119,7 @@ class LoreNoteEvent(BaseEvent):
 class ShrineEvent(BaseEvent):
     """Offer blessings or curses at a shrine."""
 
-    def trigger(
-        self, game: "DungeonBase", input_func=input, output_func=print
-    ) -> None:
+    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
         output_func(_("You discover a tranquil shrine with two altars."))
         output_func(_("[V] Altar of Valor (+1 STR until next floor)"))
         output_func(_("[W] Altar of Wisdom (+1 INT until next floor)"))
@@ -139,9 +137,7 @@ class ShrineEvent(BaseEvent):
             output_func("     /\\")
             if random.random() < 0.6:
                 heal = random.randint(8, 12)
-                game.player.health = min(
-                    game.player.max_health, game.player.health + heal
-                )
+                game.player.health = min(game.player.max_health, game.player.health + heal)
                 output_func(_(f"A warm light restores {heal} health."))
             else:
                 add_status_effect(game.player, "cursed", 30)
