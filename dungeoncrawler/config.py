@@ -21,6 +21,7 @@ class Config:
     max_floors: int = 18
     screen_width: int = 10
     screen_height: int = 10
+    verbose_combat: bool = False
 
 
 def load_config(path: Path = CONFIG_PATH) -> Config:
@@ -65,6 +66,11 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
                     if not isinstance(value, str):
                         raise ValueError(
                             f"{key} must be a string, got {type(value).__name__}"
+                        )
+                elif key == "verbose_combat":
+                    if not isinstance(value, bool):
+                        raise ValueError(
+                            f"{key} must be a boolean, got {type(value).__name__}"
                         )
                 setattr(cfg, key, value)
     return cfg

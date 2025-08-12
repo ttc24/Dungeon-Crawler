@@ -5,6 +5,7 @@ from __future__ import annotations
 from gettext import gettext as _
 from typing import TYPE_CHECKING
 
+from .constants import INVALID_KEY_MSG
 from .items import Item, Weapon
 
 if TYPE_CHECKING:  # pragma: no cover - only for type hints
@@ -45,9 +46,9 @@ def shop(
         elif choice == exit_option:
             output_func(_("Leaving the shop."))
         else:
-            output_func(_("Invalid choice."))
+            output_func(_(INVALID_KEY_MSG))
     else:
-        output_func(_("Invalid input."))
+        output_func(_(INVALID_KEY_MSG))
 
 
 def get_sale_price(item):
@@ -100,9 +101,9 @@ def sell_items(
         elif choice == len(game.player.inventory) + 1:
             return
         else:
-            output_func(_("Invalid choice."))
+            output_func(_(INVALID_KEY_MSG))
     else:
-        output_func(_("Invalid input."))
+        output_func(_(INVALID_KEY_MSG))
 
 
 def show_inventory(
@@ -133,4 +134,4 @@ def show_inventory(
             else:
                 output_func(_("You can only equip weapons."))
         else:
-            output_func(_("Invalid selection."))
+            output_func(_(INVALID_KEY_MSG))

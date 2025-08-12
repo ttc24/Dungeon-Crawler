@@ -9,7 +9,13 @@ from pathlib import Path
 from . import combat as combat_module
 from . import map as map_module
 from . import shop as shop_module
-from .constants import ANNOUNCER_LINES, RIDDLES, SAVE_FILE, SCORE_FILE
+from .constants import (
+    ANNOUNCER_LINES,
+    INVALID_KEY_MSG,
+    RIDDLES,
+    SAVE_FILE,
+    SCORE_FILE,
+)
 from .entities import Companion, Player
 from .events import MerchantEvent, PuzzleEvent, TrapEvent
 from .items import Item, Weapon
@@ -309,6 +315,9 @@ class DungeonBase:
                 records = []
 
         duration = time.time() - self.run_start if self.run_start else 0
+        epitaph = (
+            f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'"
+        )
         records.append(
             {
                 "player_name": self.player.name,
@@ -316,6 +325,7 @@ class DungeonBase:
                 "floor_reached": floor,
                 "run_duration": duration,
                 "seed": self.seed,
+                "epitaph": epitaph,
             }
         )
         records = sorted(records, key=lambda x: x["score"], reverse=True)[:10]
@@ -347,7 +357,8 @@ class DungeonBase:
             print(
                 _(
                     f"{r.get('player_name', '?')}: {r.get('score', 0)} "
-                    f"(Floor {r.get('floor_reached', '?')}, {r.get('run_duration', 0):.0f}s, Seed {r.get('seed', '?')})"
+                    f"(Floor {r.get('floor_reached', '?')}, {r.get('run_duration', 0):.0f}s, Seed {r.get('seed', '?')}) "
+                    f"{r.get('epitaph', '')}"
                 )
             )
 
@@ -379,7 +390,7 @@ class DungeonBase:
         while choice not in classes:
             choice = input(_("Class: "))
             if choice not in classes:
-                print(_("Invalid choice. Please try again."))
+                print(_(INVALID_KEY_MSG))
         self.player.choose_class(classes[choice])
 
     def offer_guild(self):
@@ -532,6 +543,9 @@ class DungeonBase:
                     break
 
         print(_("You have died. Game Over!"))
+        print(
+            _(f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'")
+        )
         print(_(f"Final Score: {self.player.get_score()}"))
         self.record_score(floor)
         if os.path.exists(SAVE_FILE):
@@ -567,7 +581,7 @@ class DungeonBase:
         elif choice == "9":
             self.view_leaderboard()
         else:
-            print(_("Invalid choice!"))
+            print(_(INVALID_KEY_MSG))
         return True
 
     def process_turn(self, floor: int):
@@ -636,7 +650,7 @@ class DungeonBase:
                 self.announce(f"{self.player.name} gains a helpful item!")
             else:
                 damage = random.randint(5, 15)
-                self.player.take_damage(damage)
+                self.player.take_damage(damage, source="Audience Gift")
                 print(_(f"Uh-oh! It explodes and deals {damage} damage."))
                 self.announce("The crowd loves a good prank!")
 

@@ -46,5 +46,5 @@ class TrapEvent(BaseEvent):
 
     def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
         damage = random.randint(5, 20)
-        game.player.take_damage(damage)
+        game.player.take_damage(damage, source="The Tripwire")
         output_func(_(f"A trap is sprung! You take {damage} damage."))

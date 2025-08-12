@@ -338,7 +338,7 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
             game.announce(_("Brilliant puzzle solving!"))
         else:
             damage = random.randint(10, 30)
-            game.player.take_damage(damage)
+            game.player.take_damage(damage, source="The Trap")
             print(_(f"Wrong answer! You take {damage} damage."))
         game.rooms[y][x] = None
         game.room_names[y][x] = "Booby-Trapped Passage"

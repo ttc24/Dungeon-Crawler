@@ -19,6 +19,7 @@ SCORE_FILE = BASE_DIR / config.score_file
 MAX_FLOORS = config.max_floors
 SCREEN_WIDTH = config.screen_width
 SCREEN_HEIGHT = config.screen_height
+INVALID_KEY_MSG = "Unknown key. Try [WASD] to move, [F] to defend, [G] to grab."
 ANNOUNCER_LINES = [
     "A decisive blow!",
     "You fight with determination.",

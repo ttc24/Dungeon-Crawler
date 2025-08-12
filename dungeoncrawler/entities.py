@@ -5,9 +5,10 @@ from __future__ import annotations
 import random
 from gettext import gettext as _
 
+from .config import config
 from .constants import ANNOUNCER_LINES
 from .items import Item, Weapon
-from .status_effects import apply_status_effects as apply_effects
+from .status_effects import add_status_effect, apply_status_effects as apply_effects
 
 
 class Entity:
@@ -41,6 +42,8 @@ class Player(Entity):
         self.race = None
         self.x = 0
         self.y = 0
+        self.inventory_limit = 8
+        self.cause_of_death = ""
         # Start as an untrained crawler. Specific classes can be chosen later
         # via ``choose_class``.
         self.choose_class(class_type, announce=False)
@@ -105,7 +108,15 @@ class Player(Entity):
         return self.health > 0
 
     def collect_item(self, item):
+        if len(self.inventory) >= self.inventory_limit:
+            print(
+                _(
+                    f"Backpack full ({self.inventory_limit}/{self.inventory_limit}). Drop something with [D]."
+                )
+            )
+            return False
         self.inventory.append(item)
+        return True
 
     def has_item(self, name):
         return any(item.name == name for item in self.inventory)
@@ -133,12 +144,32 @@ class Player(Entity):
         Applies any weapon effects and awards experience and gold if the enemy
         is defeated.
         """
-        damage: int = self.calculate_damage()
-        self.apply_weapon_effect(enemy)
-        print(_(f"You attacked the {enemy.name} and dealt {damage} damage!"))
-        enemy.take_damage(damage)
-        if not enemy.is_alive():
-            self.process_enemy_defeat(enemy)
+        hit_chance = 85
+        roll = random.randint(1, 100)
+        base = self.calculate_damage()
+        str_bonus = 0
+        damage = base + str_bonus
+        if roll <= hit_chance:
+            self.apply_weapon_effect(enemy)
+            enemy.take_damage(damage)
+            if config.verbose_combat:
+                print(
+                    _(
+                        f"You swing ({hit_chance}% to hit): roll {roll} → HIT. Damage {damage} ({base} base +{str_bonus} STR)."
+                    )
+                )
+            else:
+                print(_(f"You hit the {enemy.name} for {damage} damage."))
+            if not enemy.is_alive():
+                self.process_enemy_defeat(enemy)
+        else:
+            if config.verbose_combat:
+                reason = "It slipped on the wet stone!"
+                print(
+                    _(f"You swing ({hit_chance}% to hit): roll {roll} → MISS. {reason}")
+                )
+            else:
+                print(_(f"You missed the {enemy.name}."))
 
     def calculate_damage(self) -> int:
         """Return the damage dealt by the player's current attack."""
@@ -148,11 +179,8 @@ class Player(Entity):
 
     def apply_weapon_effect(self, enemy: Enemy) -> None:
         """Apply the equipped weapon's status effect to ``enemy`` if present."""
-        if self.weapon and hasattr(self.weapon, "effect") and self.weapon.effect:
-            effect = self.weapon.effect
-            enemy.status_effects = getattr(enemy, "status_effects", {})
-            enemy.status_effects[effect] = 3
-            print(_(f"Your weapon inflicts {effect} on the {enemy.name}!"))
+        if self.weapon and getattr(self.weapon, "effect", None):
+            add_status_effect(enemy, self.weapon.effect, 3)
 
     def process_enemy_defeat(self, enemy: Enemy) -> None:
         """Handle rewards for defeating ``enemy`` such as XP and gold."""
@@ -169,14 +197,16 @@ class Player(Entity):
 
     def defend(self, enemy):
         damage = max(0, enemy.attack_power - 5)
-        self.health -= damage
+        self.take_damage(damage, source=enemy.name)
         print(_(f"The {enemy.name} attacked you and dealt {damage} damage."))
 
-    def take_damage(self, damage):
+    def take_damage(self, damage, source=None):
         if "shield" in self.status_effects:
             damage = max(0, damage - 5)
             print(_("Your shield absorbs 5 damage!"))
         self.health = max(0, self.health - damage)
+        if self.health <= 0:
+            self.cause_of_death = source or "unknown"
 
     def apply_status_effects(self):
         """Delegate to the shared status effect helper."""
@@ -196,8 +226,7 @@ class Player(Entity):
         damage = self.attack_power + random.randint(10, 15)
         print(_(f"You cast Fireball dealing {damage} damage!"))
         enemy.take_damage(damage)
-        enemy.status_effects = getattr(enemy, "status_effects", {})
-        enemy.status_effects["burn"] = 3
+        add_status_effect(enemy, "burn", 3)
 
     def _skill_rogue(self, enemy):
         damage = self.attack_power + random.randint(5, 10)
@@ -220,7 +249,7 @@ class Player(Entity):
 
     def _skill_bard(self, enemy):
         print(_("You play an inspiring tune, bolstering your spirit!"))
-        self.status_effects["inspire"] = 3
+        add_status_effect(self, "inspire", 3)
 
     def _skill_barbarian(self, enemy):
         damage = self.attack_power + random.randint(8, 12)
@@ -232,8 +261,7 @@ class Player(Entity):
     def _skill_druid(self, enemy):
         damage = self.attack_power + random.randint(5, 10)
         enemy.take_damage(damage)
-        enemy.status_effects = getattr(enemy, "status_effects", {})
-        enemy.status_effects["freeze"] = 1
+        add_status_effect(enemy, "freeze", 1)
         heal = min(5, self.max_health - self.health)
         self.health += heal
         print(_(f"Nature's wrath deals {damage} damage and restores {heal} health!"))
@@ -241,15 +269,13 @@ class Player(Entity):
     def _skill_ranger(self, enemy):
         damage = self.attack_power + random.randint(6, 12)
         enemy.take_damage(damage)
-        enemy.status_effects = getattr(enemy, "status_effects", {})
-        enemy.status_effects["poison"] = 3
+        add_status_effect(enemy, "poison", 3)
         print(_(f"A volley of arrows hits for {damage} damage and poisons the foe!"))
 
     def _skill_sorcerer(self, enemy):
         damage = self.attack_power + random.randint(12, 18)
         enemy.take_damage(damage)
-        enemy.status_effects = getattr(enemy, "status_effects", {})
-        enemy.status_effects["burn"] = 3
+        add_status_effect(enemy, "burn", 3)
         print(_(f"You unleash Arcane Blast for {damage} damage!"))
 
     def _skill_monk(self, enemy):
@@ -282,8 +308,7 @@ class Player(Entity):
     def _skill_alchemist(self, enemy):
         damage = self.attack_power + random.randint(8, 12)
         enemy.take_damage(damage)
-        enemy.status_effects = getattr(enemy, "status_effects", {})
-        enemy.status_effects["burn"] = 3
+        add_status_effect(enemy, "burn", 3)
         print(
             _(f"An explosive flask bursts for {damage} damage and sets the foe ablaze!")
         )
@@ -441,7 +466,7 @@ class Enemy(Entity):
         return apply_effects(self)
 
     def defend(self):
-        self.status_effects["shield"] = 1
+        add_status_effect(self, "shield", 1)
         print(_(f"The {self.name} raises its guard!"))
 
     def take_turn(self, player):
@@ -454,27 +479,45 @@ class Enemy(Entity):
             self.attack(player)
 
     def attack(self, player):
+        hit_chance = 60
+        roll = random.randint(1, 100)
         damage = random.randint(self.attack_power // 2, self.attack_power)
-        if self.ability == "lifesteal":
-            self.health += damage // 3
-            print(_(f"The {self.name} drains life and heals for {damage // 3}!"))
-        elif self.ability == "poison":
-            player.status_effects["poison"] = 3
-        elif self.ability == "burn":
-            player.status_effects["burn"] = 3
-        elif self.ability == "stun":
-            player.status_effects["stun"] = 1
-            print(_(f"The {self.name} stuns you!"))
-        elif self.ability == "bleed":
-            player.status_effects["bleed"] = 3
-        elif self.ability == "freeze":
-            player.status_effects["freeze"] = 1
-            print(_(f"The {self.name} freezes you for 1 turns!"))
-        elif self.ability == "double_strike" and random.random() < 0.25:
-            print(_(f"The {self.name} strikes twice!"))
-            player.take_damage(damage)
-        player.take_damage(damage)
-        print(_(f"The {self.name} attacked you and dealt {damage} damage."))
+        if roll <= hit_chance:
+            if self.ability == "lifesteal":
+                self.health += damage // 3
+                print(_(f"The {self.name} drains life and heals for {damage // 3}!"))
+            elif self.ability == "poison":
+                add_status_effect(player, "poison", 3)
+            elif self.ability == "burn":
+                add_status_effect(player, "burn", 3)
+            elif self.ability == "stun":
+                add_status_effect(player, "stun", 1)
+            elif self.ability == "bleed":
+                add_status_effect(player, "bleed", 3)
+            elif self.ability == "freeze":
+                add_status_effect(player, "freeze", 1)
+            elif self.ability == "double_strike" and random.random() < 0.25:
+                print(_(f"The {self.name} strikes twice!"))
+                player.take_damage(damage, source=self.name)
+            player.take_damage(damage, source=self.name)
+            if config.verbose_combat:
+                print(
+                    _(
+                        f"{self.name} attacks ({hit_chance}%): roll {roll} → HIT. Damage {damage}."
+                    )
+                )
+            else:
+                print(_(f"The {self.name} attacked you and dealt {damage} damage."))
+        else:
+            if config.verbose_combat:
+                reason = "It slipped on the wet stone!"
+                print(
+                    _(
+                        f"{self.name} attacks ({hit_chance}%): roll {roll} → MISS. {reason}"
+                    )
+                )
+            else:
+                print(_(f"The {self.name}'s attack missed."))
 
 
 class Companion(Entity):
