@@ -1,9 +1,11 @@
 name: Auto-format via PR
 
 on:
-  workflow_dispatch:      # manual "Run workflow" button
-  schedule:
-    - cron: '0 8 * * *'   # optional: daily at 08:00 UTC
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -25,10 +27,11 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install formatters
+      - name: Install dev tools
         run: |
-          pip install --upgrade pip
-          pip install black isort
+          python -m pip install --upgrade pip
+          # install your dev extras from pyproject
+          pip install ".[dev]"
 
       - name: Run formatters
         run: |
