@@ -6,6 +6,8 @@ import random
 from gettext import gettext as _
 from typing import TYPE_CHECKING
 
+from .items import Item
+
 if TYPE_CHECKING:  # pragma: no cover - for type checkers only
     from .dungeon import DungeonBase
 
@@ -45,6 +47,78 @@ class TrapEvent(BaseEvent):
     """Inflict random damage to the player."""
 
     def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+        output_func(_("You notice taut filament across the path…"))
+        if input_func is input:
+            choice = "n"
+        else:
+            choice = input_func(_("Try to disarm? (y/n): ")).strip().lower()
+        if choice.startswith("y") and random.random() < 0.5:
+            output_func(_("You carefully disarm the trap."))
+            return
         damage = random.randint(5, 20)
         game.player.take_damage(damage, source="The Tripwire")
         output_func(_(f"A trap is sprung! You take {damage} damage."))
+
+
+class FountainEvent(BaseEvent):
+    """Cracked fountain that can heal or provide a potion."""
+
+    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+        output_func(_("You find a cracked fountain. The water shimmers. (Press [Q] to drink.)"))
+        output_func(_("Drink (Q) / Bottle (B) / Leave (any other key)"))
+        choice = input_func(_("Choice: ")).strip().lower()
+        if choice == "q":
+            heal = random.randint(6, 10)
+            game.player.health = min(game.player.max_health, game.player.health + heal)
+            output_func(_(f"You feel refreshed and recover {heal} health."))
+        elif choice == "b":
+            game.player.inventory.append(Item("Health Potion", "Restores 20 health"))
+            output_func(_("You bottle the shimmering water for later."))
+        else:
+            output_func(_("You leave the fountain untouched."))
+
+
+class CacheEvent(BaseEvent):
+    """Hidden cache that rewards gold."""
+
+    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+        gold = random.randint(15, 30)
+        game.player.gold += gold
+        output_func(_(f"You discover a hidden cache containing {gold} gold."))
+
+
+class LoreNoteEvent(BaseEvent):
+    """Reveal a snippet of lore."""
+
+    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+        notes = [
+            _("The walls whisper of an ancient battle."),
+            _("Scrawled handwriting reads: 'Beware the shadows.'"),
+            _("A faded map hints at deeper treasures."),
+        ]
+        output_func(random.choice(notes))
+
+
+class ShrineEvent(BaseEvent):
+    """Heal the player at a shrine."""
+
+    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+        heal = random.randint(8, 12)
+        game.player.health = min(game.player.max_health, game.player.health + heal)
+        output_func(_(f"A serene shrine restores {heal} health."))
+
+
+class MiniQuestHookEvent(BaseEvent):
+    """Placeholder for mini-quest hooks."""
+
+    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+        output_func(_("A mysterious figure hints at a quest to come."))
+
+
+class HazardEvent(BaseEvent):
+    """Minor environmental hazard dealing damage."""
+
+    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+        damage = random.randint(3, 8)
+        game.player.take_damage(damage, source="Environmental Hazard")
+        output_func(_(f"Falling debris hits you for {damage} damage."))
