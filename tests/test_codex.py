@@ -1,20 +1,25 @@
 import random
-from dungeoncrawler.events import LoreNoteEvent
-from dungeoncrawler.entities import Player, Enemy
+
 from dungeoncrawler.dungeon import DungeonBase
+from dungeoncrawler.entities import Enemy, Player
+from dungeoncrawler.events import LoreNoteEvent
 
 
 def test_lore_note_event_buff(monkeypatch):
     player = Player("Hero")
+
     class Game:
         pass
+
     game = Game()
     game.player = player
     event = LoreNoteEvent()
+
     def fake_choice(seq):
         return seq[-1]
+
     monkeypatch.setattr(random, "choice", fake_choice)
-    event.trigger(game, output_func=lambda _ : None)
+    event.trigger(game, output_func=lambda _: None)
     assert player.codex
     assert "beetle_bane" in player.status_effects
     assert player.status_effects["beetle_bane"] == 10
@@ -51,4 +56,3 @@ def test_beetle_bane_attack_bonus(monkeypatch):
     monkeypatch.setattr(random, "randint", lambda a, b: 86)
     player.attack(enemy)
     assert enemy.health == 4
-
