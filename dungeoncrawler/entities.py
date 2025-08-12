@@ -44,6 +44,24 @@ class Player(Entity):
         # Start as an untrained crawler. Specific classes can be chosen later
         # via ``choose_class``.
         self.choose_class(class_type, announce=False)
+        # Map class names to their respective skill handlers
+        self.skill_handlers = {
+            "Warrior": self._skill_warrior,
+            "Mage": self._skill_mage,
+            "Rogue": self._skill_rogue,
+            "Cleric": self._skill_cleric,
+            "Paladin": self._skill_paladin,
+            "Bard": self._skill_bard,
+            "Barbarian": self._skill_barbarian,
+            "Druid": self._skill_druid,
+            "Ranger": self._skill_ranger,
+            "Sorcerer": self._skill_sorcerer,
+            "Monk": self._skill_monk,
+            "Warlock": self._skill_warlock,
+            "Necromancer": self._skill_necromancer,
+            "Shaman": self._skill_shaman,
+            "Alchemist": self._skill_alchemist,
+        }
 
     def choose_class(self, class_type, announce=True):
         """Select a class and update core stats accordingly.
@@ -168,107 +186,119 @@ class Player(Entity):
         if self.skill_cooldown > 0:
             self.skill_cooldown -= 1
 
+    # Skill handler implementations
+    def _skill_warrior(self, enemy):
+        damage = self.attack_power * 2
+        print(_(f"You unleash a mighty Power Strike dealing {damage} damage!"))
+        enemy.take_damage(damage)
+
+    def _skill_mage(self, enemy):
+        damage = self.attack_power + random.randint(10, 15)
+        print(_(f"You cast Fireball dealing {damage} damage!"))
+        enemy.take_damage(damage)
+        enemy.status_effects = getattr(enemy, "status_effects", {})
+        enemy.status_effects["burn"] = 3
+
+    def _skill_rogue(self, enemy):
+        damage = self.attack_power + random.randint(5, 10)
+        print(_(f"You perform a sneaky Backstab for {damage} damage!"))
+        enemy.take_damage(damage)
+
+    def _skill_cleric(self, enemy):
+        heal = min(20, self.max_health - self.health)
+        self.health += heal
+        print(_(f"You invoke Healing Light and recover {heal} health!"))
+
+    def _skill_paladin(self, enemy):
+        damage = self.attack_power + random.randint(5, 12)
+        print(_(f"You smite the {enemy.name} for {damage} holy damage!"))
+        enemy.take_damage(damage)
+        heal = min(10, self.max_health - self.health)
+        if heal:
+            self.health += heal
+            print(_(f"Divine power heals you for {heal} HP!"))
+
+    def _skill_bard(self, enemy):
+        print(_("You play an inspiring tune, bolstering your spirit!"))
+        self.status_effects["inspire"] = 3
+
+    def _skill_barbarian(self, enemy):
+        damage = self.attack_power + random.randint(8, 12)
+        enemy.take_damage(damage)
+        heal = min(10, self.max_health - self.health)
+        self.health += heal
+        print(_(f"You enter a rage, dealing {damage} damage and healing {heal}!"))
+
+    def _skill_druid(self, enemy):
+        damage = self.attack_power + random.randint(5, 10)
+        enemy.take_damage(damage)
+        enemy.status_effects = getattr(enemy, "status_effects", {})
+        enemy.status_effects["freeze"] = 1
+        heal = min(5, self.max_health - self.health)
+        self.health += heal
+        print(_(f"Nature's wrath deals {damage} damage and restores {heal} health!"))
+
+    def _skill_ranger(self, enemy):
+        damage = self.attack_power + random.randint(6, 12)
+        enemy.take_damage(damage)
+        enemy.status_effects = getattr(enemy, "status_effects", {})
+        enemy.status_effects["poison"] = 3
+        print(_(f"A volley of arrows hits for {damage} damage and poisons the foe!"))
+
+    def _skill_sorcerer(self, enemy):
+        damage = self.attack_power + random.randint(12, 18)
+        enemy.take_damage(damage)
+        enemy.status_effects = getattr(enemy, "status_effects", {})
+        enemy.status_effects["burn"] = 3
+        print(_(f"You unleash Arcane Blast for {damage} damage!"))
+
+    def _skill_monk(self, enemy):
+        damage = self.attack_power + random.randint(4, 8)
+        enemy.take_damage(damage)
+        enemy.take_damage(damage)
+        print(_(f"You strike twice with a flurry for {damage * 2} total damage!"))
+
+    def _skill_warlock(self, enemy):
+        damage = self.attack_power + random.randint(8, 12)
+        enemy.take_damage(damage)
+        heal = min(damage // 2, self.max_health - self.health)
+        self.health += heal
+        print(_(f"Eldritch energy deals {damage} damage and heals you for {heal}!"))
+
+    def _skill_necromancer(self, enemy):
+        damage = self.attack_power + random.randint(5, 10)
+        enemy.take_damage(damage)
+        heal = min(damage // 2, self.max_health - self.health)
+        self.health += heal
+        print(_(f"You siphon the enemy's soul for {damage} damage and {heal} health!"))
+
+    def _skill_shaman(self, enemy):
+        heal = min(15, self.max_health - self.health)
+        self.health += heal
+        damage = self.attack_power + random.randint(4, 8)
+        enemy.take_damage(damage)
+        print(_(f"Spirits mend you for {heal} and shock the foe for {damage} damage!"))
+
+    def _skill_alchemist(self, enemy):
+        damage = self.attack_power + random.randint(8, 12)
+        enemy.take_damage(damage)
+        enemy.status_effects = getattr(enemy, "status_effects", {})
+        enemy.status_effects["burn"] = 3
+        print(
+            _(f"An explosive flask bursts for {damage} damage and sets the foe ablaze!")
+        )
+
     def use_skill(self, enemy):
         if self.skill_cooldown > 0:
             print(
                 _(f"Your skill is on cooldown for {self.skill_cooldown} more turn(s).")
             )
             return
-        if self.class_type == "Warrior":
-            damage = self.attack_power * 2
-            print(_(f"You unleash a mighty Power Strike dealing {damage} damage!"))
-            enemy.take_damage(damage)
-        elif self.class_type == "Mage":
-            damage = self.attack_power + random.randint(10, 15)
-            print(_(f"You cast Fireball dealing {damage} damage!"))
-            enemy.take_damage(damage)
-            enemy.status_effects = getattr(enemy, "status_effects", {})
-            enemy.status_effects["burn"] = 3
-        elif self.class_type == "Rogue":
-            damage = self.attack_power + random.randint(5, 10)
-            print(_(f"You perform a sneaky Backstab for {damage} damage!"))
-            enemy.take_damage(damage)
-        elif self.class_type == "Cleric":
-            heal = min(20, self.max_health - self.health)
-            self.health += heal
-            print(_(f"You invoke Healing Light and recover {heal} health!"))
-        elif self.class_type == "Paladin":
-            damage = self.attack_power + random.randint(5, 12)
-            print(_(f"You smite the {enemy.name} for {damage} holy damage!"))
-            enemy.take_damage(damage)
-            heal = min(10, self.max_health - self.health)
-            if heal:
-                self.health += heal
-                print(_(f"Divine power heals you for {heal} HP!"))
-        elif self.class_type == "Bard":
-            print(_("You play an inspiring tune, bolstering your spirit!"))
-            self.status_effects["inspire"] = 3
-        elif self.class_type == "Barbarian":
-            damage = self.attack_power + random.randint(8, 12)
-            enemy.take_damage(damage)
-            heal = min(10, self.max_health - self.health)
-            self.health += heal
-            print(_(f"You enter a rage, dealing {damage} damage and healing {heal}!"))
-        elif self.class_type == "Druid":
-            damage = self.attack_power + random.randint(5, 10)
-            enemy.take_damage(damage)
-            enemy.status_effects["freeze"] = 1
-            heal = min(5, self.max_health - self.health)
-            self.health += heal
-            print(
-                _(f"Nature's wrath deals {damage} damage and restores {heal} health!")
-            )
-        elif self.class_type == "Ranger":
-            damage = self.attack_power + random.randint(6, 12)
-            enemy.take_damage(damage)
-            enemy.status_effects["poison"] = 3
-            print(
-                _(f"A volley of arrows hits for {damage} damage and poisons the foe!")
-            )
-        elif self.class_type == "Sorcerer":
-            damage = self.attack_power + random.randint(12, 18)
-            enemy.take_damage(damage)
-            enemy.status_effects["burn"] = 3
-            print(_(f"You unleash Arcane Blast for {damage} damage!"))
-        elif self.class_type == "Monk":
-            damage = self.attack_power + random.randint(4, 8)
-            enemy.take_damage(damage)
-            enemy.take_damage(damage)
-            print(_(f"You strike twice with a flurry for {damage * 2} total damage!"))
-        elif self.class_type == "Warlock":
-            damage = self.attack_power + random.randint(8, 12)
-            enemy.take_damage(damage)
-            heal = min(damage // 2, self.max_health - self.health)
-            self.health += heal
-            print(_(f"Eldritch energy deals {damage} damage and heals you for {heal}!"))
-        elif self.class_type == "Necromancer":
-            damage = self.attack_power + random.randint(5, 10)
-            enemy.take_damage(damage)
-            heal = min(damage // 2, self.max_health - self.health)
-            self.health += heal
-            print(
-                _(f"You siphon the enemy's soul for {damage} damage and {heal} health!")
-            )
-        elif self.class_type == "Shaman":
-            heal = min(15, self.max_health - self.health)
-            self.health += heal
-            damage = self.attack_power + random.randint(4, 8)
-            enemy.take_damage(damage)
-            print(
-                _(f"Spirits mend you for {heal} and shock the foe for {damage} damage!")
-            )
-        elif self.class_type == "Alchemist":
-            damage = self.attack_power + random.randint(8, 12)
-            enemy.take_damage(damage)
-            enemy.status_effects["burn"] = 3
-            print(
-                _(
-                    f"An explosive flask bursts for {damage} damage and sets the foe ablaze!"
-                )
-            )
-        else:
+        handler = self.skill_handlers.get(self.class_type)
+        if not handler:
             print(_("You don't have a special skill."))
             return
+        handler(enemy)
         if not enemy.is_alive():
             self.process_enemy_defeat(enemy)
         self.skill_cooldown = 3
