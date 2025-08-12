@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import curses
 import random
+from collections import deque
 from gettext import gettext as _
 from typing import TYPE_CHECKING
-from collections import deque
 
 from .ai import ARCHETYPES, IntentAI
 from .combat import battle
