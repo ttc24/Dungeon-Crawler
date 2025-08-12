@@ -63,7 +63,9 @@ def main(argv=None, input_func=input, output_func=print):
         # Fallback if the save didn't actually produce a player
         if getattr(game, "player", None) is None:
             output_func(_("No valid save found. Starting a new game…"))
-            game.player = build_character(input_func=input_func, output_func=output_func)
+            game.player = build_character(
+                input_func=input_func, output_func=output_func
+            )
             if not args.skip_tutorial and not game.tutorial_complete:
                 tutorial.run(game)
     else:
