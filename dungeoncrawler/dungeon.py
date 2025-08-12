@@ -3,17 +3,17 @@ import os
 import random
 import time
 from functools import lru_cache
-from pathlib import Path
 from gettext import gettext as _
+from pathlib import Path
 
-from .constants import ANNOUNCER_LINES, RIDDLES, SAVE_FILE, SCORE_FILE
-from .entities import Companion, Player
-from .items import Item, Weapon
-from .plugins import apply_enemy_plugins, apply_item_plugins
 from . import combat as combat_module
 from . import map as map_module
 from . import shop as shop_module
+from .constants import ANNOUNCER_LINES, RIDDLES, SAVE_FILE, SCORE_FILE
+from .entities import Companion, Player
 from .events import MerchantEvent, PuzzleEvent, TrapEvent
+from .items import Item, Weapon
+from .plugins import apply_enemy_plugins, apply_item_plugins
 
 # ---------------------------------------------------------------------------
 # Data loading utilities

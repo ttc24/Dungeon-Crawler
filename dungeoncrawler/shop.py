@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
 from gettext import gettext as _
+from typing import TYPE_CHECKING
 
 from .items import Item, Weapon
 

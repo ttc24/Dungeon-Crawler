@@ -4,9 +4,9 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+from dungeoncrawler import map as dungeon_map
 from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.entities import Enemy, Player
-from dungeoncrawler import map as dungeon_map
 
 
 def test_generate_dungeon_size_and_population():

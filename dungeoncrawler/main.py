@@ -49,11 +49,11 @@ def main(argv=None):
     set_language(args.lang)
 
     global DungeonBase, Player
-    from .dungeon import DungeonBase
-    from .entities import Player
     from . import combat as combat_module  # noqa: F401
     from . import map as dungeon_map  # noqa: F401
     from . import shop as shop_module  # noqa: F401
+    from .dungeon import DungeonBase
+    from .entities import Player
 
     cfg = load_config()
     game = DungeonBase(cfg.screen_width, cfg.screen_height)
