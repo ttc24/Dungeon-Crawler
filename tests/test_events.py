@@ -45,10 +45,31 @@ def test_puzzle_event_rewards_on_correct_answer():
 def test_trap_event_deals_damage():
     game = setup_game()
     event = TrapEvent()
-    with patch("dungeoncrawler.events.random.randint", return_value=10):
+    with (
+        patch("dungeoncrawler.events.random.randint", return_value=10),
+        patch(
+            "dungeoncrawler.events.random.random",
+            side_effect=[0.99, 0.99],
+        ),
+    ):
         health_before = game.player.health
         event.trigger(game)
         assert game.player.health == health_before - 10
+
+
+def test_trap_event_detect_and_disarm():
+    game = setup_game()
+    event = TrapEvent()
+    stamina_before = game.player.stamina
+    health_before = game.player.health
+    with patch("dungeoncrawler.events.random.random", return_value=0.0):
+        event.trigger(
+            game,
+            input_func=lambda _: "d",
+            output_func=lambda _msg: None,
+        )
+    assert game.player.stamina == stamina_before - 15
+    assert game.player.health == health_before
 
 
 def test_fountain_event_drink_heals():
