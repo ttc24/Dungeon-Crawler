@@ -108,3 +108,26 @@ def test_enemy_damage_range(player):
     enemy.attack(player)
     damage = start - player.health
     assert 10 <= damage <= 20
+
+
+def test_player_flee_success():
+    player = Player("Hero")
+    enemy = Enemy("Goblin", 10, 0, 0, 0, speed=5)
+    player.speed = 20
+    random.seed(0)
+    assert player.flee(enemy) is True
+    assert "advantage" not in enemy.status_effects
+
+
+def test_player_flee_failure_gives_enemy_advantage():
+    player = Player("Hero")
+    enemy = Enemy("Goblin", 10, 5, 0, 0, speed=10)
+    player.speed = 10
+    random.seed(0)
+    assert player.flee(enemy) is False
+    assert enemy.status_effects.get("advantage") == 1
+    random.seed(30)
+    before = player.health
+    enemy.attack(player)
+    assert player.health < before
+    assert "advantage" not in enemy.status_effects
