@@ -17,3 +17,15 @@ As you explore, floors can trigger random events:
 
 These events add variety and can occur on any floor.
 
+Enemy Intents
+-------------
+Foes now telegraph their behaviour each round.  Every enemy rolls one of
+three intents—Aggressive, Defensive or Unpredictable—weighted by its
+archetype.  The selected intent is announced before the action resolves,
+for example::
+
+    Goblin steadies a heavy strike…
+    Beetle curls into its shell.
+
+Pay attention to these tells to decide when to Defend or attempt a Feint.
+

@@ -562,6 +562,10 @@ class Enemy(Entity):
         self.ai = ai
         self.xp = 10
         self.speed = speed
+        # Intent planning and cooldowns
+        self.next_action = None
+        self.intent_message = ""
+        self.heavy_cd = 0
 
     def is_alive(self):
         return self.health > 0
@@ -584,23 +588,52 @@ class Enemy(Entity):
         print(_(f"The {self.name} raises its guard!"))
 
     def take_turn(self, player):
-        action = "attack"
-        if self.ai:
-            action = self.ai.choose_action(self, player)
+        action = self.next_action
+        self.next_action = None
+        if action is None:
+            if self.ai:
+                action = self.ai.choose_action(self, player)
+            else:
+                action = "attack"
         if action == "defend":
             self.defend()
+        elif action == "heavy_attack":
+            add_status_effect(self, "heavy", 1)
+            self.heavy_cd = 3
+            self.attack(player)
+        elif action == "wild_attack":
+            add_status_effect(self, "wild", 1)
+            self.attack(player)
         else:
             self.attack(player)
+        if self.ai and hasattr(self.ai, "plan_next"):
+            self.next_action, self.intent_message = self.ai.plan_next(self, player)
+        else:
+            self.next_action = None
+            self.intent_message = ""
+        if self.heavy_cd > 0:
+            self.heavy_cd -= 1
 
+    
     def attack(self, player):
         hit_chance = 60
         if self.status_effects.pop("advantage", 0):
             hit_chance += 15
         if self.status_effects.pop("stagger", 0):
             hit_chance -= 20
+        if self.status_effects.pop("wild", 0):
+            hit_chance -= 20
+            wild = True
+        else:
+            wild = False
         roll = random.randint(1, 100)
         damage = random.randint(self.attack_power // 2, self.attack_power)
+        if self.status_effects.pop("heavy", 0):
+            damage = int(damage * 1.5)
         if roll <= hit_chance:
+            if wild and roll >= 95:
+                damage *= 2
+                print(_(f"The {self.name} lands a vicious critical!"))
             if self.ability == "lifesteal":
                 self.health += damage // 3
                 print(_(f"The {self.name} drains life and heals for {damage // 3}!"))
@@ -621,7 +654,7 @@ class Enemy(Entity):
             if config.verbose_combat:
                 print(
                     _(
-                        f"{self.name} attacks ({hit_chance}%): roll {roll} → HIT. Damage {damage}."
+                        f"{self.name} attacks ({hit_chance}%): roll {roll} → HIT. Damage {damage}.",
                     )
                 )
             else:
@@ -631,12 +664,11 @@ class Enemy(Entity):
                 reason = "It slipped on the wet stone!"
                 print(
                     _(
-                        f"{self.name} attacks ({hit_chance}%): roll {roll} → MISS. {reason}"
+                        f"{self.name} attacks ({hit_chance}%): roll {roll} → MISS. {reason}",
                     )
                 )
             else:
                 print(_(f"The {self.name}'s attack missed."))
-
 
 class Companion(Entity):
     """NPC ally that can aid the player during combat.
