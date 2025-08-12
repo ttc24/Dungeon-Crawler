@@ -424,12 +424,30 @@ class DungeonBase:
             )
 
         classes = {
-            "1": "Warrior", "2": "Mage", "3": "Rogue", "4": "Cleric", "5": "Paladin",
-            "6": "Bard", "7": "Barbarian", "8": "Druid", "9": "Ranger", "10": "Sorcerer",
-            "11": "Monk", "12": "Warlock", "13": "Necromancer", "14": "Shaman", "15": "Alchemist",
+            "1": "Warrior",
+            "2": "Mage",
+            "3": "Rogue",
+            "4": "Cleric",
+            "5": "Paladin",
+            "6": "Bard",
+            "7": "Barbarian",
+            "8": "Druid",
+            "9": "Ranger",
+            "10": "Sorcerer",
+            "11": "Monk",
+            "12": "Warlock",
+            "13": "Necromancer",
+            "14": "Shaman",
+            "15": "Alchemist",
         }
         names = {v.lower(): k for k, v in classes.items()}
-        aliases = {"wiz": "mage", "sorc": "sorcerer", "necro": "necromancer", "lock": "warlock", "pally": "paladin"}
+        aliases = {
+            "wiz": "mage",
+            "sorc": "sorcerer",
+            "necro": "necromancer",
+            "lock": "warlock",
+            "pally": "paladin",
+        }
 
         while True:
             raw = input(_("Class: ")).strip().lower()
