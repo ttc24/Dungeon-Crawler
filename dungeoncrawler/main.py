@@ -9,6 +9,7 @@ race and guild selections are deferred to later floors and offered by the
 import argparse
 from gettext import gettext as _
 
+from . import tutorial
 from .config import load_config
 from .dungeon import DungeonBase
 from .entities import Player
@@ -58,9 +59,7 @@ def main(argv=None, input_func=input, output_func=print):
         if args.skip_tutorial:
             game.tutorial_complete = True
         elif not game.tutorial_complete:
-            from .tutorial import run as run_tutorial
-
-            run_tutorial(game)
+            tutorial.run(game)
     game.play_game()
 
 
