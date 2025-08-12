@@ -26,6 +26,7 @@ def enemy():
 
 def test_player_attack_defeats_enemy(player, enemy):
     enemy.health = 5
+    random.seed(0)
     player.attack(enemy)
     assert enemy.health == 0
     assert player.xp == 5

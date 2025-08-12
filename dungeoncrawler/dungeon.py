@@ -13,9 +13,9 @@ from .constants import (
     ANNOUNCER_LINES,
     INVALID_KEY_MSG,
     RIDDLES,
+    RUN_FILE,
     SAVE_FILE,
     SCORE_FILE,
-    RUN_FILE,
 )
 from .entities import Companion, Player
 from .events import MerchantEvent, PuzzleEvent, TrapEvent
