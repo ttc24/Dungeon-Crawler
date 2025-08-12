@@ -73,9 +73,7 @@ def test_apply_item_plugins(monkeypatch, tmp_path):
                 "price": 5,
             }
         ],
-        "items": [
-            {"name": "Test Potion", "description": "A potion"}
-        ],
+        "items": [{"name": "Test Potion", "description": "A potion"}],
     }
     mod_name = _create_mod(monkeypatch, tmp_path, {"items.json": items_json})
 
