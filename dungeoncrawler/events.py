@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import json
 import random
+from functools import lru_cache
 from gettext import gettext as _
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from .items import Item
@@ -11,6 +14,19 @@ from .status_effects import add_status_effect
 
 if TYPE_CHECKING:  # pragma: no cover - for type checkers only
     from .dungeon import DungeonBase
+
+
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+
+
+@lru_cache(maxsize=None)
+def load_event_config():
+    path = DATA_DIR / "events.json"
+    with open(path) as f:
+        return json.load(f)
+
+
+EVENT_CONFIG = load_event_config()
 
 
 class BaseEvent:
@@ -47,20 +63,28 @@ class PuzzleEvent(BaseEvent):
 class TrapEvent(BaseEvent):
     """Hidden hazard that can be spotted and avoided."""
 
+    def __init__(self) -> None:
+        cfg = EVENT_CONFIG.get("trap", {})
+        self.detect_base = cfg.get("detect_base", 0.30)
+        self.disarm_cost = cfg.get("disarm_cost", 15)
+        self.bleed_chance = cfg.get("bleed_chance", 0.3)
+
     def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
         speed = getattr(game.player, "speed", 0)
         perception = getattr(game.player, "perception", 0)
-        detect_chance = 0.30 + (speed + perception) * 0.05
+        detect_chance = self.detect_base + (speed + perception) * 0.05
         detect_chance = min(0.95, detect_chance)
         if random.random() < detect_chance:
             output_func(_("You spot a faint glyph hinting at a trap."))
             if input_func is input:
                 action = "n"
             else:
-                prompt = _("Disarm (d) [15 STA] or step around (s)? ")
+                prompt = _(
+                    f"Disarm (d) [{self.disarm_cost} STA] or step around (s)? "
+                )
                 action = input_func(prompt).strip().lower()
-            if action == "d" and game.player.stamina >= 15:
-                game.player.stamina -= 15
+            if action == "d" and game.player.stamina >= self.disarm_cost:
+                game.player.stamina -= self.disarm_cost
                 output_func(_("You carefully disarm the trap."))
                 game.visited_rooms.add((game.player.x, game.player.y))
                 return
@@ -72,7 +96,7 @@ class TrapEvent(BaseEvent):
         damage = random.randint(5, 20)
         game.player.take_damage(damage, source=_("The Tripwire"))
         output_func(_(f"A trap is sprung! You take {damage} damage."))
-        if random.random() < 0.3:
+        if random.random() < self.bleed_chance:
             add_status_effect(game.player, "bleed", 3)
         game.visited_rooms.add((game.player.x, game.player.y))
 
@@ -81,7 +105,10 @@ class FountainEvent(BaseEvent):
     """Cracked fountain that can heal or provide a potion."""
 
     def __init__(self) -> None:
-        self.remaining_uses = 2
+        cfg = EVENT_CONFIG.get("fountain", {})
+        self.remaining_uses = cfg.get("uses", 2)
+        self.bless_chance = cfg.get("bless_chance", 0.3)
+        self.curse_chance = cfg.get("curse_chance", 0.1)
 
     def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
         if self.remaining_uses <= 0:
@@ -93,12 +120,14 @@ class FountainEvent(BaseEvent):
             choice = input_func(_("Choice: ")).strip().lower()
             if choice in ("d", "q"):
                 heal = random.randint(6, 10)
-                game.player.health = min(game.player.max_health, game.player.health + heal)
+                game.player.health = min(
+                    game.player.max_health, game.player.health + heal
+                )
                 output_func(_(f"You feel refreshed and recover {heal} health."))
                 roll = random.random()
-                if roll < 0.3:
+                if roll < self.bless_chance:
                     add_status_effect(game.player, "blessed", 30)
-                elif roll < 0.4:
+                elif roll < self.bless_chance + self.curse_chance:
                     add_status_effect(game.player, "cursed", 30)
             elif choice == "b":
                 game.player.inventory.append(Item("Fountain Water", "Restores 4-6 health"))
@@ -147,6 +176,10 @@ class LoreNoteEvent(BaseEvent):
 class ShrineEvent(BaseEvent):
     """Offer blessings or curses at a shrine."""
 
+    def __init__(self) -> None:
+        cfg = EVENT_CONFIG.get("shrine", {})
+        self.prayer_boon = cfg.get("prayer_boon_chance", 0.6)
+
     def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
         output_func(_("You discover a tranquil shrine with two altars."))
         output_func(_("[V] Altar of Valor (+1 STR until next floor)"))
@@ -163,9 +196,11 @@ class ShrineEvent(BaseEvent):
             output_func(_("You kneel and whisper a prayer..."))
             output_func("    _\\/_")
             output_func("     /\\")
-            if random.random() < 0.6:
+            if random.random() < self.prayer_boon:
                 heal = random.randint(8, 12)
-                game.player.health = min(game.player.max_health, game.player.health + heal)
+                game.player.health = min(
+                    game.player.max_health, game.player.health + heal
+                )
                 output_func(_(f"A warm light restores {heal} health."))
             else:
                 add_status_effect(game.player, "cursed", 30)

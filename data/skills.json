@@ -1,0 +1,23 @@
+[
+  {
+    "key": "1",
+    "name": "Power Strike",
+    "cost": 30,
+    "base_cooldown": 3,
+    "func": "power_strike"
+  },
+  {
+    "key": "2",
+    "name": "Feint",
+    "cost": 20,
+    "base_cooldown": 4,
+    "func": "feint"
+  },
+  {
+    "key": "3",
+    "name": "Bandage",
+    "cost": 25,
+    "base_cooldown": 5,
+    "func": "bandage"
+  }
+]

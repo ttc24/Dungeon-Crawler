@@ -1,11 +1,14 @@
-{
-  "Bone Tyrant": {
+[
+  {
+    "name": "Bone Tyrant",
     "stats": [
       250,
       30,
       12,
       120
     ],
+    "ai": {},
+    "traits": [],
     "ability": "lifesteal",
     "loot": [
       {
@@ -17,13 +20,16 @@
       }
     ]
   },
-  "Doom Bringer": {
+  {
+    "name": "Doom Bringer",
     "stats": [
       300,
       38,
       16,
       160
     ],
+    "ai": {},
+    "traits": [],
     "ability": "double_strike",
     "loot": [
       {
@@ -35,13 +41,16 @@
       }
     ]
   },
-  "Ember Lord": {
+  {
+    "name": "Ember Lord",
     "stats": [
       295,
       37,
       16,
       158
     ],
+    "ai": {},
+    "traits": [],
     "ability": "burn",
     "loot": [
       {
@@ -53,13 +62,16 @@
       }
     ]
   },
-  "Frost Warden": {
+  {
+    "name": "Frost Warden",
     "stats": [
       260,
       28,
       13,
       130
     ],
+    "ai": {},
+    "traits": [],
     "ability": "freeze",
     "loot": [
       {
@@ -71,13 +83,16 @@
       }
     ]
   },
-  "Glacier Fiend": {
+  {
+    "name": "Glacier Fiend",
     "stats": [
       265,
       29,
       14,
       133
     ],
+    "ai": {},
+    "traits": [],
     "ability": "freeze",
     "loot": [
       {
@@ -89,13 +104,16 @@
       }
     ]
   },
-  "Grave Monarch": {
+  {
+    "name": "Grave Monarch",
     "stats": [
       275,
       32,
       15,
       138
     ],
+    "ai": {},
+    "traits": [],
     "ability": "lifesteal",
     "loot": [
       {
@@ -107,13 +125,16 @@
       }
     ]
   },
-  "Inferno Golem": {
+  {
+    "name": "Inferno Golem",
     "stats": [
       270,
       35,
       14,
       140
     ],
+    "ai": {},
+    "traits": [],
     "ability": "burn",
     "loot": [
       {
@@ -125,13 +146,16 @@
       }
     ]
   },
-  "Shadow Reaver": {
+  {
+    "name": "Shadow Reaver",
     "stats": [
       280,
       33,
       15,
       150
     ],
+    "ai": {},
+    "traits": [],
     "ability": "poison",
     "loot": [
       {
@@ -143,13 +167,16 @@
       }
     ]
   },
-  "Storm Reaper": {
+  {
+    "name": "Storm Reaper",
     "stats": [
       285,
       34,
       15,
       145
     ],
+    "ai": {},
+    "traits": [],
     "ability": "double_strike",
     "loot": [
       {
@@ -161,13 +188,16 @@
       }
     ]
   },
-  "Void Serpent": {
+  {
+    "name": "Void Serpent",
     "stats": [
       290,
       36,
       17,
       155
     ],
+    "ai": {},
+    "traits": [],
     "ability": "poison",
     "loot": [
       {
@@ -179,4 +209,4 @@
       }
     ]
   }
-}
+]

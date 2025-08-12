@@ -34,16 +34,21 @@ def _load_json_from_mod(mod, filename):
     return None
 
 
-def apply_enemy_plugins(enemy_stats, enemy_abilities):
+def apply_enemy_plugins(enemy_stats, enemy_abilities, enemy_ai, enemy_traits):
     """Augment enemy dictionaries with contributions from mods."""
     for mod in discover_plugins():
         data = _load_json_from_mod(mod, "enemies.json")
         if data:
-            for name, cfg in data.items():
+            for cfg in data:
+                name = cfg["name"]
                 enemy_stats[name] = tuple(cfg["stats"])
                 ability = cfg.get("ability")
                 if ability:
                     enemy_abilities[name] = ability
+                if cfg.get("ai"):
+                    enemy_ai[name] = cfg["ai"]
+                if cfg.get("traits"):
+                    enemy_traits[name] = cfg["traits"]
         if hasattr(mod, "register_enemies"):
             mod.register_enemies(enemy_stats, enemy_abilities)
 
