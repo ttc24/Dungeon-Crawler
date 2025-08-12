@@ -11,6 +11,8 @@ from gettext import gettext as _
 
 from .config import load_config
 from .i18n import set_language
+from .dungeon import DungeonBase
+from .entities import Player
 
 
 def build_character(input_func=input, output_func=print):
@@ -20,8 +22,6 @@ def build_character(input_func=input, output_func=print):
     explores deeper floors.  This keeps the initial setup light and mirrors
     the gradual progression described in the novels.
     """
-
-    from .entities import Player
 
     name = ""
     while not name:
@@ -49,13 +49,6 @@ def main(argv=None, input_func=input, output_func=print):
     args = parser.parse_args(argv)
 
     set_language(args.lang)
-
-    global DungeonBase, Player
-    from . import combat as combat_module  # noqa: F401
-    from . import map as dungeon_map  # noqa: F401
-    from . import shop as shop_module  # noqa: F401
-    from .dungeon import DungeonBase
-    from .entities import Player
 
     cfg = load_config()
     game = DungeonBase(cfg.screen_width, cfg.screen_height)
