@@ -1,5 +1,6 @@
 import importlib
 import json
+import logging
 import pkgutil
 from pathlib import Path
 
@@ -12,10 +13,13 @@ def discover_plugins():
     """Return imported plugin modules found under :mod:`mods` package."""
     if not MODS_DIR.exists():
         return []
-    return [
-        importlib.import_module(f"mods.{m.name}")
-        for m in pkgutil.iter_modules([str(MODS_DIR)])
-    ]
+    modules = []
+    for m in pkgutil.iter_modules([str(MODS_DIR)]):
+        try:
+            modules.append(importlib.import_module(f"mods.{m.name}"))
+        except ImportError:
+            logging.warning("Failed to import plugin '%s'", m.name)
+    return modules
 
 
 def _load_json_from_mod(mod, filename):
