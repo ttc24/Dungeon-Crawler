@@ -10,9 +10,9 @@ import argparse
 from gettext import gettext as _
 
 from .config import load_config
-from .i18n import set_language
 from .dungeon import DungeonBase
 from .entities import Player
+from .i18n import set_language
 
 
 def build_character(input_func=input, output_func=print):
