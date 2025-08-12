@@ -70,6 +70,11 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
             )
         )
         print(
+            _(
+                f"[1] Power [2] Feint [3] Bandage STA: {player.stamina}/{player.max_stamina}"
+            )
+        )
+        print(
             _("1. Attack\n2. Defend\n3. Use Health Potion\n4. Use Skill\n5. Flee")
         )
         choice = input(_("Choose action: "))
