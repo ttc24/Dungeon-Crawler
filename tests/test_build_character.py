@@ -3,7 +3,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from dungeoncrawler.entities import Enemy, Player
+from dungeoncrawler.entities import Player
 from dungeoncrawler.main import build_character
 
 
@@ -31,22 +31,6 @@ def test_choose_barbarian_stats():
     assert player.class_type == "Barbarian"
     assert player.max_health == 130
     assert player.attack_power == 12
-
-
-def test_warlock_skill_lifesteal(monkeypatch):
-    player = Player("Hexer")
-    player.choose_class("Warlock")
-    enemy = Enemy("Dummy", 100, 5, 0, 0)
-    player.health = 70
-
-    monkeypatch.setattr("random.randint", lambda a, b: 10)
-    player.use_skill(enemy)
-    expected_damage = player.attack_power + 10
-    assert enemy.health == 100 - expected_damage
-    assert player.health == 70 + min(expected_damage // 2, player.max_health - 70)
-    assert player.skill_cooldown == 3
-
-
 def test_race_and_guild_bonuses():
     player = Player("Eve")
     player.choose_race("Tiefling")

@@ -38,9 +38,34 @@ class Player(Entity):
         self.inventory = []
         self.weapon = None
         self.companions = []
-        self.skill_cooldown = 0
         self.guild = None
         self.race = None
+        # Stamina based skill system
+        self.max_stamina = 100
+        self.stamina = 100
+        self.skills = {
+            "1": {
+                "name": "Power Strike",
+                "cost": 30,
+                "base_cooldown": 3,
+                "cooldown": 0,
+                "func": self._skill_power_strike,
+            },
+            "2": {
+                "name": "Feint",
+                "cost": 20,
+                "base_cooldown": 4,
+                "cooldown": 0,
+                "func": self._skill_feint,
+            },
+            "3": {
+                "name": "Bandage",
+                "cost": 25,
+                "base_cooldown": 5,
+                "cooldown": 0,
+                "func": self._skill_bandage,
+            },
+        }
         self.x = 0
         self.y = 0
         self.inventory_limit = 8
@@ -53,24 +78,6 @@ class Player(Entity):
         # Start as an untrained crawler. Specific classes can be chosen later
         # via ``choose_class``.
         self.choose_class(class_type, announce=False)
-        # Map class names to their respective skill handlers
-        self.skill_handlers = {
-            "Warrior": self._skill_warrior,
-            "Mage": self._skill_mage,
-            "Rogue": self._skill_rogue,
-            "Cleric": self._skill_cleric,
-            "Paladin": self._skill_paladin,
-            "Bard": self._skill_bard,
-            "Barbarian": self._skill_barbarian,
-            "Druid": self._skill_druid,
-            "Ranger": self._skill_ranger,
-            "Sorcerer": self._skill_sorcerer,
-            "Monk": self._skill_monk,
-            "Warlock": self._skill_warlock,
-            "Necromancer": self._skill_necromancer,
-            "Shaman": self._skill_shaman,
-            "Alchemist": self._skill_alchemist,
-        }
 
     def choose_class(self, class_type, announce=True):
         """Select a class and update core stats accordingly.
@@ -257,8 +264,50 @@ class Player(Entity):
         return apply_effects(self)
 
     def decrement_cooldowns(self):
-        if self.skill_cooldown > 0:
-            self.skill_cooldown -= 1
+        for skill in self.skills.values():
+            if skill["cooldown"] > 0:
+                skill["cooldown"] -= 1
+
+    # Light-weight skill implementations
+    def _skill_power_strike(self, enemy):
+        hit_chance = 75
+        roll = random.randint(1, 100)
+        base = self.calculate_damage()
+        damage = int(base * 1.5)
+        if roll <= hit_chance:
+            self.apply_weapon_effect(enemy)
+            enemy.take_damage(damage)
+            print(_(f"Power Strike hits for {damage} damage!"))
+            if not enemy.is_alive():
+                self.process_enemy_defeat(enemy)
+        else:
+            print(_("Power Strike misses."))
+
+    def _skill_feint(self, enemy):
+        hit_chance = 85
+        roll = random.randint(1, 100)
+        base = self.calculate_damage()
+        damage = int(base * 0.5)
+        if roll <= hit_chance:
+            self.apply_weapon_effect(enemy)
+            enemy.take_damage(damage)
+            add_status_effect(enemy, "stagger", 1)
+            print(_(f"Feint deals {damage} damage and staggers the enemy!"))
+            if not enemy.is_alive():
+                self.process_enemy_defeat(enemy)
+        else:
+            print(_("Feint misses."))
+
+    def _skill_bandage(self, _enemy):
+        if "bleed" in self.status_effects:
+            del self.status_effects["bleed"]
+            print(_("Bleeding stopped."))
+        heal = min(3, self.max_health - self.health)
+        if heal > 0:
+            self.health += heal
+            print(_(f"You bandage your wounds and heal {heal} HP."))
+        else:
+            print(_("You are already at full health."))
 
     # Skill handler implementations
     def _skill_warrior(self, enemy):
@@ -357,20 +406,35 @@ class Player(Entity):
             _(f"An explosive flask bursts for {damage} damage and sets the foe ablaze!")
         )
 
-    def use_skill(self, enemy):
-        if self.skill_cooldown > 0:
+    def regen_stamina(self, amount):
+        self.stamina = min(self.max_stamina, self.stamina + amount)
+
+    def wait(self):
+        self.regen_stamina(10)
+        print(_("You wait and catch your breath."))
+
+    def use_skill(self, enemy, choice=None):
+        if choice is None:
             print(
-                _(f"Your skill is on cooldown for {self.skill_cooldown} more turn(s).")
+                _(f"[1] Power [2] Feint [3] Bandage STA: {self.stamina}/{self.max_stamina}")
+            )
+            choice = input(_("Choose skill: "))
+        skill = self.skills.get(str(choice))
+        if not skill:
+            print(_("Invalid skill choice."))
+            return
+        if skill["cooldown"] > 0:
+            print(
+                _(f"{skill['name']} is on cooldown for {skill['cooldown']} more turn(s).")
             )
             return
-        handler = self.skill_handlers.get(self.class_type)
-        if not handler:
-            print(_("You don't have a special skill."))
+        if self.stamina < skill["cost"]:
+            needed = skill["cost"] - self.stamina
+            print(_(f"You're winded (need {needed} more STA)."))
             return
-        handler(enemy)
-        if not enemy.is_alive():
-            self.process_enemy_defeat(enemy)
-        self.skill_cooldown = 3
+        self.stamina -= skill["cost"]
+        skill["func"](enemy)
+        skill["cooldown"] = skill["base_cooldown"]
 
     def level_up(self):
         self.level += 1
@@ -393,8 +457,6 @@ class Player(Entity):
             self.health += 10
         elif guild == "Mages' Guild":
             self.attack_power += 3
-        elif guild == "Rogues' Guild":
-            self.skill_cooldown = max(0, self.skill_cooldown - 1)
         elif guild == "Healers' Circle":
             self.max_health += 8
             self.health += 8
@@ -402,7 +464,6 @@ class Player(Entity):
             self.attack_power += 4
         elif guild == "Arcane Order":
             self.attack_power += 2
-            self.skill_cooldown = max(0, self.skill_cooldown - 1)
         elif guild == "Rangers' Lodge":
             self.max_health += 5
             self.health += 5
@@ -430,7 +491,7 @@ class Player(Entity):
             self.max_health += 2
             self.health += 2
         elif race == "Halfling":
-            self.skill_cooldown = max(0, self.skill_cooldown - 1)
+            pass
         elif race == "Catfolk":
             self.attack_power += 1
         elif race == "Lizardfolk":
@@ -442,7 +503,7 @@ class Player(Entity):
             self.max_health += 4
             self.health += 4
         elif race == "Goblin":
-            self.skill_cooldown = max(0, self.skill_cooldown - 1)
+            pass
         elif race == "Dragonborn":
             self.attack_power += 2
             self.max_health += 2
@@ -535,6 +596,8 @@ class Enemy(Entity):
         hit_chance = 60
         if self.status_effects.pop("advantage", 0):
             hit_chance += 15
+        if self.status_effects.pop("stagger", 0):
+            hit_chance -= 20
         roll = random.randint(1, 100)
         damage = random.randint(self.attack_power // 2, self.attack_power)
         if roll <= hit_chance:

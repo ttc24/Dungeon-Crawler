@@ -11,6 +11,7 @@ EFFECT_INFO = {
     "shield": "Block 5 damage.",
     "inspire": "+3 attack.",
     "guard": "Incoming damage -40%. Next attack +10% hit.",
+    "stagger": "-20% hit.",
 }
 
 

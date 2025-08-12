@@ -279,7 +279,10 @@ class DungeonBase:
                 "xp": self.player.xp,
                 "gold": self.player.gold,
                 "class": self.player.class_type,
-                "cooldown": self.player.skill_cooldown,
+                "stamina": self.player.stamina,
+                "skill_cooldowns": {
+                    k: v["cooldown"] for k, v in self.player.skills.items()
+                },
                 "guild": self.player.guild,
                 "race": self.player.race,
                 "inventory": [serialize_item(it) for it in self.player.inventory],
@@ -313,7 +316,11 @@ class DungeonBase:
             self.player.attack_power = p["attack_power"]
             self.player.xp = p["xp"]
             self.player.gold = p["gold"]
-            self.player.skill_cooldown = p.get("cooldown", 0)
+            self.player.stamina = p.get("stamina", self.player.max_stamina)
+            cooldowns = p.get("skill_cooldowns", {})
+            for k, v in cooldowns.items():
+                if k in self.player.skills:
+                    self.player.skills[k]["cooldown"] = v
             self.player.guild = p.get("guild")
             self.player.race = p.get("race")
             for item_data in p.get("inventory", []):
@@ -574,7 +581,7 @@ class DungeonBase:
                 )
                 print(
                     _(
-                        f"Health: {self.player.health} | XP: {self.player.xp} | Gold: {self.player.gold} | Level: {self.player.level} | Floor: {floor} | Skill CD: {self.player.skill_cooldown}"
+                        f"Health: {self.player.health} | STA: {self.player.stamina}/{self.player.max_stamina} | XP: {self.player.xp} | Gold: {self.player.gold} | Level: {self.player.level} | Floor: {floor}"
                     )
                 )
                 if self.player.guild:
@@ -583,7 +590,7 @@ class DungeonBase:
                     print(_(f"Race: {self.player.race}"))
                 print(
                     _(
-                        "1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit 8. Show Map 9. View Leaderboard"
+                        "0. Wait 1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit 8. Show Map 9. View Leaderboard"
                     )
                 )
                 choice = input(_("Action: "))
@@ -615,7 +622,9 @@ class DungeonBase:
         returns ``True`` to continue playing.
         """
 
-        if choice == "1":
+        if choice == "0":
+            self.player.wait()
+        elif choice == "1":
             self.move_player("left")
         elif choice == "2":
             self.move_player("right")
@@ -683,7 +692,10 @@ class DungeonBase:
         return floor, True
 
     def move_player(self, direction):
+        prev = (self.player.x, self.player.y)
         map_module.move_player(self, direction)
+        if (self.player.x, self.player.y) != prev:
+            self.player.regen_stamina(20)
 
     def render_map(self):
         map_module.render_map(self)
