@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 from .combat import battle
 from .entities import Companion, Enemy
-from .items import Item, Weapon
+from .items import Item
 
 if TYPE_CHECKING:  # pragma: no cover - type hints only
     from .dungeon import DungeonBase
