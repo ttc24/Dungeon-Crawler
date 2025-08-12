@@ -79,9 +79,7 @@ class TrapEvent(BaseEvent):
             if input_func is input:
                 action = "n"
             else:
-                prompt = _(
-                    f"Disarm (d) [{self.disarm_cost} STA] or step around (s)? "
-                )
+                prompt = _(f"Disarm (d) [{self.disarm_cost} STA] or step around (s)? ")
                 action = input_func(prompt).strip().lower()
             if action == "d" and game.player.stamina >= self.disarm_cost:
                 game.player.stamina -= self.disarm_cost
@@ -120,9 +118,7 @@ class FountainEvent(BaseEvent):
             choice = input_func(_("Choice: ")).strip().lower()
             if choice in ("d", "q"):
                 heal = random.randint(6, 10)
-                game.player.health = min(
-                    game.player.max_health, game.player.health + heal
-                )
+                game.player.health = min(game.player.max_health, game.player.health + heal)
                 output_func(_(f"You feel refreshed and recover {heal} health."))
                 roll = random.random()
                 if roll < self.bless_chance:
@@ -198,9 +194,7 @@ class ShrineEvent(BaseEvent):
             output_func("     /\\")
             if random.random() < self.prayer_boon:
                 heal = random.randint(8, 12)
-                game.player.health = min(
-                    game.player.max_health, game.player.health + heal
-                )
+                game.player.health = min(game.player.max_health, game.player.health + heal)
                 output_func(_(f"A warm light restores {heal} health."))
             else:
                 add_status_effect(game.player, "cursed", 30)

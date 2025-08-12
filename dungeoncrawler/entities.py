@@ -14,7 +14,6 @@ from .items import Item, Weapon
 from .status_effects import add_status_effect
 from .status_effects import apply_status_effects as apply_effects
 
-
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 

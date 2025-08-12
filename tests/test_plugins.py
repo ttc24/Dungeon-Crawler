@@ -62,9 +62,7 @@ def test_apply_enemy_plugins(monkeypatch, tmp_path):
 
     enemy_stats, enemy_abilities, enemy_ai, enemy_traits = {}, {}, {}, {}
     try:
-        plugins_module.apply_enemy_plugins(
-            enemy_stats, enemy_abilities, enemy_ai, enemy_traits
-        )
+        plugins_module.apply_enemy_plugins(enemy_stats, enemy_abilities, enemy_ai, enemy_traits)
     finally:
         sys.modules.pop(f"mods.{mod_name}", None)
 
