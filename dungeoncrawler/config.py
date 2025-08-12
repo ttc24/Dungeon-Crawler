@@ -57,21 +57,15 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
             if hasattr(cfg, key):
                 if key in {"screen_width", "screen_height", "max_floors"}:
                     if not isinstance(value, int):
-                        raise ValueError(
-                            f"{key} must be an integer, got {type(value).__name__}"
-                        )
+                        raise ValueError(f"{key} must be an integer, got {type(value).__name__}")
                     if value <= 0:
                         raise ValueError(f"{key} must be greater than 0, got {value}")
                 elif key in {"save_file", "score_file"}:
                     if not isinstance(value, str):
-                        raise ValueError(
-                            f"{key} must be a string, got {type(value).__name__}"
-                        )
+                        raise ValueError(f"{key} must be a string, got {type(value).__name__}")
                 elif key == "verbose_combat":
                     if not isinstance(value, bool):
-                        raise ValueError(
-                            f"{key} must be a boolean, got {type(value).__name__}"
-                        )
+                        raise ValueError(f"{key} must be a boolean, got {type(value).__name__}")
                 setattr(cfg, key, value)
     return cfg
 

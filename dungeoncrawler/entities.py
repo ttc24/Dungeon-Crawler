@@ -164,11 +164,7 @@ class Player(Entity):
         if roll <= escape_chance:
             print(_("You successfully disengage!"))
             return True
-        print(
-            _(
-                f"You try to disengage, but the {enemy.name} pins you (they gain advantage!)."
-            )
-        )
+        print(_(f"You try to disengage, but the {enemy.name} pins you (they gain advantage!)."))
         enemy.status_effects["advantage"] = 1
         return False
 
@@ -206,9 +202,7 @@ class Player(Entity):
         else:
             if config.verbose_combat:
                 reason = "It slipped on the wet stone!"
-                print(
-                    _(f"You swing ({hit_chance}% to hit): roll {roll} → MISS. {reason}")
-                )
+                print(_(f"You swing ({hit_chance}% to hit): roll {roll} → MISS. {reason}"))
             else:
                 print(_(f"You missed the {enemy.name}."))
 
@@ -404,9 +398,7 @@ class Player(Entity):
         damage = self.attack_power + random.randint(8, 12)
         enemy.take_damage(damage)
         add_status_effect(enemy, "burn", 3)
-        print(
-            _(f"An explosive flask bursts for {damage} damage and sets the foe ablaze!")
-        )
+        print(_(f"An explosive flask bursts for {damage} damage and sets the foe ablaze!"))
 
     def regen_stamina(self, amount):
         self.stamina = min(self.max_stamina, self.stamina + amount)
@@ -417,22 +409,14 @@ class Player(Entity):
 
     def use_skill(self, enemy, choice=None):
         if choice is None:
-            print(
-                _(
-                    f"[1] Power [2] Feint [3] Bandage STA: {self.stamina}/{self.max_stamina}"
-                )
-            )
+            print(_(f"[1] Power [2] Feint [3] Bandage STA: {self.stamina}/{self.max_stamina}"))
             choice = input(_("Choose skill: "))
         skill = self.skills.get(str(choice))
         if not skill:
             print(_("Invalid skill choice."))
             return
         if skill["cooldown"] > 0:
-            print(
-                _(
-                    f"{skill['name']} is on cooldown for {skill['cooldown']} more turn(s)."
-                )
-            )
+            print(_(f"{skill['name']} is on cooldown for {skill['cooldown']} more turn(s)."))
             return
         if self.stamina < skill["cost"]:
             needed = skill["cost"] - self.stamina

@@ -31,9 +31,7 @@ def build_character(input_func=input, output_func=print):
             output_func(_("Name cannot be blank."))
 
     player = Player(name)
-    output_func(
-        _("Welcome {name}! Your journey is just beginning.").format(name=player.name)
-    )
+    output_func(_("Welcome {name}! Your journey is just beginning.").format(name=player.name))
     return player
 
 
@@ -63,9 +61,7 @@ def main(argv=None, input_func=input, output_func=print):
         # Fallback if the save didn't actually produce a player
         if getattr(game, "player", None) is None:
             output_func(_("No valid save found. Starting a new game…"))
-            game.player = build_character(
-                input_func=input_func, output_func=output_func
-            )
+            game.player = build_character(input_func=input_func, output_func=output_func)
             if not args.skip_tutorial and not game.tutorial_complete:
                 tutorial.run(game)
     else:

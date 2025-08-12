@@ -64,9 +64,7 @@ class FountainEvent(BaseEvent):
     """Cracked fountain that can heal or provide a potion."""
 
     def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
-        output_func(
-            _("You find a cracked fountain. The water shimmers. (Press [Q] to drink.)")
-        )
+        output_func(_("You find a cracked fountain. The water shimmers. (Press [Q] to drink.)"))
         output_func(_("Drink (Q) / Bottle (B) / Leave (any other key)"))
         choice = input_func(_("Choice: ")).strip().lower()
         if choice == "q":

@@ -122,9 +122,7 @@ def show_inventory(
         equipped = " (Equipped)" if item == game.player.weapon else ""
         output_func(_(f"{i}. {item.name}{equipped} - {item.description}"))
 
-    choice = input_func(
-        _("Enter item number to equip weapon, or press Enter to go back: ")
-    )
+    choice = input_func(_("Enter item number to equip weapon, or press Enter to go back: "))
     if choice.isdigit():
         idx = int(choice) - 1
         if 0 <= idx < len(game.player.inventory):

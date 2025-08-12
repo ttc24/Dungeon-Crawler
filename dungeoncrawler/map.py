@@ -32,8 +32,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
         game.novice_luck_announced = True
     game.rooms = [[None for __ in range(game.width)] for __ in range(game.height)]
     game.room_names = [
-        [game.generate_room_name() for __ in range(game.width)]
-        for __ in range(game.height)
+        [game.generate_room_name() for __ in range(game.width)] for __ in range(game.height)
     ]
     visited = set()
     path = []
@@ -72,9 +71,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
 
     def place_near_start(obj, max_dist):
         candidates = [
-            pos
-            for pos in visited
-            if abs(pos[0] - start[0]) + abs(pos[1] - start[1]) <= max_dist
+            pos for pos in visited if abs(pos[0] - start[0]) + abs(pos[1] - start[1]) <= max_dist
         ]
         random.shuffle(candidates)
         if candidates:
@@ -310,11 +307,7 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
             print(_("1. Poison  2. Burn  3. Freeze  4. Cancel"))
             choice = input(_("Choose enchantment: "))
             if game.player.weapon.effect:
-                print(
-                    _(
-                        "Your weapon is already enchanted! You can't add another enchantment."
-                    )
-                )
+                print(_("Your weapon is already enchanted! You can't add another enchantment."))
             elif game.player.gold >= 30 and choice in ["1", "2", "3"]:
                 effect = {"1": "poison", "2": "burn", "3": "freeze"}[choice]
                 game.player.weapon.description += f" (Enchanted: {effect})"
@@ -337,11 +330,7 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
                     f"Your weapon: {game.player.weapon.name} ({game.player.weapon.min_damage}-{game.player.weapon.max_damage})"
                 )
             )
-            print(
-                _(
-                    "Would you like to upgrade your weapon for 50 gold? +3 min/max damage"
-                )
-            )
+            print(_("Would you like to upgrade your weapon for 50 gold? +3 min/max damage"))
             confirm = input(_("Upgrade? (y/n): "))
             if confirm.lower() == "y" and game.player.gold >= 50:
                 game.player.weapon.min_damage += 3

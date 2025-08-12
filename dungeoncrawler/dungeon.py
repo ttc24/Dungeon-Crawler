@@ -280,9 +280,7 @@ class DungeonBase:
                 "gold": self.player.gold,
                 "class": self.player.class_type,
                 "stamina": self.player.stamina,
-                "skill_cooldowns": {
-                    k: v["cooldown"] for k, v in self.player.skills.items()
-                },
+                "skill_cooldowns": {k: v["cooldown"] for k, v in self.player.skills.items()},
                 "guild": self.player.guild,
                 "race": self.player.race,
                 "inventory": [serialize_item(it) for it in self.player.inventory],
@@ -306,9 +304,7 @@ class DungeonBase:
             except (IOError, json.JSONDecodeError):
                 return 1
             self.tutorial_complete = data.get("tutorial_complete", False)
-            self.player = Player(
-                data["player"]["name"], data["player"].get("class", "Novice")
-            )
+            self.player = Player(data["player"]["name"], data["player"].get("class", "Novice"))
             p = data["player"]
             self.player.level = p["level"]
             self.player.health = p["health"]
@@ -350,9 +346,7 @@ class DungeonBase:
                 self.player.weapon = weapon
 
             for comp_data in p.get("companions", []):
-                self.player.companions.append(
-                    Companion(comp_data["name"], comp_data["effect"])
-                )
+                self.player.companions.append(Companion(comp_data["name"], comp_data["effect"]))
 
             return data.get("floor", 1)
         return 1
@@ -376,9 +370,7 @@ class DungeonBase:
                 records = []
 
         duration = time.time() - self.run_start if self.run_start else 0
-        epitaph = (
-            f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'"
-        )
+        epitaph = f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'"
         records.append(
             {
                 "player_name": self.player.name,
@@ -614,9 +606,7 @@ class DungeonBase:
                     break
 
         print(_("You have died. Game Over!"))
-        print(
-            _(f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'")
-        )
+        print(_(f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'"))
         print(_(f"Final Score: {self.player.get_score()}"))
         self.record_score(floor)
         if os.path.exists(SAVE_FILE):
@@ -682,9 +672,7 @@ class DungeonBase:
             and self.player.has_item("Key")
         ):
             print(_("You reach the Sealed Gate."))
-            proceed = input(
-                _("Would you like to descend to the next floor? (y/n): ")
-            ).lower()
+            proceed = input(_("Would you like to descend to the next floor? (y/n): ")).lower()
             if proceed == "y":
                 floor += 1
                 self.save_game(floor)

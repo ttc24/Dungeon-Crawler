@@ -15,9 +15,7 @@ def test_build_character():
         ]
     )
 
-    player = build_character(
-        input_func=lambda _: next(inputs), output_func=lambda _msg: None
-    )
+    player = build_character(input_func=lambda _: next(inputs), output_func=lambda _msg: None)
     assert isinstance(player, Player)
     assert player.name == "Alice"
     assert player.class_type == "Novice"

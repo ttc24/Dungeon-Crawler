@@ -49,8 +49,6 @@ def test_sell_unsellable():
     dungeon.player = Player("Seller")
     rare_weapon = Weapon("Elven Longbow", "Bow", 15, 25, 0)
     dungeon.player.collect_item(rare_weapon)
-    shop_module.sell_items(
-        dungeon, input_func=lambda _: "1", output_func=lambda _msg: None
-    )
+    shop_module.sell_items(dungeon, input_func=lambda _: "1", output_func=lambda _msg: None)
     assert dungeon.player.gold == 0
     assert rare_weapon in dungeon.player.inventory

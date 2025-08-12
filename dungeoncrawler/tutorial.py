@@ -15,11 +15,7 @@ def run(game) -> None:
     """
 
     print(_("=== Welcome to the Dungeon Crawler tutorial! ==="))
-    print(
-        _(
-            "Let's begin with movement. Use '1' (left), '2' (right), '3' (up) or '4' (down)."
-        )
-    )
+    print(_("Let's begin with movement. Use '1' (left), '2' (right), '3' (up) or '4' (down)."))
     while True:
         move = input(_("Move: ")).strip()
         if move in {"1", "2", "3", "4"}:

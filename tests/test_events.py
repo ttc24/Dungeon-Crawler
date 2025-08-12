@@ -32,9 +32,7 @@ def test_merchant_event_calls_shop():
 def test_puzzle_event_rewards_on_correct_answer():
     game = setup_game()
     event = PuzzleEvent()
-    with patch(
-        "dungeoncrawler.events.random.choice", return_value=("riddle", "answer")
-    ):
+    with patch("dungeoncrawler.events.random.choice", return_value=("riddle", "answer")):
         gold_before = game.player.gold
         event.trigger(
             game,

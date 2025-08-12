@@ -61,23 +61,11 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
             enemy_turn(enemy, player)
             continue
 
-        print(
-            _(
-                f"Player Health: {player.health} {format_status_tags(player.status_effects)}"
-            )
-        )
-        print(
-            _(
-                f"Enemy Health: {enemy.health} {format_status_tags(enemy.status_effects)}"
-            )
-        )
+        print(_(f"Player Health: {player.health} {format_status_tags(player.status_effects)}"))
+        print(_(f"Enemy Health: {enemy.health} {format_status_tags(enemy.status_effects)}"))
         if enemy.intent_message:
             print(_(enemy.intent_message))
-        print(
-            _(
-                f"[1] Power [2] Feint [3] Bandage STA: {player.stamina}/{player.max_stamina}"
-            )
-        )
+        print(_(f"[1] Power [2] Feint [3] Bandage STA: {player.stamina}/{player.max_stamina}"))
         print(_("1. Attack\n2. Defend\n3. Use Health Potion\n4. Use Skill\n5. Flee"))
         choice = input(_("Choose action: "))
         if choice == "1":

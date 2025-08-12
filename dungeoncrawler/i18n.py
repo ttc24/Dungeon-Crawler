@@ -18,6 +18,4 @@ def set_language(lang: str | None = None) -> None:
     if lang:
         lang = lang.split("_")[0]
     localedir = Path(__file__).resolve().parent.parent / "locale"
-    gettext.translation(
-        "messages", localedir=localedir, languages=[lang], fallback=True
-    ).install()
+    gettext.translation("messages", localedir=localedir, languages=[lang], fallback=True).install()
