@@ -8,7 +8,8 @@ from gettext import gettext as _
 from .config import config
 from .constants import ANNOUNCER_LINES
 from .items import Item, Weapon
-from .status_effects import add_status_effect, apply_status_effects as apply_effects
+from .status_effects import add_status_effect
+from .status_effects import apply_status_effects as apply_effects
 
 
 class Entity:
