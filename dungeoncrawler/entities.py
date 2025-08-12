@@ -165,7 +165,9 @@ class Player(Entity):
             print(_("You successfully disengage!"))
             return True
         print(
-            _(f"You try to disengage, but the {enemy.name} pins you (they gain advantage!).")
+            _(
+                f"You try to disengage, but the {enemy.name} pins you (they gain advantage!)."
+            )
         )
         enemy.status_effects["advantage"] = 1
         return False
@@ -416,7 +418,9 @@ class Player(Entity):
     def use_skill(self, enemy, choice=None):
         if choice is None:
             print(
-                _(f"[1] Power [2] Feint [3] Bandage STA: {self.stamina}/{self.max_stamina}")
+                _(
+                    f"[1] Power [2] Feint [3] Bandage STA: {self.stamina}/{self.max_stamina}"
+                )
             )
             choice = input(_("Choose skill: "))
         skill = self.skills.get(str(choice))
@@ -425,7 +429,9 @@ class Player(Entity):
             return
         if skill["cooldown"] > 0:
             print(
-                _(f"{skill['name']} is on cooldown for {skill['cooldown']} more turn(s).")
+                _(
+                    f"{skill['name']} is on cooldown for {skill['cooldown']} more turn(s)."
+                )
             )
             return
         if self.stamina < skill["cost"]:
@@ -614,7 +620,6 @@ class Enemy(Entity):
         if self.heavy_cd > 0:
             self.heavy_cd -= 1
 
-    
     def attack(self, player):
         hit_chance = 60
         if self.status_effects.pop("advantage", 0):
@@ -669,6 +674,7 @@ class Enemy(Entity):
                 )
             else:
                 print(_(f"The {self.name}'s attack missed."))
+
 
 class Companion(Entity):
     """NPC ally that can aid the player during combat.

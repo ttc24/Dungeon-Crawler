@@ -68,8 +68,9 @@ def test_fountain_event_drink_heals():
 
 def test_random_event_selection_from_floor_config():
     game = setup_game()
-    with patch(
-        "dungeoncrawler.dungeon.random.choice", return_value=MerchantEvent
-    ), patch.object(DungeonBase, "shop") as mock_shop:
+    with (
+        patch("dungeoncrawler.dungeon.random.choice", return_value=MerchantEvent),
+        patch.object(DungeonBase, "shop") as mock_shop,
+    ):
         game.trigger_random_event(1)
         assert mock_shop.called

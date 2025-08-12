@@ -99,4 +99,3 @@ ARCHETYPES = {
     "Beetle": {"aggressive": 1, "defensive": 3, "unpredictable": 1},
     "Acolyte": {"aggressive": 2, "defensive": 1, "unpredictable": 2},
 }
-

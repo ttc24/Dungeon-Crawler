@@ -7,9 +7,9 @@ import random
 from gettext import gettext as _
 from typing import TYPE_CHECKING
 
+from .ai import ARCHETYPES, IntentAI
 from .combat import battle
 from .entities import Companion, Enemy
-from .ai import IntentAI, ARCHETYPES
 from .items import Item
 
 if TYPE_CHECKING:  # pragma: no cover - type hints only

@@ -31,6 +31,8 @@ def test_choose_barbarian_stats():
     assert player.class_type == "Barbarian"
     assert player.max_health == 130
     assert player.attack_power == 12
+
+
 def test_race_and_guild_bonuses():
     player = Player("Eve")
     player.choose_race("Tiefling")

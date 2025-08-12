@@ -50,4 +50,3 @@ def test_wait_regenerates_stamina():
     player.stamina = 50
     player.wait()
     assert player.stamina == 60
-
