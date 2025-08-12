@@ -3,7 +3,6 @@ name: Auto-format via PR
 on:
   push:
     branches: [main]
-    paths: ['**/*.py']
   workflow_dispatch:
 
 permissions:
