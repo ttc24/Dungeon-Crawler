@@ -46,6 +46,9 @@ class Player(Entity):
         self.inventory_limit = 8
         self.cause_of_death = ""
         self.novice_luck_active = False
+        # Temporary combat modifiers for the defend action
+        self.guard_damage = False
+        self.guard_attack = False
         # Start as an untrained crawler. Specific classes can be chosen later
         # via ``choose_class``.
         self.choose_class(class_type, announce=False)
@@ -146,7 +149,14 @@ class Player(Entity):
         Applies any weapon effects and awards experience and gold if the enemy
         is defeated.
         """
-        hit_chance = 85 + (10 if getattr(self, "novice_luck_active", False) else 0)
+        hit_chance = 85
+        if self.guard_attack:
+            hit_chance += 10
+            # Guard bonus consumed once you swing
+            self.guard_attack = False
+            self.status_effects.pop("guard", None)
+        if getattr(self, "novice_luck_active", False):
+            hit_chance += 10
         roll = random.randint(1, 100)
         base = self.calculate_damage()
         str_bonus = 0
@@ -197,12 +207,22 @@ class Player(Entity):
             self.xp -= self.level * 20
             self.level_up()
 
-    def defend(self, enemy):
-        damage = max(0, enemy.attack_power - 5)
-        self.take_damage(damage, source=enemy.name)
-        print(_(f"The {enemy.name} attacked you and dealt {damage} damage."))
+    def defend(self, enemy=None):
+        """Prepare to mitigate the next blow and steady the next strike."""
+
+        self.guard_damage = True
+        self.guard_attack = True
+        self.status_effects["guard"] = 1
+        print(
+            _(
+                "You brace yourself. Incoming damage -40% next hit; your next strike steadies (+10% hit)."
+            )
+        )
 
     def take_damage(self, damage, source=None):
+        if self.guard_damage:
+            damage = int(damage * 0.6)
+            self.guard_damage = False
         if "shield" in self.status_effects:
             damage = max(0, damage - 5)
             print(_("Your shield absorbs 5 damage!"))
