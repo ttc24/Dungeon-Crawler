@@ -54,7 +54,19 @@ def main(argv=None, input_func=input, output_func=print):
     cfg = load_config()
     game = DungeonBase(cfg.screen_width, cfg.screen_height)
     cont = input_func(_("Load existing save? (y/n): ")).strip().lower()
-    if cont != "y":
+    if cont == "y":
+        floor = game.load_game()
+        try:
+            output_func(_("Resuming on Floor {floor}.").format(floor=floor))
+        except Exception:
+            pass
+        # Fallback if the save didn't actually produce a player
+        if getattr(game, "player", None) is None:
+            output_func(_("No valid save found. Starting a new game…"))
+            game.player = build_character(input_func=input_func, output_func=output_func)
+            if not args.skip_tutorial and not game.tutorial_complete:
+                tutorial.run(game)
+    else:
         game.player = build_character(input_func=input_func, output_func=output_func)
         if args.skip_tutorial:
             game.tutorial_complete = True
