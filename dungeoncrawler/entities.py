@@ -75,6 +75,9 @@ class Player(Entity):
         # Temporary combat modifiers for the defend action
         self.guard_damage = False
         self.guard_attack = False
+        # Floor-scoped temporary buffs
+        self.temp_strength = 0
+        self.temp_intelligence = 0
         # Start as an untrained crawler. Specific classes can be chosen later
         # via ``choose_class``.
         self.choose_class(class_type, announce=False)
@@ -191,7 +194,7 @@ class Player(Entity):
             hit_chance -= 5
         roll = random.randint(1, 100)
         base = self.calculate_damage()
-        str_bonus = 0
+        str_bonus = getattr(self, "temp_strength", 0)
         damage = base + str_bonus
         if roll <= hit_chance:
             self.apply_weapon_effect(enemy)

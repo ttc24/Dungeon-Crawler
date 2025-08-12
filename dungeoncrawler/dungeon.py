@@ -282,6 +282,8 @@ class DungeonBase:
                 "gold": self.player.gold,
                 "class": self.player.class_type,
                 "stamina": self.player.stamina,
+                "temp_strength": getattr(self.player, "temp_strength", 0),
+                "temp_intelligence": getattr(self.player, "temp_intelligence", 0),
                 "skill_cooldowns": {k: v["cooldown"] for k, v in self.player.skills.items()},
                 "guild": self.player.guild,
                 "race": self.player.race,
@@ -315,6 +317,8 @@ class DungeonBase:
             self.player.xp = p["xp"]
             self.player.gold = p["gold"]
             self.player.stamina = p.get("stamina", self.player.max_stamina)
+            self.player.temp_strength = p.get("temp_strength", 0)
+            self.player.temp_intelligence = p.get("temp_intelligence", 0)
             cooldowns = p.get("skill_cooldowns", {})
             for k, v in cooldowns.items():
                 if k in self.player.skills:
@@ -783,6 +787,9 @@ class DungeonBase:
             proceed = input(_("Would you like to descend to the next floor? (y/n): ")).lower()
             if proceed == "y":
                 floor += 1
+                # Reset temporary floor buffs
+                self.player.temp_strength = 0
+                self.player.temp_intelligence = 0
                 self.save_game(floor)
                 return floor, False
             print(_("You chose to exit the dungeon."))
