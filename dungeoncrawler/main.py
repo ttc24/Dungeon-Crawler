@@ -13,7 +13,7 @@ from .config import load_config
 from .i18n import set_language
 
 
-def build_character():
+def build_character(input_func=input, output_func=print):
     """Interactively construct a :class:`Player` with just a name.
 
     Further character customisation happens organically as the player
@@ -25,16 +25,18 @@ def build_character():
 
     name = ""
     while not name:
-        name = input(_("Enter your name: ")).strip()
+        name = input_func(_("Enter your name: ")).strip()
         if not name:
-            print(_("Name cannot be blank."))
+            output_func(_("Name cannot be blank."))
 
     player = Player(name)
-    print(_("Welcome {name}! Your journey is just beginning.").format(name=player.name))
+    output_func(
+        _("Welcome {name}! Your journey is just beginning.").format(name=player.name)
+    )
     return player
 
 
-def main(argv=None):
+def main(argv=None, input_func=input, output_func=print):
     """Run the game with optional command line arguments."""
 
     parser = argparse.ArgumentParser()
@@ -57,9 +59,9 @@ def main(argv=None):
 
     cfg = load_config()
     game = DungeonBase(cfg.screen_width, cfg.screen_height)
-    cont = input(_("Load existing save? (y/n): ")).strip().lower()
+    cont = input_func(_("Load existing save? (y/n): ")).strip().lower()
     if cont != "y":
-        game.player = build_character()
+        game.player = build_character(input_func=input_func, output_func=output_func)
         if args.skip_tutorial:
             game.tutorial_complete = True
         elif not game.tutorial_complete:

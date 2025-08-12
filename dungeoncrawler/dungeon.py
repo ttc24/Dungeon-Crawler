@@ -614,17 +614,17 @@ class DungeonBase:
         """Give the player a temporary inspire buff."""
         self.player.status_effects["inspire"] = turns
 
-    def shop(self):
-        shop_module.shop(self)
+    def shop(self, input_func=input, output_func=print):
+        shop_module.shop(self, input_func=input_func, output_func=output_func)
 
     def get_sale_price(self, item):
         return shop_module.get_sale_price(item)
 
-    def sell_items(self):
-        shop_module.sell_items(self)
+    def sell_items(self, input_func=input, output_func=print):
+        shop_module.sell_items(self, input_func=input_func, output_func=output_func)
 
-    def show_inventory(self):
-        shop_module.show_inventory(self)
+    def show_inventory(self, input_func=input, output_func=print):
+        shop_module.show_inventory(self, input_func=input_func, output_func=output_func)
 
     def riddle_challenge(self):
         """Present the player with a riddle for a potential reward."""

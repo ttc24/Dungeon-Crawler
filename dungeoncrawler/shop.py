@@ -11,20 +11,24 @@ if TYPE_CHECKING:  # pragma: no cover - only for type hints
     from .dungeon import DungeonBase
 
 
-def shop(game: "DungeonBase") -> None:
+def shop(
+    game: "DungeonBase",
+    input_func=input,
+    output_func=print,
+) -> None:
     """Interact with the shop allowing the player to buy or sell items."""
 
-    print(_("Welcome to the Shop!"))
-    print(_(f"Gold: {game.player.gold}"))
+    output_func(_("Welcome to the Shop!"))
+    output_func(_(f"Gold: {game.player.gold}"))
     for i, item in enumerate(game.shop_items, 1):
         price = item.price if isinstance(item, Weapon) else 10
-        print(_(f"{i}. {item.name} - {price} Gold"))
+        output_func(_(f"{i}. {item.name} - {price} Gold"))
     sell_option = len(game.shop_items) + 1
     exit_option = sell_option + 1
-    print(_(f"{sell_option}. Sell Items"))
-    print(_(f"{exit_option}. Exit"))
+    output_func(_(f"{sell_option}. Sell Items"))
+    output_func(_(f"{exit_option}. Exit"))
 
-    choice = input(_("Choose an option:"))
+    choice = input_func(_("Choose an option:"))
     if choice.isdigit():
         choice = int(choice)
         if 1 <= choice <= len(game.shop_items):
@@ -33,17 +37,17 @@ def shop(game: "DungeonBase") -> None:
             if game.player.gold >= price:
                 game.player.collect_item(item)
                 game.player.gold -= price
-                print(_(f"You bought {item.name}."))
+                output_func(_(f"You bought {item.name}."))
             else:
-                print(_("Not enough gold."))
+                output_func(_("Not enough gold."))
         elif choice == sell_option:
-            sell_items(game)
+            sell_items(game, input_func=input_func, output_func=output_func)
         elif choice == exit_option:
-            print(_("Leaving the shop."))
+            output_func(_("Leaving the shop."))
         else:
-            print(_("Invalid choice."))
+            output_func(_("Invalid choice."))
     else:
-        print(_("Invalid input."))
+        output_func(_("Invalid input."))
 
 
 def get_sale_price(item):
@@ -59,57 +63,67 @@ def get_sale_price(item):
     return None
 
 
-def sell_items(game: "DungeonBase") -> None:
+def sell_items(
+    game: "DungeonBase",
+    input_func=input,
+    output_func=print,
+) -> None:
     """Sell items from the player's inventory."""
 
     if not game.player.inventory:
-        print(_("You have nothing to sell."))
+        output_func(_("You have nothing to sell."))
         return
 
-    print(_("Your Items:"))
+    output_func(_("Your Items:"))
     for i, item in enumerate(game.player.inventory, 1):
         sale_price = get_sale_price(item)
         if sale_price is None:
-            print(_(f"{i}. {item.name} - Cannot sell"))
+            output_func(_(f"{i}. {item.name} - Cannot sell"))
         else:
-            print(_(f"{i}. {item.name} - {sale_price} Gold"))
-    print(_(f"{len(game.player.inventory)+1}. Back"))
+            output_func(_(f"{i}. {item.name} - {sale_price} Gold"))
+    output_func(_(f"{len(game.player.inventory)+1}. Back"))
 
-    choice = input(_("Sell what?"))
+    choice = input_func(_("Sell what?"))
     if choice.isdigit():
         choice = int(choice)
         if 1 <= choice <= len(game.player.inventory):
             item = game.player.inventory[choice - 1]
             sale_price = get_sale_price(item)
             if sale_price is None:
-                print(_("You can't sell that item."))
+                output_func(_("You can't sell that item."))
                 return
-            confirm = input(_(f"Sell {item.name} for {sale_price} gold? (y/n) "))
+            confirm = input_func(_(f"Sell {item.name} for {sale_price} gold? (y/n) "))
             if confirm.lower() == "y":
                 game.player.inventory.pop(choice - 1)
                 game.player.gold += sale_price
-                print(_(f"You sold {item.name}."))
+                output_func(_(f"You sold {item.name}."))
         elif choice == len(game.player.inventory) + 1:
             return
         else:
-            print(_("Invalid choice."))
+            output_func(_("Invalid choice."))
     else:
-        print(_("Invalid input."))
+        output_func(_("Invalid input."))
 
 
-def show_inventory(game: "DungeonBase") -> None:
+def show_inventory(
+    game: "DungeonBase",
+    input_func=input,
+    output_func=print,
+) -> None:
     """Display the player's inventory and allow equipping weapons."""
 
     if not game.player.inventory:
-        print(_("Your inventory is empty."))
+        output_func(_("Your inventory is empty."))
         return
 
-    print(_("Your Inventory:"))
+    output_func(_("Your Inventory:"))
     for i, item in enumerate(game.player.inventory, 1):
         equipped = " (Equipped)" if item == game.player.weapon else ""
-        print(_(f"{i}. {item.name}{equipped} - {item.description}"))
+        output_func(_(f"{i}. {item.name}{equipped} - {item.description}"))
 
-    choice = input(_("Enter item number to equip weapon, or press Enter to go back: "))
+    choice = input_func(
+        _("Enter item number to equip weapon, or press Enter to go back: ")
+    )
     if choice.isdigit():
         idx = int(choice) - 1
         if 0 <= idx < len(game.player.inventory):
@@ -117,6 +131,6 @@ def show_inventory(game: "DungeonBase") -> None:
             if isinstance(item, Weapon):
                 game.player.equip_weapon(item)
             else:
-                print(_("You can only equip weapons."))
+                output_func(_("You can only equip weapons."))
         else:
-            print(_("Invalid selection."))
+            output_func(_("Invalid selection."))

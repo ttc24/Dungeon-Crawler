@@ -29,11 +29,9 @@ def test_tutorial_runs_once_per_save(tmp_path, monkeypatch):
     monkeypatch.setattr(DungeonBase, "play_game", fake_play_game)
 
     inputs = iter(["n", "Alice"])
-    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
-    main([])
+    main([], input_func=lambda _: next(inputs), output_func=lambda _msg: None)
     assert len(calls) == 1
 
     inputs = iter(["y"])
-    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
-    main([])
+    main([], input_func=lambda _: next(inputs), output_func=lambda _msg: None)
     assert len(calls) == 1
