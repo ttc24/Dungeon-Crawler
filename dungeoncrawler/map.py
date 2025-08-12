@@ -23,6 +23,12 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
         raise ValueError(f"Floor {floor} is not configured")
     size = cfg.get("size", (min(15, 8 + floor), min(15, 8 + floor)))
     game.width, game.height = size
+    game.current_floor = floor
+    # Determine if the first-run bonus applies
+    game.player.novice_luck_active = game.total_runs == 0 and floor <= 2
+    if game.player.novice_luck_active and not game.novice_luck_announced:
+        print(_("You feel emboldened (Novice's Luck)."))
+        game.novice_luck_announced = True
     game.rooms = [[None for __ in range(game.width)] for __ in range(game.height)]
     game.room_names = [
         [game.generate_room_name() for __ in range(game.width)]
@@ -63,12 +69,35 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
             game.rooms[py][px] = obj
             return (px, py)
 
-    game.exit_coords = place("Exit")
+    def place_near_start(obj, max_dist):
+        candidates = [
+            pos
+            for pos in visited
+            if abs(pos[0] - start[0]) + abs(pos[1] - start[1]) <= max_dist
+        ]
+        random.shuffle(candidates)
+        if candidates:
+            px, py = candidates.pop()
+            visited.remove((px, py))
+            game.rooms[py][px] = obj
+            return (px, py)
+        return place(obj)
+
+    if floor == 1:
+        game.exit_coords = place_near_start("Exit", 10)
+    else:
+        game.exit_coords = place("Exit")
     place(Item("Key", "Opens the dungeon exit"))
+    if floor == 1:
+        place_near_start("Sanctuary", 10)
 
     enemy_names = cfg["enemies"]
     early_game_bonus = 5 if floor <= 3 else 0
-    for __ in range(5 + floor):
+    walkable = (game.width * game.height) // 2
+    density_map = {1: (3, 4), 2: (5, 6), 3: (7, 8)}
+    low, high = density_map.get(floor, (8, 9))
+    enemy_total = max(1, walkable * random.randint(low, high) // 100)
+    for __ in range(enemy_total):
         name = random.choice(enemy_names)
         hp_min, hp_max, atk_min, atk_max, defense = game.enemy_stats[name]
 
@@ -127,6 +156,10 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     for pname, count in place_counts.items():
         for __ in range(count):
             place(pname)
+
+    if floor == 1:
+        # Guarantee an uncommon item on the first floor
+        place(random.choice(game.rare_loot))
     # Key is now tied to boss drop; don't place it separately
 
 
@@ -344,6 +377,9 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
         game.room_names[y][x] = "Booby-Trapped Passage"
     elif room == "Exit":
         game.room_names[y][x] = "Sealed Gate"
+        if not game.stairs_prompt_shown:
+            print(_("Tip: [R]un to descend the stairs quickly."))
+            game.stairs_prompt_shown = True
         if game.player.has_item("Key"):
             print(_("🎉 You unlocked the exit and escaped the dungeon!"))
             print(_(f"Final Score: {game.player.get_score()}"))

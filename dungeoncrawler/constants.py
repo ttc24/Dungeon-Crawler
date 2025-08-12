@@ -16,6 +16,8 @@ SAVE_FILE = SAVE_DIR / config.save_file
 
 # Leaderboard is stored directly in ``~/.dungeon_crawler``
 SCORE_FILE = BASE_DIR / config.score_file
+# Track how many times the game has been run to provide "Novice's Luck".
+RUN_FILE = BASE_DIR / "run_stats.json"
 MAX_FLOORS = config.max_floors
 SCREEN_WIDTH = config.screen_width
 SCREEN_HEIGHT = config.screen_height

@@ -15,6 +15,7 @@ from .constants import (
     RIDDLES,
     SAVE_FILE,
     SCORE_FILE,
+    RUN_FILE,
 )
 from .entities import Companion, Player
 from .events import MerchantEvent, PuzzleEvent, TrapEvent
@@ -123,10 +124,25 @@ BOSS_STATS, BOSS_LOOT = load_bosses()
 apply_enemy_plugins(ENEMY_STATS, ENEMY_ABILITIES)
 
 
-def floor_size(floor):
-    """Return map size for a given floor with cap at 15x15."""
-    size = min(7 + floor, 15)
-    return (size, size)
+def floor_size(floor: int) -> tuple[int, int]:
+    """Return map size for a given floor.
+
+    Early floors are intentionally small to ease new players in. Size grows
+    gradually until Floor 10 where the dungeon expands sharply.
+    """
+
+    if floor == 1:
+        return (20, 12)
+    if floor == 2:
+        return (24, 14)
+    if floor < 10:
+        width = 28 + 2 * (floor - 3)
+        height = 16 + 2 * (floor - 3)
+        return (width, height)
+    # Dramatic increase from floor 10 onwards
+    width = 60 + 4 * (floor - 10)
+    height = 40 + 4 * (floor - 10)
+    return (width, height)
 
 
 # Floor specific configuration loaded from data/floors.json
@@ -143,8 +159,9 @@ def load_floor_configs():
     configs = {}
     for floor, cfg in data.items():
         floor = int(floor)
-        cfg.setdefault("size", floor_size(floor))
-        cfg["size"] = tuple(cfg["size"])
+        # Always compute size programmatically so adjustments in ``floor_size``
+        # apply without requiring updates to the JSON data.
+        cfg["size"] = tuple(floor_size(floor))
         cfg.setdefault("events", EVENT_TYPES)
         configs[floor] = cfg
     return configs
@@ -200,6 +217,16 @@ class DungeonBase:
         # Tracking for leaderboard entries
         self.run_start = None
         self.seed = None
+        # Persistent run statistics used for "Novice's Luck"
+        self.total_runs = 0
+        if RUN_FILE.exists():
+            try:
+                with open(RUN_FILE) as f:
+                    self.total_runs = json.load(f).get("total_runs", 0)
+            except (IOError, json.JSONDecodeError):
+                self.total_runs = 0
+        self.novice_luck_announced = False
+        self.stairs_prompt_shown = False
 
     def announce(self, msg):
         print(_(f"[Announcer] {random.choice(ANNOUNCER_LINES)} {msg}"))
@@ -305,6 +332,13 @@ class DungeonBase:
 
     def record_score(self, floor):
         """Persist the current run to the leaderboard file and display it."""
+        # Update total run count used for first-run bonuses
+        self.total_runs += 1
+        try:
+            with open(RUN_FILE, "w") as f:
+                json.dump({"total_runs": self.total_runs}, f)
+        except IOError:
+            pass
 
         records = []
         if os.path.exists(SCORE_FILE):
