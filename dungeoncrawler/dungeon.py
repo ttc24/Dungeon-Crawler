@@ -18,7 +18,17 @@ from .constants import (
     SCORE_FILE,
 )
 from .entities import Companion, Player
-from .events import MerchantEvent, PuzzleEvent, TrapEvent
+from .events import (
+    CacheEvent,
+    FountainEvent,
+    HazardEvent,
+    LoreNoteEvent,
+    MerchantEvent,
+    MiniQuestHookEvent,
+    PuzzleEvent,
+    ShrineEvent,
+    TrapEvent,
+)
 from .items import Item, Weapon
 from .plugins import apply_enemy_plugins, apply_item_plugins
 
@@ -147,7 +157,17 @@ def floor_size(floor: int) -> tuple[int, int]:
 
 # Floor specific configuration loaded from data/floors.json
 
-EVENT_TYPES = [MerchantEvent, PuzzleEvent, TrapEvent]
+EVENT_TYPES = [
+    MerchantEvent,
+    PuzzleEvent,
+    TrapEvent,
+    FountainEvent,
+    CacheEvent,
+    LoreNoteEvent,
+    ShrineEvent,
+    MiniQuestHookEvent,
+    HazardEvent,
+]
 
 
 @lru_cache(maxsize=None)
@@ -743,12 +763,20 @@ class DungeonBase:
     def _floor_one_event(self):
         print(_("The crowd roars as you step into the arena for the first time."))
         self.offer_class()
+        event_cls = random.choice([FountainEvent, CacheEvent])
+        event_cls().trigger(self)
 
     def _floor_two_event(self):
         self.offer_guild()
+        options = [CacheEvent, TrapEvent, LoreNoteEvent]
+        for _ in range(random.randint(1, 2)):
+            random.choice(options)().trigger(self)
 
     def _floor_three_event(self):
         self.offer_race()
+        options = [ShrineEvent, MiniQuestHookEvent, HazardEvent]
+        for _ in range(2):
+            random.choice(options)().trigger(self)
 
     def _floor_five_event(self):
         print(_("A mysterious merchant sets up shop, selling exotic wares."))

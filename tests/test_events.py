@@ -6,7 +6,12 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from dungeoncrawler.dungeon import DungeonBase, load_floor_configs
 from dungeoncrawler.entities import Player
-from dungeoncrawler.events import MerchantEvent, PuzzleEvent, TrapEvent
+from dungeoncrawler.events import (
+    FountainEvent,
+    MerchantEvent,
+    PuzzleEvent,
+    TrapEvent,
+)
 
 
 def setup_game():
@@ -46,6 +51,19 @@ def test_trap_event_deals_damage():
         health_before = game.player.health
         event.trigger(game)
         assert game.player.health == health_before - 10
+
+
+def test_fountain_event_drink_heals():
+    game = setup_game()
+    game.player.health = 50
+    event = FountainEvent()
+    with patch("dungeoncrawler.events.random.randint", return_value=8):
+        event.trigger(
+            game,
+            input_func=lambda _: "q",
+            output_func=lambda _msg: None,
+        )
+    assert game.player.health == 58
 
 
 def test_random_event_selection_from_floor_config():
