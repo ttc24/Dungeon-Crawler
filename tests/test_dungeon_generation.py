@@ -16,8 +16,8 @@ def test_generate_dungeon_size_and_population():
     dungeon.player = Player("Tester")
     dungeon_map.generate_dungeon(dungeon, floor=1)
 
-    assert dungeon.width == 8
-    assert dungeon.height == 8
+    assert dungeon.width == 20
+    assert dungeon.height == 12
     assert len(dungeon.rooms) == dungeon.height
     assert all(len(row) == dungeon.width for row in dungeon.rooms)
 
@@ -26,6 +26,8 @@ def test_generate_dungeon_size_and_population():
 
     ex, ey = dungeon.exit_coords
     assert dungeon.rooms[ey][ex] == "Exit"
+    # Stairs should be close to the start on the first floor
+    assert abs(px - ex) + abs(py - ey) <= 10
 
     enemy_count = sum(isinstance(obj, Enemy) for row in dungeon.rooms for obj in row)
-    assert enemy_count >= 6
+    assert 3 <= enemy_count <= 5

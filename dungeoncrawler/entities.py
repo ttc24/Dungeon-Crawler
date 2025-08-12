@@ -45,6 +45,7 @@ class Player(Entity):
         self.y = 0
         self.inventory_limit = 8
         self.cause_of_death = ""
+        self.novice_luck_active = False
         # Start as an untrained crawler. Specific classes can be chosen later
         # via ``choose_class``.
         self.choose_class(class_type, announce=False)
@@ -145,7 +146,7 @@ class Player(Entity):
         Applies any weapon effects and awards experience and gold if the enemy
         is defeated.
         """
-        hit_chance = 85
+        hit_chance = 85 + (10 if getattr(self, "novice_luck_active", False) else 0)
         roll = random.randint(1, 100)
         base = self.calculate_damage()
         str_bonus = 0
@@ -205,6 +206,8 @@ class Player(Entity):
         if "shield" in self.status_effects:
             damage = max(0, damage - 5)
             print(_("Your shield absorbs 5 damage!"))
+        if getattr(self, "novice_luck_active", False):
+            damage = max(0, damage - 1)
         self.health = max(0, self.health - damage)
         if self.health <= 0:
             self.cause_of_death = source or "unknown"
