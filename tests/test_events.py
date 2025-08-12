@@ -29,9 +29,13 @@ def test_puzzle_event_rewards_on_correct_answer():
     event = PuzzleEvent()
     with patch(
         "dungeoncrawler.events.random.choice", return_value=("riddle", "answer")
-    ), patch("builtins.input", return_value="answer"):
+    ):
         gold_before = game.player.gold
-        event.trigger(game)
+        event.trigger(
+            game,
+            input_func=lambda _: "answer",
+            output_func=lambda _msg: None,
+        )
         assert game.player.gold == gold_before + 50
 
 
