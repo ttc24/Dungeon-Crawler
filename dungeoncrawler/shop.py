@@ -120,4 +120,3 @@ def show_inventory(game: "DungeonBase") -> None:
                 print(_("You can only equip weapons."))
         else:
             print(_("Invalid selection."))
-

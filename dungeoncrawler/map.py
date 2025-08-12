@@ -77,9 +77,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
 
         defense = max(1, defense + floor // 3)
 
-        health = random.randint(
-            hp_min + floor * hp_scale, hp_max + floor * hp_scale
-        )
+        health = random.randint(hp_min + floor * hp_scale, hp_max + floor * hp_scale)
         attack = random.randint(
             atk_min + floor * atk_scale,
             atk_max + floor * atk_scale,
@@ -172,9 +170,9 @@ def render_map(game: "DungeonBase") -> None:
         curses.curs_set(0)
         curses.start_color()
         curses.init_pair(1, curses.COLOR_YELLOW, curses.COLOR_BLACK)  # player
-        curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_BLACK)    # explored
-        curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)   # exit
-        curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_BLACK)   # unknown
+        curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_BLACK)  # explored
+        curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)  # exit
+        curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_BLACK)  # unknown
 
         show_legend = False
         while True:
@@ -195,7 +193,12 @@ def render_map(game: "DungeonBase") -> None:
             offset = len(rows) + 1
             stdscr.addstr(offset, 0, _("Press '?' for legend, q to exit"))
             if show_legend:
-                legend = [_("@: Player"), _("E: Exit"), _(".: Explored"), _("#: Unexplored")]
+                legend = [
+                    _("@: Player"),
+                    _("E: Exit"),
+                    _(".: Explored"),
+                    _("#: Unexplored"),
+                ]
                 for i, entry in enumerate(legend):
                     stdscr.addstr(offset + 1 + i, 0, entry)
 
@@ -268,7 +271,11 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
             print(_("1. Poison  2. Burn  3. Freeze  4. Cancel"))
             choice = input(_("Choose enchantment: "))
             if game.player.weapon.effect:
-                print(_("Your weapon is already enchanted! You can't add another enchantment."))
+                print(
+                    _(
+                        "Your weapon is already enchanted! You can't add another enchantment."
+                    )
+                )
             elif game.player.gold >= 30 and choice in ["1", "2", "3"]:
                 effect = {"1": "poison", "2": "burn", "3": "freeze"}[choice]
                 game.player.weapon.description += f" (Enchanted: {effect})"
@@ -287,9 +294,15 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
         print(_("You meet a grizzled blacksmith hammering at a forge."))
         if game.player.weapon:
             print(
-                _(f"Your weapon: {game.player.weapon.name} ({game.player.weapon.min_damage}-{game.player.weapon.max_damage})")
+                _(
+                    f"Your weapon: {game.player.weapon.name} ({game.player.weapon.min_damage}-{game.player.weapon.max_damage})"
+                )
             )
-            print(_("Would you like to upgrade your weapon for 50 gold? +3 min/max damage"))
+            print(
+                _(
+                    "Would you like to upgrade your weapon for 50 gold? +3 min/max damage"
+                )
+            )
             confirm = input(_("Upgrade? (y/n): "))
             if confirm.lower() == "y" and game.player.gold >= 50:
                 game.player.weapon.min_damage += 3
@@ -302,7 +315,9 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
                 print(_("Maybe next time."))
         else:
             print(
-                _("The blacksmith scoffs. 'No weapon? Come back when you have something worth forging.'")
+                _(
+                    "The blacksmith scoffs. 'No weapon? Come back when you have something worth forging.'"
+                )
             )
         game.rooms[y][x] = None
         game.room_names[y][x] = "Blacksmith Forge"
@@ -341,4 +356,3 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
     game.rooms[y][x] = game.player
     game.visited_rooms.add((x, y))
     game.audience_gift()
-
