@@ -29,8 +29,9 @@ def test_merchant_event_calls_shop():
 def test_puzzle_event_rewards_on_correct_answer():
     game = setup_game()
     event = PuzzleEvent()
-    with patch("dungeoncrawler.events.random.choice", return_value=("riddle", "answer")), \
-         patch("builtins.input", return_value="answer"):
+    with patch(
+        "dungeoncrawler.events.random.choice", return_value=("riddle", "answer")
+    ), patch("builtins.input", return_value="answer"):
         gold_before = game.player.gold
         event.trigger(game)
         assert game.player.gold == gold_before + 50
@@ -47,7 +48,8 @@ def test_trap_event_deals_damage():
 
 def test_random_event_selection_from_floor_config():
     game = setup_game()
-    with patch("dungeoncrawler.dungeon.random.choice", return_value=MerchantEvent), \
-         patch.object(DungeonBase, "shop") as mock_shop:
+    with patch(
+        "dungeoncrawler.dungeon.random.choice", return_value=MerchantEvent
+    ), patch.object(DungeonBase, "shop") as mock_shop:
         game.trigger_random_event(1)
         assert mock_shop.called

@@ -170,7 +170,9 @@ class Player(Entity):
 
     def use_skill(self, enemy):
         if self.skill_cooldown > 0:
-            print(_(f"Your skill is on cooldown for {self.skill_cooldown} more turn(s)."))
+            print(
+                _(f"Your skill is on cooldown for {self.skill_cooldown} more turn(s).")
+            )
             return
         if self.class_type == "Warrior":
             damage = self.attack_power * 2
@@ -213,12 +215,16 @@ class Player(Entity):
             enemy.status_effects["freeze"] = 1
             heal = min(5, self.max_health - self.health)
             self.health += heal
-            print(_(f"Nature's wrath deals {damage} damage and restores {heal} health!"))
+            print(
+                _(f"Nature's wrath deals {damage} damage and restores {heal} health!")
+            )
         elif self.class_type == "Ranger":
             damage = self.attack_power + random.randint(6, 12)
             enemy.take_damage(damage)
             enemy.status_effects["poison"] = 3
-            print(_(f"A volley of arrows hits for {damage} damage and poisons the foe!"))
+            print(
+                _(f"A volley of arrows hits for {damage} damage and poisons the foe!")
+            )
         elif self.class_type == "Sorcerer":
             damage = self.attack_power + random.randint(12, 18)
             enemy.take_damage(damage)
@@ -240,19 +246,25 @@ class Player(Entity):
             enemy.take_damage(damage)
             heal = min(damage // 2, self.max_health - self.health)
             self.health += heal
-            print(_(f"You siphon the enemy's soul for {damage} damage and {heal} health!"))
+            print(
+                _(f"You siphon the enemy's soul for {damage} damage and {heal} health!")
+            )
         elif self.class_type == "Shaman":
             heal = min(15, self.max_health - self.health)
             self.health += heal
             damage = self.attack_power + random.randint(4, 8)
             enemy.take_damage(damage)
-            print(_(f"Spirits mend you for {heal} and shock the foe for {damage} damage!"))
+            print(
+                _(f"Spirits mend you for {heal} and shock the foe for {damage} damage!")
+            )
         elif self.class_type == "Alchemist":
             damage = self.attack_power + random.randint(8, 12)
             enemy.take_damage(damage)
             enemy.status_effects["burn"] = 3
             print(
-                _(f"An explosive flask bursts for {damage} damage and sets the foe ablaze!")
+                _(
+                    f"An explosive flask bursts for {damage} damage and sets the foe ablaze!"
+                )
             )
         else:
             print(_("You don't have a special skill."))

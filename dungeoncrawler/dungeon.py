@@ -548,8 +548,10 @@ class DungeonBase:
             return
         for r in records:
             print(
-                _(f"{r.get('player_name', '?')}: {r.get('score', 0)} "
-                  f"(Floor {r.get('floor_reached', '?')}, {r.get('run_duration', 0):.0f}s, Seed {r.get('seed', '?')})")
+                _(
+                    f"{r.get('player_name', '?')}: {r.get('score', 0)} "
+                    f"(Floor {r.get('floor_reached', '?')}, {r.get('run_duration', 0):.0f}s, Seed {r.get('seed', '?')})"
+                )
             )
 
     def offer_class(self):
@@ -704,17 +706,23 @@ class DungeonBase:
 
             while self.player.is_alive():
                 print(
-                    _(f"Position: ({self.player.x}, {self.player.y}) - {self.room_names[self.player.y][self.player.x]}")
+                    _(
+                        f"Position: ({self.player.x}, {self.player.y}) - {self.room_names[self.player.y][self.player.x]}"
+                    )
                 )
                 print(
-                    _(f"Health: {self.player.health} | XP: {self.player.xp} | Gold: {self.player.gold} | Level: {self.player.level} | Floor: {floor} | Skill CD: {self.player.skill_cooldown}")
+                    _(
+                        f"Health: {self.player.health} | XP: {self.player.xp} | Gold: {self.player.gold} | Level: {self.player.level} | Floor: {floor} | Skill CD: {self.player.skill_cooldown}"
+                    )
                 )
                 if self.player.guild:
                     print(_(f"Guild: {self.player.guild}"))
                 if self.player.race:
                     print(_(f"Race: {self.player.race}"))
                 print(
-                    _("1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit 8. Show Map 9. View Leaderboard")
+                    _(
+                        "1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit 8. Show Map 9. View Leaderboard"
+                    )
                 )
                 choice = input(_("Action: "))
 

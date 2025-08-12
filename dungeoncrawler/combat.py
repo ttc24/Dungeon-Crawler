@@ -24,7 +24,9 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
 
     player = game.player
     print(
-        _(f"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability else ''} Boss incoming!")
+        _(
+            f"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability else ''} Boss incoming!"
+        )
     )
     game.announce(f"{player.name} engages {enemy.name}!")
     while player.is_alive() and enemy.is_alive():
@@ -81,4 +83,3 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
             player.collect_item(loot)
             print(_(f"The {enemy.name} dropped {loot.name}!"))
             game.announce(_(f"{player.name} obtains {loot.name}!"))
-
