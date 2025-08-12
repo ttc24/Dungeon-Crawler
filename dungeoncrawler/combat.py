@@ -48,6 +48,8 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
             f"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability else ''} Boss incoming!"
         )
     )
+    if enemy.ai and hasattr(enemy.ai, "plan_next"):
+        enemy.next_action, enemy.intent_message = enemy.ai.plan_next(enemy, player)
     game.announce(f"{player.name} engages {enemy.name}!")
     while player.is_alive() and enemy.is_alive():
         skip_player = player.apply_status_effects()
@@ -69,6 +71,8 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
                 f"Enemy Health: {enemy.health} {format_status_tags(enemy.status_effects)}"
             )
         )
+        if enemy.intent_message:
+            print(_(enemy.intent_message))
         print(
             _(
                 f"[1] Power [2] Feint [3] Bandage STA: {player.stamina}/{player.max_stamina}"

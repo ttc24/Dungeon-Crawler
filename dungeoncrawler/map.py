@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 
 from .combat import battle
 from .entities import Companion, Enemy
+from .ai import IntentAI, ARCHETYPES
 from .items import Item
 
 if TYPE_CHECKING:  # pragma: no cover - type hints only
@@ -114,7 +115,9 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
         gold = random.randint(15 + early_game_bonus + floor, 30 + floor * 2)
 
         ability = game.enemy_abilities.get(name)
-        enemy = Enemy(name, health, attack, defense, gold, ability)
+        weights = ARCHETYPES.get(name)
+        ai = IntentAI(**weights) if weights else None
+        enemy = Enemy(name, health, attack, defense, gold, ability, ai)
         enemy.xp = max(5, (health + attack + defense) // 15)
 
         place(enemy)
@@ -123,6 +126,8 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     name = random.choice(boss_names)
     hp, atk, dfs, gold, ability = game.boss_stats[name]
     print(_(f"A powerful boss guards this floor! The {name} lurks nearby..."))
+    boss_weights = ARCHETYPES.get(name)
+    boss_ai = IntentAI(**boss_weights) if boss_weights else None
     boss = Enemy(
         name,
         hp + floor * 10,
@@ -130,6 +135,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
         dfs + floor // 2,
         gold + floor * 5,
         ability=ability,
+        ai=boss_ai,
     )
     place(boss)
     boss_drop = game.boss_loot.get(name, [])

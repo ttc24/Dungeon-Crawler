@@ -1,3 +1,6 @@
+import random
+
+
 class AggressiveAI:
     """Simple AI that always chooses to attack."""
 
@@ -15,3 +18,85 @@ class DefensiveAI:
         ):
             return "defend"
         return "attack"
+
+
+class IntentAI:
+    """Weighted three-state controller for enemy behaviour.
+
+    Each enemy configured with this AI chooses between Aggressive,
+    Defensive and Unpredictable intents every turn according to the
+    provided weights.  The chosen intent is *telegraphed* to the player in
+    advance so they can react during their turn.
+
+    Parameters
+    ----------
+    aggressive: int
+        Relative weight for selecting an aggressive action.
+    defensive: int
+        Relative weight for selecting a defensive action.
+    unpredictable: int
+        Relative weight for selecting an unpredictable action.
+    """
+
+    TELEGRAPHS = {
+        "Goblin": {
+            "aggressive": "Goblin steadies a heavy strike…",
+            "defensive": "Goblin raises its guard.",
+            "unpredictable": "The Goblin grins wildly, unpredictable…",
+        },
+        "Beetle": {
+            "defensive": "Beetle curls into its shell.",
+        },
+        "Acolyte": {
+            "aggressive": "Acolyte begins channeling (interrupt with 8+ damage).",
+        },
+    }
+
+    def __init__(self, aggressive=1, defensive=1, unpredictable=1):
+        self.weights = {
+            "aggressive": aggressive,
+            "defensive": defensive,
+            "unpredictable": unpredictable,
+        }
+
+    # ------------------------------------------------------------------
+    def plan_next(self, enemy, player):
+        """Choose the next intent and telegraph it.
+
+        Returns a tuple ``(action, message)`` which is stored on the enemy
+        and executed on the subsequent turn.
+        """
+
+        intents = list(self.weights.keys())
+        weights = list(self.weights.values())
+        intent = random.choices(intents, weights=weights, k=1)[0]
+
+        # Map intents to actions and default telegraphs
+        action = "attack"
+        message = {
+            "aggressive": f"The {enemy.name} prepares a heavy strike…",
+            "defensive": f"The {enemy.name} raises its guard.",
+            "unpredictable": f"The {enemy.name} wavers unpredictably…",
+        }[intent]
+
+        if intent == "aggressive" and getattr(enemy, "heavy_cd", 0) == 0:
+            action = "heavy_attack"
+        elif intent == "defensive" and enemy.health <= enemy.max_health // 3:
+            action = "defend"
+        elif intent == "unpredictable":
+            action = random.choice(["wild_attack", "defend"])
+
+        # Custom telegraphs for specific enemy archetypes
+        telegraphs = self.TELEGRAPHS.get(enemy.name, {})
+        message = telegraphs.get(intent, message)
+
+        return action, message
+
+
+# Default archetype weights for enemies that use IntentAI
+ARCHETYPES = {
+    "Goblin": {"aggressive": 3, "defensive": 1, "unpredictable": 1},
+    "Beetle": {"aggressive": 1, "defensive": 3, "unpredictable": 1},
+    "Acolyte": {"aggressive": 2, "defensive": 1, "unpredictable": 2},
+}
+
