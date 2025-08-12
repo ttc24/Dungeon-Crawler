@@ -423,36 +423,28 @@ class DungeonBase:
                 )
             )
 
-    def offer_class(self):
-        if self.player.class_type != "Novice":
-            return
-        print(_("It's time to choose your class!"))
-        print(_("1. Warrior 2. Mage 3. Rogue 4. Cleric 5. Paladin 6. Bard"))
-        print(_("7. Barbarian 8. Druid 9. Ranger 10. Sorcerer 11. Monk"))
-        print(_("12. Warlock 13. Necromancer 14. Shaman 15. Alchemist"))
         classes = {
-            "1": "Warrior",
-            "2": "Mage",
-            "3": "Rogue",
-            "4": "Cleric",
-            "5": "Paladin",
-            "6": "Bard",
-            "7": "Barbarian",
-            "8": "Druid",
-            "9": "Ranger",
-            "10": "Sorcerer",
-            "11": "Monk",
-            "12": "Warlock",
-            "13": "Necromancer",
-            "14": "Shaman",
-            "15": "Alchemist",
+            "1": "Warrior", "2": "Mage", "3": "Rogue", "4": "Cleric", "5": "Paladin",
+            "6": "Bard", "7": "Barbarian", "8": "Druid", "9": "Ranger", "10": "Sorcerer",
+            "11": "Monk", "12": "Warlock", "13": "Necromancer", "14": "Shaman", "15": "Alchemist",
         }
-        choice = ""
-        while choice not in classes:
-            choice = input(_("Class: "))
-            if choice not in classes:
-                print(_(INVALID_KEY_MSG))
-        self.player.choose_class(classes[choice])
+        names = {v.lower(): k for k, v in classes.items()}
+        aliases = {"wiz": "mage", "sorc": "sorcerer", "necro": "necromancer", "lock": "warlock", "pally": "paladin"}
+
+        while True:
+            raw = input(_("Class: ")).strip().lower()
+            choice = None
+            if raw.isdigit() and raw in classes:
+                choice = raw
+            else:
+                key = aliases.get(raw, raw)
+                if key in names:
+                    choice = names[key]
+            if choice is None:
+                print(_("Please enter a number (1–15) or a valid class name."))
+                continue
+            self.player.choose_class(classes[choice])
+            break
 
     def offer_guild(self):
         if self.player.guild:
