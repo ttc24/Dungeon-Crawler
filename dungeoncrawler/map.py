@@ -8,7 +8,7 @@ from collections import deque
 from gettext import gettext as _
 from typing import TYPE_CHECKING
 
-from .ai import ARCHETYPES, IntentAI
+from .ai import IntentAI
 from .combat import battle
 from .entities import Companion, Enemy
 from .events import BaseEvent
@@ -148,7 +148,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
         gold = random.randint(15 + early_game_bonus + floor, 30 + floor * 2)
 
         ability = game.enemy_abilities.get(name)
-        weights = ARCHETYPES.get(name)
+        weights = game.enemy_ai.get(name)
         ai = IntentAI(**weights) if weights else None
         enemy = Enemy(name, health, attack, defense, gold, ability, ai)
         enemy.xp = max(5, (health + attack + defense) // 15)
@@ -159,7 +159,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     name = random.choice(boss_names)
     hp, atk, dfs, gold, ability = game.boss_stats[name]
     print(_(f"A powerful boss guards this floor! The {name} lurks nearby..."))
-    boss_weights = ARCHETYPES.get(name)
+    boss_weights = game.boss_ai.get(name)
     boss_ai = IntentAI(**boss_weights) if boss_weights else None
     boss = Enemy(
         name,

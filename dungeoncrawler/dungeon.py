@@ -36,18 +36,22 @@ from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
 # ---------------------------------------------------------------------------
 # Data loading utilities
 # ---------------------------------------------------------------------------
-# ``data/enemies.json`` schema:
-# {
-#   "EnemyName": {
+# ``data/enemies.json`` schema (list of dictionaries):
+# [
+#   {
+#     "name": str,
 #     "stats": [hp_min, hp_max, atk_min, atk_max, defense],
-#     "ability": "optional"
+#     "ability": "optional",
+#     "ai": {"aggressive": int, "defensive": int, "unpredictable": int},
+#     "traits": [str, ...]
 #   },
 #   ...
-# }
+# ]
 #
 # ``data/bosses.json`` schema:
-# {
-#   "BossName": {
+# [
+#   {
+#     "name": str,
 #     "stats": [hp, atk, defense, gold],
 #     "ability": "optional",
 #     "loot": [
@@ -58,10 +62,12 @@ from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
 #         "max_damage": int,
 #         "price": int
 #       }
-#     ]
+#     ],
+#     "ai": {"aggressive": int, "defensive": int, "unpredictable": int},
+#     "traits": [str, ...]
 #   },
 #   ...
-# }
+# ]
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
@@ -105,13 +111,25 @@ ROOM_NAME_NOUNS = [
 
 @lru_cache(maxsize=None)
 def load_enemies():
-    """Load enemy stats and abilities from ``enemies.json``."""
+    """Load enemy definitions from ``enemies.json``."""
     path = DATA_DIR / "enemies.json"
     with open(path) as f:
         data = json.load(f)
-    stats = {name: tuple(v["stats"]) for name, v in data.items()}
-    abilities = {name: v.get("ability") for name, v in data.items() if v.get("ability")}
-    return stats, abilities
+    stats = {}
+    abilities = {}
+    ai = {}
+    traits = {}
+    for cfg in data:
+        name = cfg["name"]
+        stats[name] = tuple(cfg["stats"])
+        ability = cfg.get("ability")
+        if ability:
+            abilities[name] = ability
+        if cfg.get("ai"):
+            ai[name] = cfg["ai"]
+        if cfg.get("traits"):
+            traits[name] = cfg["traits"]
+    return stats, abilities, ai, traits
 
 
 @lru_cache(maxsize=None)
@@ -122,17 +140,24 @@ def load_bosses():
         data = json.load(f)
     stats = {}
     loot = {}
-    for name, cfg in data.items():
+    ai = {}
+    traits = {}
+    for cfg in data:
+        name = cfg["name"]
         hp, atk, dfs, gold = cfg["stats"]
         stats[name] = (hp, atk, dfs, gold, cfg.get("ability"))
         if "loot" in cfg:
             loot[name] = [Weapon(**item) for item in cfg["loot"]]
-    return stats, loot
+        if cfg.get("ai"):
+            ai[name] = cfg["ai"]
+        if cfg.get("traits"):
+            traits[name] = cfg["traits"]
+    return stats, loot, ai, traits
 
 
-ENEMY_STATS, ENEMY_ABILITIES = load_enemies()
-BOSS_STATS, BOSS_LOOT = load_bosses()
-apply_enemy_plugins(ENEMY_STATS, ENEMY_ABILITIES)
+ENEMY_STATS, ENEMY_ABILITIES, ENEMY_AI, ENEMY_TRAITS = load_enemies()
+BOSS_STATS, BOSS_LOOT, BOSS_AI, BOSS_TRAITS = load_bosses()
+apply_enemy_plugins(ENEMY_STATS, ENEMY_ABILITIES, ENEMY_AI, ENEMY_TRAITS)
 
 
 def floor_size(floor: int) -> tuple[int, int]:
@@ -234,8 +259,12 @@ class DungeonBase:
         self.riddles = RIDDLES
         self.enemy_stats = ENEMY_STATS
         self.enemy_abilities = ENEMY_ABILITIES
+        self.enemy_ai = ENEMY_AI
+        self.enemy_traits = ENEMY_TRAITS
         self.boss_stats = BOSS_STATS
         self.boss_loot = BOSS_LOOT
+        self.boss_ai = BOSS_AI
+        self.boss_traits = BOSS_TRAITS
         self.floor_configs = FLOOR_CONFIGS
         # Tracking for leaderboard entries
         self.run_start = None

@@ -2,14 +2,30 @@
 
 from __future__ import annotations
 
+import json
 import random
+from functools import lru_cache
 from gettext import gettext as _
+from pathlib import Path
 
 from .config import config
 from .constants import ANNOUNCER_LINES
 from .items import Item, Weapon
 from .status_effects import add_status_effect
 from .status_effects import apply_status_effects as apply_effects
+
+
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+
+
+@lru_cache(maxsize=None)
+def load_skills():
+    path = DATA_DIR / "skills.json"
+    with open(path) as f:
+        return json.load(f)
+
+
+SKILL_DEFS = load_skills()
 
 
 class Entity:
@@ -45,29 +61,17 @@ class Player(Entity):
         # Stamina based skill system
         self.max_stamina = 100
         self.stamina = 100
-        self.skills = {
-            "1": {
-                "name": "Power Strike",
-                "cost": 30,
-                "base_cooldown": 3,
+        self.skills = {}
+        for cfg in SKILL_DEFS:
+            key = cfg["key"]
+            func = getattr(self, f"_skill_{cfg['func']}")
+            self.skills[key] = {
+                "name": cfg["name"],
+                "cost": cfg["cost"],
+                "base_cooldown": cfg["base_cooldown"],
                 "cooldown": 0,
-                "func": self._skill_power_strike,
-            },
-            "2": {
-                "name": "Feint",
-                "cost": 20,
-                "base_cooldown": 4,
-                "cooldown": 0,
-                "func": self._skill_feint,
-            },
-            "3": {
-                "name": "Bandage",
-                "cost": 25,
-                "base_cooldown": 5,
-                "cooldown": 0,
-                "func": self._skill_bandage,
-            },
-        }
+                "func": func,
+            }
         self.x = 0
         self.y = 0
         self.inventory_limit = 8

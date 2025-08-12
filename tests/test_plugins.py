@@ -49,17 +49,28 @@ def _create_mod(monkeypatch, tmp_path, data_files):
 
 
 def test_apply_enemy_plugins(monkeypatch, tmp_path):
-    enemy_json = {"Test Orc": {"stats": [1, 2, 3, 4], "ability": "smash"}}
+    enemy_json = [
+        {
+            "name": "Test Orc",
+            "stats": [1, 2, 3, 4],
+            "ability": "smash",
+            "ai": {"aggressive": 1},
+            "traits": [],
+        }
+    ]
     mod_name = _create_mod(monkeypatch, tmp_path, {"enemies.json": enemy_json})
 
-    enemy_stats, enemy_abilities = {}, {}
+    enemy_stats, enemy_abilities, enemy_ai, enemy_traits = {}, {}, {}, {}
     try:
-        plugins_module.apply_enemy_plugins(enemy_stats, enemy_abilities)
+        plugins_module.apply_enemy_plugins(
+            enemy_stats, enemy_abilities, enemy_ai, enemy_traits
+        )
     finally:
         sys.modules.pop(f"mods.{mod_name}", None)
 
     assert enemy_stats["Test Orc"] == (1, 2, 3, 4)
     assert enemy_abilities["Test Orc"] == "smash"
+    assert enemy_ai["Test Orc"]["aggressive"] == 1
 
 
 def test_apply_item_plugins(monkeypatch, tmp_path):
