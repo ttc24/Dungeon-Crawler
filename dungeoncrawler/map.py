@@ -6,6 +6,7 @@ import curses
 import random
 from gettext import gettext as _
 from typing import TYPE_CHECKING
+from collections import deque
 
 from .ai import ARCHETYPES, IntentAI
 from .combat import battle
@@ -16,6 +17,37 @@ from .quests import EscortNPC
 
 if TYPE_CHECKING:  # pragma: no cover - type hints only
     from .dungeon import DungeonBase
+
+
+def compute_visibility(grid, px, py, radius):
+    """Return set of visible tiles using BFS from ``(px, py)``."""
+
+    height = len(grid)
+    width = len(grid[0]) if height else 0
+    visited = set()
+    queue = deque([(px, py, 0)])
+    while queue:
+        x, y, dist = queue.popleft()
+        if (x, y) in visited:
+            continue
+        visited.add((x, y))
+        if dist >= radius:
+            continue
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < width and 0 <= ny < height and grid[ny][nx] is not None:
+                queue.append((nx, ny, dist + 1))
+    return visited
+
+
+def update_visibility(game: "DungeonBase") -> None:
+    """Recompute visible and discovered tiles for ``game``."""
+
+    game.visible = [[False for __ in range(game.width)] for __ in range(game.height)]
+    radius = 3 + game.current_floor // 2
+    for x, y in compute_visibility(game.rooms, game.player.x, game.player.y, radius):
+        game.visible[y][x] = True
+        game.discovered[y][x] = True
 
 
 def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
@@ -36,6 +68,8 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     game.room_names = [
         [game.generate_room_name() for __ in range(game.width)] for __ in range(game.height)
     ]
+    game.discovered = [[False for __ in range(game.width)] for __ in range(game.height)]
+    game.visible = [[False for __ in range(game.width)] for __ in range(game.height)]
     visited = set()
     path = []
     x, y = game.width // 2, game.height // 2
@@ -167,6 +201,8 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
         place(random.choice(game.rare_loot))
     # Key is now tied to boss drop; don't place it separately
 
+    update_visibility(game)
+
 
 def move_player(game: "DungeonBase", direction: str) -> None:
     """Move the player if the target tile is valid."""
@@ -177,6 +213,7 @@ def move_player(game: "DungeonBase", direction: str) -> None:
     x, y = game.player.x + dx, game.player.y + dy
     if 0 <= x < game.width and 0 <= y < game.height and game.rooms[y][x] is not None:
         handle_room(game, x, y)
+        update_visibility(game)
     else:
         print(_("You can't move that way."))
 
@@ -188,15 +225,17 @@ def render_map_string(game: "DungeonBase") -> str:
     for y in range(game.height):
         row = ""
         for x in range(game.width):
-            pos = (x, y)
-            if pos == (game.player.x, game.player.y):
-                row += "@"
-            elif pos == game.exit_coords:
-                row += "E"
-            elif pos in game.visited_rooms:
-                row += "."
+            if game.visible[y][x]:
+                if (x, y) == (game.player.x, game.player.y):
+                    row += "@"
+                elif (x, y) == game.exit_coords:
+                    row += "E"
+                else:
+                    row += "."
+            elif game.discovered[y][x]:
+                row += "·"
             else:
-                row += "#"
+                row += " "
         rows.append(row)
     return "\n".join(rows)
 
@@ -220,7 +259,7 @@ def render_map(game: "DungeonBase") -> None:
                 for x, ch in enumerate(row):
                     if ch == "@":
                         color = curses.color_pair(1)
-                    elif ch == ".":
+                    elif ch in (".", "·"):
                         color = curses.color_pair(2)
                     elif ch == "E":
                         color = curses.color_pair(3)
@@ -238,8 +277,8 @@ def render_map(game: "DungeonBase") -> None:
                 legend = [
                     _("@: Player"),
                     _("E: Exit"),
-                    _(".: Explored"),
-                    _("#: Unexplored"),
+                    _(".: Visible"),
+                    _("·: seen, not visible"),
                 ]
                 for i, entry in enumerate(legend):
                     stdscr.addstr(offset + 2 + i, 0, entry)
