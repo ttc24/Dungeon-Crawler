@@ -109,7 +109,11 @@ class Player(Entity):
 
     def collect_item(self, item):
         if len(self.inventory) >= self.inventory_limit:
-            print(_(f"Backpack full ({self.inventory_limit}/{self.inventory_limit}). Drop something with [D]."))
+            print(
+                _(
+                    f"Backpack full ({self.inventory_limit}/{self.inventory_limit}). Drop something with [D]."
+                )
+            )
             return False
         self.inventory.append(item)
         return True
@@ -162,9 +166,7 @@ class Player(Entity):
             if config.verbose_combat:
                 reason = "It slipped on the wet stone!"
                 print(
-                    _(
-                        f"You swing ({hit_chance}% to hit): roll {roll} → MISS. {reason}"
-                    )
+                    _(f"You swing ({hit_chance}% to hit): roll {roll} → MISS. {reason}")
                 )
             else:
                 print(_(f"You missed the {enemy.name}."))

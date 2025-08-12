@@ -315,7 +315,9 @@ class DungeonBase:
                 records = []
 
         duration = time.time() - self.run_start if self.run_start else 0
-        epitaph = f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'"
+        epitaph = (
+            f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'"
+        )
         records.append(
             {
                 "player_name": self.player.name,
@@ -356,7 +358,7 @@ class DungeonBase:
                 _(
                     f"{r.get('player_name', '?')}: {r.get('score', 0)} "
                     f"(Floor {r.get('floor_reached', '?')}, {r.get('run_duration', 0):.0f}s, Seed {r.get('seed', '?')}) "
-                    f"{r.get('epitaph', '')}" 
+                    f"{r.get('epitaph', '')}"
                 )
             )
 
@@ -541,7 +543,9 @@ class DungeonBase:
                     break
 
         print(_("You have died. Game Over!"))
-        print(_(f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'"))
+        print(
+            _(f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'")
+        )
         print(_(f"Final Score: {self.player.get_score()}"))
         self.record_score(floor)
         if os.path.exists(SAVE_FILE):

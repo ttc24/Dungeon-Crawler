@@ -39,9 +39,7 @@ def _handle_poison(entity, effects, is_player, name):
     if effects["poison"] > 0:
         entity.health -= 3
         remaining = effects["poison"] - 1
-        msg = _(
-            f"Poison -3 HP ({remaining} turns left)."
-        )
+        msg = _(f"Poison -3 HP ({remaining} turns left).")
         if is_player:
             print(msg)
         else:
@@ -60,9 +58,7 @@ def _handle_burn(entity, effects, is_player, name):
     if effects["burn"] > 0:
         entity.health -= 4
         remaining = effects["burn"] - 1
-        msg = _(
-            f"Burn -4 HP ({remaining} turns left)."
-        )
+        msg = _(f"Burn -4 HP ({remaining} turns left).")
         if is_player:
             print(msg)
         else:
@@ -81,9 +77,7 @@ def _handle_bleed(entity, effects, is_player, name):
     if effects["bleed"] > 0:
         entity.health -= 2
         remaining = effects["bleed"] - 1
-        msg = _(
-            f"Bleeding -2 HP ({remaining} turns left)."
-        )
+        msg = _(f"Bleeding -2 HP ({remaining} turns left).")
         if is_player:
             print(msg)
         else:
@@ -102,9 +96,7 @@ def _handle_freeze(entity, effects, is_player, name):
     skip_turn = False
     if effects["freeze"] > 0:
         remaining = effects["freeze"] - 1
-        msg = _(
-            f"Frozen ({remaining} turns left)."
-        )
+        msg = _(f"Frozen ({remaining} turns left).")
         if is_player:
             print(msg)
         else:
@@ -124,9 +116,7 @@ def _handle_stun(entity, effects, is_player, name):
     skip_turn = False
     if effects["stun"] > 0:
         remaining = effects["stun"] - 1
-        msg = _(
-            f"Stunned ({remaining} turns left)."
-        )
+        msg = _(f"Stunned ({remaining} turns left).")
         if is_player:
             print(msg)
         else:
