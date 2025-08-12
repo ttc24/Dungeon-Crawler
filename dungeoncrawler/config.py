@@ -37,6 +37,13 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
     Config
         A :class:`Config` instance populated with values from the JSON file or
         falling back to defaults when the file or specific keys are missing.
+
+    Raises
+    ------
+    ValueError
+        If a configuration value has an invalid type or falls outside the
+        accepted range. For example ``screen_width`` and ``screen_height`` must
+        be positive integers.
     """
 
     cfg = Config()
@@ -47,6 +54,14 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
             return cfg
         for key, value in data.items():
             if hasattr(cfg, key):
+                if key in {"screen_width", "screen_height", "max_floors"}:
+                    if not isinstance(value, int):
+                        raise ValueError(f"{key} must be an integer, got {type(value).__name__}")
+                    if value <= 0:
+                        raise ValueError(f"{key} must be greater than 0, got {value}")
+                elif key in {"save_file", "score_file"}:
+                    if not isinstance(value, str):
+                        raise ValueError(f"{key} must be a string, got {type(value).__name__}")
                 setattr(cfg, key, value)
     return cfg
 
