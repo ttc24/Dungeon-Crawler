@@ -6,6 +6,9 @@ import random
 from gettext import gettext as _
 from typing import TYPE_CHECKING
 
+from .constants import INVALID_KEY_MSG
+from .status_effects import format_status_tags
+
 if TYPE_CHECKING:  # pragma: no cover - for type hints only
     from .dungeon import DungeonBase
     from .entities import Enemy, Player
@@ -56,8 +59,8 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
             enemy_turn(enemy, player)
             continue
 
-        print(_(f"Player Health: {player.health}"))
-        print(_(f"Enemy Health: {enemy.health}"))
+        print(_(f"Player Health: {player.health} {format_status_tags(player.status_effects)}"))
+        print(_(f"Enemy Health: {enemy.health} {format_status_tags(enemy.status_effects)}"))
         print(_("1. Attack\n2. Defend\n3. Use Health Potion\n4. Use Skill"))
         choice = input(_("Choose action: "))
         if choice == "1":
@@ -75,7 +78,7 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
             game.announce(_("Special skill unleashed!"))
             enemy_turn(enemy, player)
         else:
-            print(_("Invalid choice!"))
+            print(_(INVALID_KEY_MSG))
         player.decrement_cooldowns()
 
     if not enemy.is_alive():
