@@ -1,9 +1,8 @@
 import json
-from pathlib import Path
 
 import pytest
 
-from dungeoncrawler.config import Config, load_config
+from dungeoncrawler.config import load_config
 
 
 def test_load_config_valid(tmp_path):
