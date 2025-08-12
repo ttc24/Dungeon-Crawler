@@ -17,7 +17,7 @@ from .constants import (
     SAVE_FILE,
     SCORE_FILE,
 )
-from .entities import Companion, Player, Enemy
+from .entities import Companion, Enemy, Player
 from .events import (
     CacheEvent,
     FountainEvent,
@@ -29,9 +29,9 @@ from .events import (
     ShrineEvent,
     TrapEvent,
 )
-from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
 from .items import Item, Weapon
 from .plugins import apply_enemy_plugins, apply_item_plugins
+from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
 
 # ---------------------------------------------------------------------------
 # Data loading utilities
@@ -572,9 +572,7 @@ class DungeonBase:
         if qtype == "fetch":
             item = Item("Ancient Relic", "A quest item")
             candidates = [
-                pos
-                for pos in empty
-                if abs(pos[0] - start[0]) + abs(pos[1] - start[1]) <= 15
+                pos for pos in empty if abs(pos[0] - start[0]) + abs(pos[1] - start[1]) <= 15
             ]
             loc = candidates[0] if candidates else empty[0]
             self.rooms[loc[1]][loc[0]] = [CacheEvent(), item]

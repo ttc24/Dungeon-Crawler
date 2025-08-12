@@ -4,8 +4,8 @@ import random
 from dataclasses import dataclass
 from typing import Optional, Tuple
 
-from .items import Item
 from .entities import Enemy
+from .items import Item
 
 
 @dataclass
@@ -71,10 +71,10 @@ class EscortQuest(Quest):
         self.npc = npc
 
     def is_complete(self, game) -> bool:
-        return (
-            (self.npc.x, self.npc.y) == game.exit_coords
-            and (game.player.x, game.player.y) == game.exit_coords
-        )
+        return (self.npc.x, self.npc.y) == game.exit_coords and (
+            game.player.x,
+            game.player.y,
+        ) == game.exit_coords
 
     def status(self, game) -> str:
         if self.is_complete(game):
