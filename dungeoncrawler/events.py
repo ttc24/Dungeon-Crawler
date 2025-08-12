@@ -45,20 +45,38 @@ class PuzzleEvent(BaseEvent):
 
 
 class TrapEvent(BaseEvent):
-    """Inflict random damage to the player."""
+    """Hidden hazard that can be spotted and avoided."""
 
-    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
-        output_func(_("You notice taut filament across the path…"))
-        if input_func is input:
-            choice = "n"
-        else:
-            choice = input_func(_("Try to disarm? (y/n): ")).strip().lower()
-        if choice.startswith("y") and random.random() < 0.5:
-            output_func(_("You carefully disarm the trap."))
-            return
+    def trigger(
+        self, game: "DungeonBase", input_func=input, output_func=print
+    ) -> None:
+        speed = getattr(game.player, "speed", 0)
+        perception = getattr(game.player, "perception", 0)
+        detect_chance = 0.30 + (speed + perception) * 0.05
+        detect_chance = min(0.95, detect_chance)
+        if random.random() < detect_chance:
+            output_func(_("You spot a faint glyph hinting at a trap."))
+            if input_func is input:
+                action = "n"
+            else:
+                prompt = _("Disarm (d) [15 STA] or step around (s)? ")
+                action = input_func(prompt).strip().lower()
+            if action == "d" and game.player.stamina >= 15:
+                game.player.stamina -= 15
+                output_func(_("You carefully disarm the trap."))
+                game.visited_rooms.add((game.player.x, game.player.y))
+                return
+            if action == "s":
+                output_func(_("You step around the trap, taking extra time."))
+                game.visited_rooms.add((game.player.x, game.player.y))
+                return
+            output_func(_("You hesitate and trigger the trap!"))
         damage = random.randint(5, 20)
-        game.player.take_damage(damage, source="The Tripwire")
+        game.player.take_damage(damage, source=_("The Tripwire"))
         output_func(_(f"A trap is sprung! You take {damage} damage."))
+        if random.random() < 0.3:
+            add_status_effect(game.player, "bleed", 3)
+        game.visited_rooms.add((game.player.x, game.player.y))
 
 
 class FountainEvent(BaseEvent):
