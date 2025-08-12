@@ -69,7 +69,9 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
                 f"Enemy Health: {enemy.health} {format_status_tags(enemy.status_effects)}"
             )
         )
-        print(_("1. Attack\n2. Defend\n3. Use Health Potion\n4. Use Skill"))
+        print(
+            _("1. Attack\n2. Defend\n3. Use Health Potion\n4. Use Skill\n5. Flee")
+        )
         choice = input(_("Choose action: "))
         if choice == "1":
             player.attack(enemy)
@@ -84,6 +86,11 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
         elif choice == "4":
             player.use_skill(enemy)
             game.announce(_("Special skill unleashed!"))
+            enemy_turn(enemy, player)
+        elif choice == "5":
+            if player.flee(enemy):
+                game.announce(f"{player.name} flees from {enemy.name}!")
+                break
             enemy_turn(enemy, player)
         else:
             print(_(INVALID_KEY_MSG))

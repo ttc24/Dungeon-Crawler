@@ -46,6 +46,7 @@ class Player(Entity):
         self.inventory_limit = 8
         self.cause_of_death = ""
         self.novice_luck_active = False
+        self.speed = 10
         # Temporary combat modifiers for the defend action
         self.guard_damage = False
         self.guard_attack = False
@@ -142,6 +143,25 @@ class Player(Entity):
             print(_(f"You used a Health Potion and gained {healed_amount} health."))
         else:
             print(_("You don't have a Health Potion to use."))
+
+    def flee(self, enemy: "Enemy") -> bool:
+        """Attempt to flee from ``enemy``.
+
+        Returns ``True`` if the escape succeeds. Otherwise the enemy gains
+        advantage on their next attack.
+        """
+
+        base_chance = 40 + (self.speed - enemy.speed) * 5
+        escape_chance = max(10, min(90, base_chance))
+        roll = random.randint(1, 100)
+        if roll <= escape_chance:
+            print(_("You successfully disengage!"))
+            return True
+        print(
+            _(f"You try to disengage, but the {enemy.name} pins you (they gain advantage!).")
+        )
+        enemy.status_effects["advantage"] = 1
+        return False
 
     def attack(self, enemy: Enemy) -> None:
         """Attack ``enemy`` using the equipped weapon or base attack power.
@@ -461,7 +481,15 @@ class Enemy(Entity):
     """
 
     def __init__(
-        self, name, health, attack_power, defense, gold, ability=None, ai=None
+        self,
+        name,
+        health,
+        attack_power,
+        defense,
+        gold,
+        ability=None,
+        ai=None,
+        speed=10,
     ):
         super().__init__(name, "")
         self.health = health
@@ -472,6 +500,7 @@ class Enemy(Entity):
         self.ability = ability
         self.ai = ai
         self.xp = 10
+        self.speed = speed
 
     def is_alive(self):
         return self.health > 0
@@ -504,6 +533,8 @@ class Enemy(Entity):
 
     def attack(self, player):
         hit_chance = 60
+        if self.status_effects.pop("advantage", 0):
+            hit_chance += 15
         roll = random.randint(1, 100)
         damage = random.randint(self.attack_power // 2, self.attack_power)
         if roll <= hit_chance:
