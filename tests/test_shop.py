@@ -13,9 +13,7 @@ def test_shop_purchase():
     dungeon = DungeonBase(1, 1)
     dungeon.player = Player("Buyer")
     dungeon.player.gold = 20
-    shop_module.shop(
-        dungeon, input_func=lambda _: "1", output_func=lambda _msg: None
-    )
+    shop_module.shop(dungeon, input_func=lambda _: "1", output_func=lambda _msg: None)
     assert dungeon.player.gold == 10
     assert any(item.name == "Health Potion" for item in dungeon.player.inventory)
 

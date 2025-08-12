@@ -8,10 +8,12 @@ from dungeoncrawler.main import build_character
 
 
 def test_build_character():
-    inputs = iter([
-        "",
-        "Alice",  # name (invalid then valid)
-    ])
+    inputs = iter(
+        [
+            "",
+            "Alice",  # name (invalid then valid)
+        ]
+    )
 
     player = build_character(
         input_func=lambda _: next(inputs), output_func=lambda _msg: None

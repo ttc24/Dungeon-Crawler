@@ -22,18 +22,14 @@ class BaseEvent:
 class MerchantEvent(BaseEvent):
     """Open the in-game shop."""
 
-    def trigger(
-        self, game: "DungeonBase", input_func=input, output_func=print
-    ) -> None:
+    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
         game.shop(input_func=input_func, output_func=output_func)
 
 
 class PuzzleEvent(BaseEvent):
     """Present a riddle that rewards gold when solved."""
 
-    def trigger(
-        self, game: "DungeonBase", input_func=input, output_func=print
-    ) -> None:
+    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
         riddle, answer = random.choice(game.riddles)
         output_func(_("A sage presents a riddle:\n") + riddle)
         response = input_func(_("Answer: ")).strip().lower()
@@ -48,9 +44,7 @@ class PuzzleEvent(BaseEvent):
 class TrapEvent(BaseEvent):
     """Inflict random damage to the player."""
 
-    def trigger(
-        self, game: "DungeonBase", input_func=input, output_func=print
-    ) -> None:
+    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
         damage = random.randint(5, 20)
         game.player.take_damage(damage)
         output_func(_(f"A trap is sprung! You take {damage} damage."))
