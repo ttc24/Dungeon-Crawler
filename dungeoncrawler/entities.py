@@ -135,19 +135,22 @@ class Player(Entity):
         return any(item.name == name for item in self.inventory)
 
     def use_health_potion(self):
-        potion = next(
-            (
-                item
-                for item in self.inventory
-                if isinstance(item, Item) and item.name == "Health Potion"
-            ),
-            None,
-        )
+        potion = None
+        heal = 0
+        for item in self.inventory:
+            if isinstance(item, Item) and item.name == "Health Potion":
+                potion = item
+                heal = 20
+                break
+            if isinstance(item, Item) and item.name == "Fountain Water":
+                potion = item
+                heal = random.randint(4, 6)
+                break
         if potion:
             self.inventory.remove(potion)
-            healed_amount = min(20, self.max_health - self.health)
+            healed_amount = min(heal, self.max_health - self.health)
             self.health += healed_amount
-            print(_(f"You used a Health Potion and gained {healed_amount} health."))
+            print(_(f"You used a {potion.name} and gained {healed_amount} health."))
         else:
             print(_("You don't have a Health Potion to use."))
 
@@ -182,6 +185,10 @@ class Player(Entity):
             self.status_effects.pop("guard", None)
         if getattr(self, "novice_luck_active", False):
             hit_chance += 10
+        if "blessed" in self.status_effects:
+            hit_chance += 10
+        if "cursed" in self.status_effects:
+            hit_chance -= 5
         roll = random.randint(1, 100)
         base = self.calculate_damage()
         str_bonus = 0
@@ -615,6 +622,10 @@ class Enemy(Entity):
             wild = True
         else:
             wild = False
+        if "blessed" in self.status_effects:
+            hit_chance += 10
+        if "cursed" in self.status_effects:
+            hit_chance -= 5
         roll = random.randint(1, 100)
         damage = random.randint(self.attack_power // 2, self.attack_power)
         if self.status_effects.pop("heavy", 0):

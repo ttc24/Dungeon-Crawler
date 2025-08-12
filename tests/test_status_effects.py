@@ -65,3 +65,13 @@ def test_custom_effect_via_registry(monkeypatch):
     apply_status_effects(player)
     assert player.health == 10
     assert "heal" not in player.status_effects
+
+
+def test_blessed_and_cursed_expire():
+    player = Player(status_effects={"blessed": 2, "cursed": 2})
+    apply_status_effects(player)
+    assert player.status_effects["blessed"] == 1
+    assert player.status_effects["cursed"] == 1
+    apply_status_effects(player)
+    assert "blessed" not in player.status_effects
+    assert "cursed" not in player.status_effects

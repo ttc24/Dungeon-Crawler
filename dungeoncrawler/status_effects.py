@@ -12,6 +12,8 @@ EFFECT_INFO = {
     "inspire": "+3 attack.",
     "guard": "Incoming damage -40%. Next attack +10% hit.",
     "stagger": "-20% hit.",
+    "blessed": "+10% hit chance.",
+    "cursed": "-5% hit chance.",
 }
 
 
@@ -171,6 +173,40 @@ def _handle_inspire(entity, effects, is_player, name):
     return False
 
 
+def _handle_blessed(entity, effects, is_player, name):
+    effects["blessed"] -= 1
+    remaining = effects.get("blessed", 0)
+    if remaining > 0:
+        if is_player:
+            print(_(f"Blessed ({remaining} turns left)."))
+        else:
+            print(_(f"The {name} is blessed ({remaining} turns left)."))
+    if effects["blessed"] <= 0:
+        del effects["blessed"]
+        if is_player:
+            print(_("Blessing fades."))
+        else:
+            print(_(f"The {name}'s blessing fades."))
+    return False
+
+
+def _handle_cursed(entity, effects, is_player, name):
+    effects["cursed"] -= 1
+    remaining = effects.get("cursed", 0)
+    if remaining > 0:
+        if is_player:
+            print(_(f"Cursed ({remaining} turns left)."))
+        else:
+            print(_(f"The {name} is cursed ({remaining} turns left)."))
+    if effects["cursed"] <= 0:
+        del effects["cursed"]
+        if is_player:
+            print(_("Curse fades."))
+        else:
+            print(_(f"The {name}'s curse fades."))
+    return False
+
+
 STATUS_EFFECT_HANDLERS = {
     "poison": _handle_poison,
     "burn": _handle_burn,
@@ -179,6 +215,8 @@ STATUS_EFFECT_HANDLERS = {
     "stun": _handle_stun,
     "shield": _handle_shield,
     "inspire": _handle_inspire,
+    "blessed": _handle_blessed,
+    "cursed": _handle_cursed,
 }
 
 
