@@ -17,7 +17,7 @@ from .constants import (
     SAVE_FILE,
     SCORE_FILE,
 )
-from .entities import Companion, Player
+from .entities import Companion, Player, Enemy
 from .events import (
     CacheEvent,
     FountainEvent,
@@ -29,6 +29,7 @@ from .events import (
     ShrineEvent,
     TrapEvent,
 )
+from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
 from .items import Item, Weapon
 from .plugins import apply_enemy_plugins, apply_item_plugins
 
@@ -247,6 +248,7 @@ class DungeonBase:
                 self.total_runs = 0
         self.novice_luck_announced = False
         self.stairs_prompt_shown = False
+        self.active_quest = None
 
     def announce(self, msg):
         print(_(f"[Announcer] {random.choice(ANNOUNCER_LINES)} {msg}"))
@@ -550,6 +552,110 @@ class DungeonBase:
 
     def generate_dungeon(self, floor=1):
         map_module.generate_dungeon(self, floor)
+        self.generate_quest(floor)
+
+    def generate_quest(self, floor):
+        """Create a simple quest for the current floor."""
+
+        self.active_quest = None
+        start = (self.player.x, self.player.y)
+        empty = [
+            (x, y)
+            for y in range(self.height)
+            for x in range(self.width)
+            if self.rooms[y][x] == "Empty"
+        ]
+        if not empty:
+            return
+        qtype = random.choice(["fetch", "hunt", "escort"])
+        random.shuffle(empty)
+        if qtype == "fetch":
+            item = Item("Ancient Relic", "A quest item")
+            candidates = [
+                pos
+                for pos in empty
+                if abs(pos[0] - start[0]) + abs(pos[1] - start[1]) <= 15
+            ]
+            loc = candidates[0] if candidates else empty[0]
+            self.rooms[loc[1]][loc[0]] = [CacheEvent(), item]
+            self.active_quest = FetchQuest(
+                item,
+                loc,
+                reward=40,
+                flavor=_("A whisper speaks of a hidden cache."),
+            )
+        elif qtype == "hunt":
+            name = random.choice(list(self.enemy_stats.keys()))
+            hp_min, hp_max, atk_min, atk_max, defense = self.enemy_stats[name]
+            enemy = Enemy(
+                name,
+                hp_max + floor * 2,
+                atk_max + floor * 2,
+                defense + floor // 2,
+                random.randint(30, 60),
+            )
+            enemy.xp = max(5, (enemy.health + enemy.attack_power + enemy.defense) // 15)
+            loc = empty[0]
+            enemy.x, enemy.y = loc
+            self.rooms[loc[1]][loc[0]] = enemy
+            self.active_quest = HuntQuest(
+                enemy,
+                reward=60,
+                flavor=_("A bounty is placed on a fearsome foe."),
+            )
+        else:
+            npc = EscortNPC(_("Lost Traveler"))
+            loc = empty[0]
+            npc.x, npc.y = loc
+            self.rooms[loc[1]][loc[0]] = npc
+            self.active_quest = EscortQuest(
+                npc,
+                reward=50,
+                flavor=_("A traveler seeks safe passage to the exit."),
+            )
+
+    def check_quest_progress(self):
+        """Update and resolve the active quest."""
+
+        quest = self.active_quest
+        if not quest:
+            return
+        if isinstance(quest, FetchQuest):
+            if not quest.hint_given and not quest.is_complete(self):
+                px, py = self.player.x, self.player.y
+                dist = abs(px - quest.location[0]) + abs(py - quest.location[1])
+                if dist <= 5:
+                    print(_("You notice faint footprints nearby."))
+                    quest.hint_given = True
+            if quest.is_complete(self):
+                print(_("Quest complete!"))
+                self.player.gold += quest.reward
+                self.active_quest = None
+        elif isinstance(quest, HuntQuest):
+            if quest.is_complete(self):
+                print(_("Quest complete!"))
+                self.player.gold += quest.reward
+                self.active_quest = None
+        elif isinstance(quest, EscortQuest):
+            npc = quest.npc
+            if not npc.following:
+                dist = abs(npc.x - self.player.x) + abs(npc.y - self.player.y)
+                if dist <= 5:
+                    step_x = 1 if self.player.x > npc.x else -1 if self.player.x < npc.x else 0
+                    step_y = 1 if self.player.y > npc.y else -1 if self.player.y < npc.y else 0
+                    self.rooms[npc.y][npc.x] = "Empty"
+                    npc.x += step_x
+                    npc.y += step_y
+                    if (npc.x, npc.y) == (self.player.x, self.player.y):
+                        npc.following = True
+                    else:
+                        self.rooms[npc.y][npc.x] = npc
+            else:
+                npc.x, npc.y = self.player.x, self.player.y
+            if quest.is_complete(self):
+                print(_("Quest complete!"))
+                self.player.gold += quest.reward
+                self.active_quest = None
 
     def play_game(self) -> None:
         """Run the main game loop until the player quits or dies."""
@@ -590,6 +696,10 @@ class DungeonBase:
                     print(_(f"Guild: {self.player.guild}"))
                 if self.player.race:
                     print(_(f"Race: {self.player.race}"))
+                if self.active_quest:
+                    print(_(f"Quest: {self.active_quest.status(self)}"))
+                else:
+                    print(_("Quest: None"))
                 print(
                     _(
                         "0. Wait 1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit 8. Show Map 9. View Leaderboard"
