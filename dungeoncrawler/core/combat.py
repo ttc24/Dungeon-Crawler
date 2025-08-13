@@ -13,10 +13,10 @@ from typing import List
 from .entity import Entity
 from .events import AttackResolved, Event, StatusApplied
 
-
 # ---------------------------------------------------------------------------
 # Core resolvers
 # ---------------------------------------------------------------------------
+
 
 def resolve_attack(attacker: Entity, defender: Entity) -> AttackResolved:
     """Resolve a basic attack from ``attacker`` to ``defender``.
@@ -97,5 +97,7 @@ def resolve_enemy_turn(enemy: Entity, player: Entity) -> List[Event]:
     """
 
     if not enemy.is_alive():
-        return [StatusApplied(f"{enemy.name} is defeated and cannot act.", enemy.name, "defeated", 0)]
+        return [
+            StatusApplied(f"{enemy.name} is defeated and cannot act.", enemy.name, "defeated", 0)
+        ]
     return [resolve_attack(enemy, player)]

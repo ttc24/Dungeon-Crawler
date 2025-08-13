@@ -7,9 +7,9 @@ from gettext import gettext as _
 from typing import TYPE_CHECKING
 
 from .constants import INVALID_KEY_MSG
-from .status_effects import format_status_tags
-from .core.entity import Entity as CoreEntity
 from .core.combat import resolve_enemy_turn, resolve_player_action
+from .core.entity import Entity as CoreEntity
+from .status_effects import format_status_tags
 
 if TYPE_CHECKING:  # pragma: no cover - for type hints only
     from .dungeon import DungeonBase
@@ -32,7 +32,11 @@ def enemy_turn(enemy: "Enemy", player: "Player") -> None:
         if enemy.is_alive() and not skip:
             enemy_entity = CoreEntity(
                 enemy.name,
-                {"health": enemy.health, "attack": getattr(enemy, "attack_power", 0), "speed": getattr(enemy, "speed", 0)},
+                {
+                    "health": enemy.health,
+                    "attack": getattr(enemy, "attack_power", 0),
+                    "speed": getattr(enemy, "speed", 0),
+                },
             )
             player_entity = CoreEntity(
                 player.name,
