@@ -20,7 +20,7 @@ def test_render_map_snapshot():
         "####################\n"
         "#########.##########\n"
         "########...#########\n"
-        "#########.E.########\n"
+        "#########...########\n"
         "#########....#######\n"
         "#########.##..######\n"
         "#########.@#...#####\n"
@@ -48,5 +48,4 @@ def test_render_map_symbols_after_show_map():
     assert "@" in rendered
     assert "." in rendered
     assert "#" in rendered
-    assert "E" in rendered
     assert rendered.count("@") == 1

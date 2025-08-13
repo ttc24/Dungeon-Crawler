@@ -97,13 +97,16 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
             return (px, py)
         return place(obj)
 
-    if floor == 1:
-        game.exit_coords = place_near_start("Exit", 4)
-    else:
-        game.exit_coords = place("Exit")
+    game.exit_coords = place_near_start("Exit", 10)
     place(Item("Key", "Opens the dungeon exit"))
     if floor == 1:
         place_near_start("Sanctuary", 10)
+
+    # Always ensure a helpful non-combat feature near the starting room
+    total = config.trap_chance + config.loot_multiplier
+    fountain_prob = config.trap_chance / total if total else 0.5
+    event_cls = FountainEvent if random.random() < fountain_prob else CacheEvent
+    place_near_start(event_cls(), 10)
 
     enemy_names = cfg["enemies"]
     early_game_bonus = 5 if floor <= 3 else 0
@@ -160,17 +163,14 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     place(Item("Key", "A magical key dropped by the boss"))
     companion_options = load_companions()
     place(random.choice(companion_options))
-    if floor <= 3:
-        total = config.trap_chance + config.loot_multiplier
-        fountain_prob = config.trap_chance / total if total else 0.5
-        event_cls = FountainEvent if random.random() < fountain_prob else CacheEvent
-        event = event_cls()
-        if floor == 1:
-            place_near_start(event, 10)
-        else:
-            place(event)
     place_counts = game.default_place_counts.copy()
     place_counts.update(cfg.get("places", {}))
+
+    # Bias trap and treasure placement according to configuration
+    trap_base = place_counts.get("Trap", 0)
+    place_counts["Trap"] = max(0, round(trap_base * (1 + config.trap_chance)))
+    treasure_base = place_counts.get("Treasure", 0)
+    place_counts["Treasure"] = max(0, round(treasure_base * config.loot_multiplier))
     for pname, count in place_counts.items():
         for __ in range(count):
             place(pname)
