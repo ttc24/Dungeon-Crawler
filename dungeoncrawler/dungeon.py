@@ -32,6 +32,7 @@ from .events import (
 from .items import Item, Weapon
 from .plugins import apply_enemy_plugins, apply_item_plugins
 from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
+from .stats_logger import StatsLogger
 
 # ---------------------------------------------------------------------------
 # Data loading utilities
@@ -209,6 +210,11 @@ def load_floor_configs():
         # apply without requiring updates to the JSON data.
         cfg["size"] = tuple(floor_size(floor))
         cfg.setdefault("events", EVENT_TYPES)
+        # Allow optional per-event spawn rates such as ``fountain_rate`` and
+        # ``cache_rate``. These default to 1.0 if not specified in
+        # ``floors.json`` so designers can tweak them without touching code.
+        cfg.setdefault("fountain_rate", 1.0)
+        cfg.setdefault("cache_rate", 1.0)
         configs[floor] = cfg
     return configs
 
@@ -280,6 +286,8 @@ class DungeonBase:
         self.novice_luck_announced = False
         self.stairs_prompt_shown = False
         self.active_quest = None
+        # Balance metrics logger
+        self.stats_logger = StatsLogger()
 
     def announce(self, msg):
         print(_(f"[Announcer] {random.choice(ANNOUNCER_LINES)} {msg}"))
@@ -714,6 +722,7 @@ class DungeonBase:
         while self.player.is_alive() and floor <= 18:
             print(_(f"===== Entering Floor {floor} ====="))
             self.generate_dungeon(floor)
+            self.stats_logger.start_floor(self, floor)
             self.trigger_floor_event(floor)
 
             while self.player.is_alive():
@@ -742,18 +751,22 @@ class DungeonBase:
                 )
                 choice = input(_("Action: "))
                 if not self.handle_input(choice):
+                    self.stats_logger.finalize(self, self.player.cause_of_death or "Quit")
                     return
 
                 floor, continue_floor = self.process_turn(floor)
                 if continue_floor is None:
+                    self.stats_logger.finalize(self, self.player.cause_of_death or "Quit")
                     return
                 if not continue_floor:
+                    self.stats_logger.end_floor(self)
                     break
 
         print(_("You have died. Game Over!"))
         print(_(f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'"))
         print(_(f"Final Score: {self.player.get_score()}"))
         self.record_score(floor)
+        self.stats_logger.finalize(self, self.player.cause_of_death or "Unknown")
         if os.path.exists(SAVE_FILE):
             try:
                 os.remove(SAVE_FILE)
@@ -851,6 +864,7 @@ class DungeonBase:
         prev = (self.player.x, self.player.y)
         map_module.move_player(self, direction)
         if (self.player.x, self.player.y) != prev:
+            self.stats_logger.record_move()
             self.player.regen_stamina(20)
 
     def render_map(self):
@@ -909,7 +923,12 @@ class DungeonBase:
         cfg = self.floor_configs.get(floor, {})
         events = cfg.get("events")
         if events:
-            event_cls = random.choice(events)
+            weights = []
+            for ev in events:
+                name = ev.__name__.replace("Event", "").lower()
+                weight = cfg.get(f"{name}_rate", 1.0)
+                weights.append(weight)
+            event_cls = random.choices(events, weights=weights, k=1)[0]
             event = event_cls()
             event.trigger(self)
 

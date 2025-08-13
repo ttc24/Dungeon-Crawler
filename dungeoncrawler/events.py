@@ -56,6 +56,7 @@ class PuzzleEvent(BaseEvent):
             reward = 50
             output_func(_(f"Correct! You receive {reward} gold."))
             game.player.gold += reward
+            game.stats_logger.record_reward()
         else:
             output_func(_("Incorrect! The sage vanishes in disappointment."))
 
@@ -120,6 +121,7 @@ class FountainEvent(BaseEvent):
                 heal = random.randint(6, 10)
                 game.player.health = min(game.player.max_health, game.player.health + heal)
                 output_func(_(f"You feel refreshed and recover {heal} health."))
+                game.stats_logger.record_reward()
                 roll = random.random()
                 if roll < self.bless_chance:
                     add_status_effect(game.player, "blessed", 30)
@@ -128,6 +130,7 @@ class FountainEvent(BaseEvent):
             elif choice == "b":
                 game.player.inventory.append(Item("Fountain Water", "Restores 4-6 health"))
                 output_func(_("You bottle the shimmering water for later."))
+                game.stats_logger.record_reward()
             else:
                 output_func(_("You leave the fountain untouched."))
                 break
@@ -143,6 +146,7 @@ class CacheEvent(BaseEvent):
         gold = random.randint(15, 30)
         game.player.gold += gold
         output_func(_(f"You discover a hidden cache containing {gold} gold."))
+        game.stats_logger.record_reward()
 
 
 class LoreNoteEvent(BaseEvent):
@@ -185,9 +189,11 @@ class ShrineEvent(BaseEvent):
         if choice == "v":
             game.player.temp_strength += 1
             output_func(_("A surge of might flows through you."))
+            game.stats_logger.record_reward()
         elif choice == "w":
             game.player.temp_intelligence += 1
             output_func(_("Your mind feels momentarily sharper."))
+            game.stats_logger.record_reward()
         elif choice == "p":
             output_func(_("You kneel and whisper a prayer..."))
             output_func("    _\\/_")
@@ -196,6 +202,7 @@ class ShrineEvent(BaseEvent):
                 heal = random.randint(8, 12)
                 game.player.health = min(game.player.max_health, game.player.health + heal)
                 output_func(_(f"A warm light restores {heal} health."))
+                game.stats_logger.record_reward()
             else:
                 add_status_effect(game.player, "cursed", 30)
                 output_func(_("A dark chill leaves you cursed."))

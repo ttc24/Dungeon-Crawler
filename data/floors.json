@@ -18,7 +18,9 @@
       "Enchantment": 1,
       "Sanctuary": 1,
       "Blacksmith": 1
-    }
+    },
+    "fountain_rate": 1.0,
+    "cache_rate": 1.0
   },
   "2": {
     "size": [
