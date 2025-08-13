@@ -42,6 +42,7 @@ def test_new_keys_default(tmp_path):
     cfg = load_config(cfg_file)
     assert cfg.trap_chance == 0.1
     assert cfg.loot_multiplier == 1.0
+    assert cfg.verbose_combat is False
     assert cfg.enable_debug is False
 
 
