@@ -9,18 +9,20 @@ Dungeon Crawler is a small text-based adventure that borrows the core ideas of t
 Clone the repository and start the game with Python 3:
 
 ```bash
-git clone https://github.com/yourname/Dungeon-Crawler.git
+git clone https://github.com/ttc24/Dungeon-Crawler.git
 cd Dungeon-Crawler
+python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
 python -m dungeoncrawler
 ```
 
-For full installation instructions, gameplay tips, API reference, and contributing guidelines, see the [documentation](https://<username>.github.io/Dungeon-Crawler/).
-
 ## Installation
 
-The game only requires Python 3. Run it directly using the main module:
+The game only requires Python 3. Create a virtual environment, install the dependencies, and run the game using the main module:
 
 ```bash
+python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
 python3 -m dungeoncrawler
 ```
 
