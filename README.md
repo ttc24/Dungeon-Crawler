@@ -1,16 +1,20 @@
 # Dungeon Crawler
 
 [![CI](https://github.com/ttc24/Dungeon-Crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/ttc24/Dungeon-Crawler/actions/workflows/ci.yml)
+[![Coverage](coverage.svg)](https://github.com/ttc24/Dungeon-Crawler/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://ttc24.github.io/Dungeon-Crawler/)
 
 Dungeon Crawler is a small text-based adventure that borrows the core ideas of the *Dungeon Crawler Carl* where you guide your hero through procedurally generated floors filled with monsters, treasure, and meaningful character choices.
+
+Full documentation is available at [ttc24.github.io/Dungeon-Crawler](https://ttc24.github.io/Dungeon-Crawler/).
 
 ## Quickstart
 
 Clone the repository and start the game with Python 3:
 
 ```bash
-git clone https://github.com/ttc24/Dungeon-Crawler.git
-cd Dungeon-Crawler
+git clone https://github.com/ttc24/dungeoncrawler.git
+cd dungeoncrawler
 python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 python -m dungeoncrawler
