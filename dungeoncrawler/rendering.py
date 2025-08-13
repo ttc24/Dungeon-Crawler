@@ -1,64 +1,20 @@
-"""Rendering helpers and UI abstractions.
+"""Map rendering helpers.
 
-This module centralises all user interface interactions.  Game logic
-modules interact with :class:`Renderer` instead of printing directly so the
-core game remains easy to test.
+The original project exposed a small ``Renderer`` class from this module.  The
+renderer now lives in :mod:`dungeoncrawler.ui.terminal`; this file only retains
+helpers for producing map strings and a convenience wrapper around the active
+renderer.
 """
 
 from __future__ import annotations
 
-from gettext import gettext as _
-
-
-class Renderer:
-    """Minimal text based renderer used by the test-suite.
-
-    Real front ends may subclass this and provide richer implementations but
-    the methods here are purposely tiny – they simply forward output to the
-    supplied ``output_func`` which defaults to :func:`print`.
-    """
-
-    def __init__(self, output_func=print):
-        self.output_func = output_func
-
-    # ------------------------------------------------------------------
-    # Basic message helpers
-    # ------------------------------------------------------------------
-    def show_message(self, text: str) -> None:
-        """Display ``text`` to the user."""
-
-        self.output_func(text)
-
-    def show_status(self, game_state) -> None:
-        """Render a summary of the current ``game_state``.
-
-        Only a few core stats are shown which keeps the method independent of
-        any particular front end.  Additional data can be appended by callers
-        if desired.
-        """
-
-        player = game_state.player
-        status = _(
-            f"Health: {player.health}/{player.max_health} | STA: {player.stamina}/{player.max_stamina} | "
-            f"XP: {player.xp} | Gold: {player.gold} | Level: {player.level} | Floor: {game_state.current_floor}"
-        )
-        self.output_func(status)
-
-    def draw_map(self, map_string: str) -> None:
-        """Render ``map_string`` representing the dungeon layout."""
-
-        self.output_func(map_string)
-
-
-# ----------------------------------------------------------------------
-# Map rendering utilities – migrated from :mod:`map`
-# ----------------------------------------------------------------------
+from .ui.terminal import Renderer
 
 
 def render_map_string(game) -> str:
     """Return a simple string representation of the dungeon map."""
 
-    rows = []
+    rows: list[str] = []
     for y in range(game.height):
         row = ""
         for x in range(game.width):
@@ -78,7 +34,8 @@ def render_map_string(game) -> str:
 
 
 def render_map(game) -> None:
-    """Simple helper that prints the current map using :func:`render_map_string`."""
+    """Print the current map using :func:`render_map_string`."""
 
     renderer = getattr(game, "renderer", Renderer())
     renderer.draw_map(render_map_string(game))
+
