@@ -11,9 +11,7 @@ def test_shop_items_reflect_json_change(tmp_path):
     original = items_path.read_text(encoding="utf-8")
     try:
         payload = json.loads(original)
-        payload["shop"].append(
-            {"type": "Item", "name": "UnitTest Trinket", "description": "Tmp"}
-        )
+        payload["shop"].append({"type": "Item", "name": "UnitTest Trinket", "description": "Tmp"})
         items_path.write_text(json.dumps(payload), encoding="utf-8")
         data_module.load_items.cache_clear()
         game = DungeonBase(4, 4)

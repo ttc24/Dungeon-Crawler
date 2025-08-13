@@ -9,10 +9,10 @@ from typing import TYPE_CHECKING
 
 from .ai import IntentAI
 from .combat import battle
+from .data import load_companions
 from .entities import Companion, Enemy
 from .events import BaseEvent, CacheEvent, FountainEvent
 from .items import Item
-from .data import load_companions
 from .quests import EscortNPC
 
 if TYPE_CHECKING:  # pragma: no cover - type hints only
