@@ -1,9 +1,9 @@
 """Utility script to summarize balance metrics and death causes."""
 
-from collections import Counter
 import csv
-from pathlib import Path
 import statistics
+from collections import Counter
+from pathlib import Path
 
 
 def main() -> None:

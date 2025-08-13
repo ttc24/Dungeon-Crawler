@@ -1,7 +1,7 @@
 import csv
 import time
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 
 class StatsLogger:
@@ -48,9 +48,9 @@ class StatsLogger:
                 "floor": self.current_floor,
                 "turns": self.turns,
                 "encounters": self.encounters,
-                "time_to_first_reward": self.first_reward_turn
-                if self.first_reward_turn is not None
-                else "",
+                "time_to_first_reward": (
+                    self.first_reward_turn if self.first_reward_turn is not None else ""
+                ),
                 "fog_reveal_rate": round(fog_rate, 3),
             }
         )
