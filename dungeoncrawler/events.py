@@ -71,6 +71,13 @@ class TrapEvent(BaseEvent):
         self.bleed_chance = cfg.get("bleed_chance", 0.3)
 
     def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+        intros = [
+            _("A chill runs down your spine."),
+            _("The corridor ahead feels oddly dangerous."),
+            _("Your instincts warn of hidden snares."),
+        ]
+        output_func(random.choice(intros))
+
         speed = getattr(game.player, "speed", 0)
         perception = getattr(game.player, "perception", 0)
         detect_chance = self.detect_base + (speed + perception) * 0.05
@@ -113,8 +120,14 @@ class FountainEvent(BaseEvent):
         if self.remaining_uses <= 0:
             output_func(_("The fountain is dry."))
             return
+        intros = [
+            _("You find a cracked fountain. The water shimmers."),
+            _("An ancient fountain trickles invitingly."),
+            _("A mystical fountain bubbles softly."),
+        ]
+        output_func(random.choice(intros))
+
         while self.remaining_uses > 0:
-            output_func(_("You find a cracked fountain. The water shimmers."))
             output_func(_("Drink (D) / Bottle (B) / Leave (any other key)"))
             choice = input_func(_("Choice: ")).strip().lower()
             if choice in ("d", "q"):
@@ -143,6 +156,12 @@ class CacheEvent(BaseEvent):
     """Hidden cache that rewards gold."""
 
     def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+        intros = [
+            _("A loose stone reveals a hidden cache."),
+            _("Behind a crumbled wall lies a secret stash."),
+            _("You notice a small cache tucked away."),
+        ]
+        output_func(random.choice(intros))
         gold = random.randint(15, 30)
         game.player.gold += gold
         output_func(_(f"You discover a hidden cache containing {gold} gold."))

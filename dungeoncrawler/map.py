@@ -5,6 +5,8 @@ from __future__ import annotations
 import random
 from collections import deque
 from gettext import gettext as _
+
+from .flavor import generate_room_flavor
 from typing import TYPE_CHECKING
 
 from .ai import IntentAI
@@ -216,17 +218,9 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
 
     room = game.rooms[y][x]
     name = game.room_names[y][x]
-    lore = {
-        "Glittering Vault": "The air shimmers with unseen magic. Ancient riches may lie within.",
-        "Booby-Trapped Passage": "This corridor is riddled with pressure plates and crumbled bones.",
-        "Cursed Hall": "The shadows shift... something watches from the dark.",
-        "Sealed Gate": "Massive stone doors sealed by arcane runes. It might be the only way out.",
-        "Hidden Niche": "A hollow carved into the wall, forgotten by time. Something valuable glints inside.",
-        "Silent Chamber": "Dust covers everything. It appears long abandoned.",
-        "Sacred Sanctuary": "A peaceful place that heals weary adventurers.",
-    }
-    if name in lore:
-        game.queue_message(_(f"{lore[name]}"))
+    flavor = generate_room_flavor(name)
+    if flavor:
+        game.queue_message(flavor)
 
     if isinstance(room, list):
         for obj in list(room):
