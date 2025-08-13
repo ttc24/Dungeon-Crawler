@@ -59,3 +59,19 @@ def to_choice(action: Action) -> str:
     """Translate ``action`` back to the legacy numeric choice string."""
 
     return CHOICE_MAP[action]
+
+
+def read_key(prompt: str = "") -> str:
+    """Return a raw key press using ``input``.
+
+    Wrapping ``input`` in this helper centralises keyboard access so that
+    gameplay loops do not call ``input`` directly, making it easier to swap
+    in alternative input mechanisms later on.
+    """
+
+    try:
+        return input(prompt)
+    except EOFError:
+        # When running under tests there may be no stdin.  Returning an empty
+        # string allows callers to handle the absence of input gracefully.
+        return ""

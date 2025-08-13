@@ -96,7 +96,7 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
             renderer.show_message(_(enemy.intent_message))
         renderer.show_message(_(f"Stamina: {player.stamina}/{player.max_stamina}"))
         renderer.show_message(_("1. Attack\n2. Defend\n3. Use Health Potion\n4. Use Skill\n5. Flee"))
-        key = input(_("Choose action: "))
+        key = keys.read_key(_("Choose action: "))
         action = keys.get_action(key)
         combat_action = {
             keys.Action.MOVE_LEFT: "attack",

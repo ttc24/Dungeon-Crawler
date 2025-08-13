@@ -761,7 +761,7 @@ class DungeonBase:
                         "0. Wait 1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit 8. Show Map 9. View Leaderboard"
                     )
                 )
-                key = input(_("Action: "))
+                key = keys.read_key(_("Action: "))
                 action = keys.get_action(key)
                 choice = keys.to_choice(action) if action else key
                 if not self.handle_input(choice):

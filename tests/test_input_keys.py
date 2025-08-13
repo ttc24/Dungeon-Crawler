@@ -13,3 +13,8 @@ def test_key_to_action_mapping():
 def test_action_to_choice():
     assert keys.to_choice(keys.Action.SHOW_MAP) == "8"
     assert keys.to_choice(keys.Action.QUIT) == "7"
+
+
+def test_read_key(monkeypatch):
+    monkeypatch.setattr("builtins.input", lambda _=None: "?")
+    assert keys.read_key("prompt") == "?"
