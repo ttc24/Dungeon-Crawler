@@ -4,6 +4,7 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import json
+
 import dungeoncrawler.constants as constants
 import dungeoncrawler.dungeon as dungeon_module
 from dungeoncrawler.dungeon import DungeonBase
