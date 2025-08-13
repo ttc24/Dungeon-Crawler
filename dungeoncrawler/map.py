@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import random
-from collections import deque
 from gettext import gettext as _
 from typing import TYPE_CHECKING
 
 from .ai import IntentAI
 from .combat import battle
 from .config import config
+from .core.map import compute_visibility, update_visibility
 from .data import load_companions
 from .entities import Companion, Enemy
 from .events import BaseEvent, CacheEvent, FountainEvent
@@ -28,37 +28,6 @@ __all__ = [
 
 if TYPE_CHECKING:  # pragma: no cover - type hints only
     from .dungeon import DungeonBase
-
-
-def compute_visibility(grid, px, py, radius):
-    """Return set of visible tiles using BFS from ``(px, py)``."""
-
-    height = len(grid)
-    width = len(grid[0]) if height else 0
-    visited = set()
-    queue = deque([(px, py, 0)])
-    while queue:
-        x, y, dist = queue.popleft()
-        if (x, y) in visited:
-            continue
-        visited.add((x, y))
-        if dist >= radius:
-            continue
-        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-            nx, ny = x + dx, y + dy
-            if 0 <= nx < width and 0 <= ny < height and grid[ny][nx] is not None:
-                queue.append((nx, ny, dist + 1))
-    return visited
-
-
-def update_visibility(game: "DungeonBase") -> None:
-    """Recompute visible and discovered tiles for ``game``."""
-
-    game.visible = [[False for __ in range(game.width)] for __ in range(game.height)]
-    radius = 6 if game.current_floor == 1 else 3 + game.current_floor // 2
-    for x, y in compute_visibility(game.rooms, game.player.x, game.player.y, radius):
-        game.visible[y][x] = True
-        game.discovered[y][x] = True
 
 
 def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
