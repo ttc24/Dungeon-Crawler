@@ -22,7 +22,7 @@ def test_player_action_defend_event():
     enemy = Entity("Gob", {"health": 5})
     events = resolve_player_action(player, enemy, "defend")
     assert isinstance(events[0], StatusApplied)
-    assert events[0].status == "defending"
+    assert events[0].status == "defend"
 
 
 def test_use_potion_event():

@@ -13,26 +13,83 @@ from typing import List
 from .entity import Entity
 from .events import AttackResolved, Event, StatusApplied
 
+def calculate_hit(attacker: Entity, defender: Entity) -> int:
+    """Return the attacker's hit chance against ``defender``.
+
+    A base 75% chance is modified by the speed difference between
+    ``attacker`` and ``defender``.  Temporary status flags may further
+    modify the result:
+
+    * ``advantage`` – grants +15% hit and is consumed.
+    * ``defend_attack`` – grants +10% hit and is consumed.
+
+    The value is clamped between 0 and 100.
+    """
+
+    hit = 75 + attacker.stats.get("speed", 0) - defender.stats.get("speed", 0)
+    if "advantage" in attacker.status:
+        hit += 15
+        attacker.status.remove("advantage")
+    if "defend_attack" in attacker.status:
+        hit += 10
+        attacker.status.remove("defend_attack")
+    return max(0, min(100, hit))
+
+
+def calculate_crit(attacker: Entity, defender: Entity) -> int:
+    """Return the attacker's critical hit chance.
+
+    Uses the attacker's ``crit`` stat reduced by the defender's
+    ``tenacity`` stat if present.  The result is clamped between
+    0 and 100.
+    """
+
+    crit = attacker.stats.get("crit", 0) - defender.stats.get("tenacity", 0)
+    return max(0, min(100, crit))
+
+
+def calculate_damage(attacker: Entity, defender: Entity, critical: bool = False) -> int:
+    """Compute damage dealt from ``attacker`` to ``defender``.
+
+    The basic formula is ``attack - defense``.  If ``critical`` is ``True``
+    the damage is doubled.  If the defender has the temporary status
+    ``defend_damage`` incoming damage is reduced by 40% and the status is
+    consumed.
+    """
+
+    attack = attacker.stats.get("attack", 0)
+    defense = defender.stats.get("defense", 0)
+    damage = max(0, attack - defense)
+    if critical:
+        damage *= 2
+    if "defend_damage" in defender.status:
+        damage = int(damage * 0.6)
+        defender.status.remove("defend_damage")
+    defender.stats["health"] = max(0, defender.stats.get("health", 0) - damage)
+    return damage
+
+
 # ---------------------------------------------------------------------------
 # Core resolvers
 # ---------------------------------------------------------------------------
 
 
 def resolve_attack(attacker: Entity, defender: Entity) -> AttackResolved:
-    """Resolve a basic attack from ``attacker`` to ``defender``.
+    """Resolve a basic attack from ``attacker`` to ``defender``."""
 
-    Damage is computed deterministically from the ``attack`` and ``defense``
-    stats. The defender's ``health`` stat is reduced in-place.  The returned
-    :class:`AttackResolved` event contains the amount of damage dealt and whether
-    the defender was defeated.
-    """
+    hit = calculate_hit(attacker, defender)
+    if hit < 50:
+        msg = f"{attacker.name} misses {defender.name}."
+        return AttackResolved(msg, attacker.name, defender.name, 0, 0)
 
-    attack = attacker.stats.get("attack", 0)
-    defense = defender.stats.get("defense", 0)
-    damage = max(0, attack - defense)
-    defender.stats["health"] = max(0, defender.stats.get("health", 0) - damage)
+    crit_chance = calculate_crit(attacker, defender)
+    critical = crit_chance >= 100
+    damage = calculate_damage(attacker, defender, critical)
     defeated = int(not defender.is_alive())
-    msg = f"{attacker.name} hits {defender.name} for {damage} damage."
+    if critical:
+        msg = f"{attacker.name} critically hits {defender.name} for {damage} damage."
+    else:
+        msg = f"{attacker.name} hits {defender.name} for {damage} damage."
     if defeated:
         msg += f" {defender.name} is defeated."
     return AttackResolved(msg, attacker.name, defender.name, damage, defeated)
@@ -56,8 +113,8 @@ def resolve_player_action(player: Entity, enemy: Entity, action: str) -> List[Ev
     if action == "attack":
         events.append(resolve_attack(player, enemy))
     elif action == "defend":
-        player.status.append("defending")
-        events.append(StatusApplied(f"{player.name} defends.", player.name, "defending", 1))
+        player.status.extend(["defend_damage", "defend_attack"])
+        events.append(StatusApplied(f"{player.name} defends.", player.name, "defend", 1))
     elif action == "use_health_potion":
         if "potion" in player.inventory:
             player.inventory.remove("potion")
@@ -79,11 +136,14 @@ def resolve_player_action(player: Entity, enemy: Entity, action: str) -> List[Ev
                 StatusApplied(f"{player.name} has no potion.", player.name, "heal_failed", 0)
             )
     elif action == "flee":
-        success = int(player.stats.get("speed", 0) > enemy.stats.get("speed", 0))
+        speed_diff = player.stats.get("speed", 0) - enemy.stats.get("speed", 0)
+        chance = max(10, min(90, 40 + speed_diff * 5))
+        success = int(chance > 50)
         if success:
             msg = f"{player.name} flees from {enemy.name}."
         else:
             msg = f"{player.name} fails to flee from {enemy.name}."
+            enemy.status.append("advantage")
         events.append(StatusApplied(msg, player.name, "flee", 0, value=success))
     else:
         events.append(StatusApplied("Unknown action.", player.name, "unknown", 0))
