@@ -18,6 +18,14 @@ from .items import Item
 from .quests import EscortNPC
 from .rendering import render_map, render_map_string  # re-exported for compatibility
 
+__all__ = [
+    "compute_visibility",
+    "update_visibility",
+    "generate_dungeon",
+    "render_map",
+    "render_map_string",
+]
+
 if TYPE_CHECKING:  # pragma: no cover - type hints only
     from .dungeon import DungeonBase
 
