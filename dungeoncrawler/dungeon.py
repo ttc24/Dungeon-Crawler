@@ -233,6 +233,26 @@ class DungeonBase:
         self.tutorial_complete = False
         self.shop_items, self.rare_loot = load_items()
         apply_item_plugins(self.shop_items)
+        self.shop_items.extend(
+            [
+                Weapon("Rusty Pike", "Barely holds together", 3, 6, 5),
+                Item("Mystic Orb", "Glimmers with arcane energy"),
+                Weapon("Iron Staff", "Heavy but reliable", 5, 9, 12),
+            ]
+        )
+        self.rare_loot.extend(
+            [
+                Weapon(
+                    "Phantom Blade",
+                    "Slices through spirit and bone",
+                    12,
+                    18,
+                    120,
+                    "bleed",
+                ),
+                Item("Elixir of Insight", "Reveals hidden paths"),
+            ]
+        )
         (
             self.random_events,
             self.random_event_weights,
