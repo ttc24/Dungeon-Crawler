@@ -7,19 +7,19 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-from .items import Item, Weapon
 from .entities import Companion
 from .events import (
-    MerchantEvent,
-    PuzzleEvent,
-    TrapEvent,
-    FountainEvent,
     CacheEvent,
-    LoreNoteEvent,
-    ShrineEvent,
-    MiniQuestHookEvent,
+    FountainEvent,
     HazardEvent,
+    LoreNoteEvent,
+    MerchantEvent,
+    MiniQuestHookEvent,
+    PuzzleEvent,
+    ShrineEvent,
+    TrapEvent,
 )
+from .items import Item, Weapon
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 

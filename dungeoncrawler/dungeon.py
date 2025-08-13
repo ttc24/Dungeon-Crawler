@@ -17,6 +17,7 @@ from .constants import (
     SAVE_FILE,
     SCORE_FILE,
 )
+from .data import load_event_defs, load_items
 from .entities import Companion, Enemy, Player
 from .events import (
     CacheEvent,
@@ -30,7 +31,6 @@ from .events import (
     TrapEvent,
 )
 from .items import Item, Weapon
-from .data import load_items, load_event_defs
 from .plugins import apply_enemy_plugins, apply_item_plugins
 from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
 from .rendering import Renderer, render_map_string
