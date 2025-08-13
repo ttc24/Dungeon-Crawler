@@ -13,6 +13,7 @@ from typing import List
 from .entity import Entity
 from .events import AttackResolved, Event, StatusApplied
 
+
 def calculate_hit(attacker: Entity, defender: Entity) -> int:
     """Return the attacker's hit chance against ``defender``.
 
