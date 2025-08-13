@@ -35,7 +35,9 @@ from .events import (
 from .items import Item, Weapon
 from .plugins import apply_enemy_plugins, apply_item_plugins
 from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
-from .rendering import Renderer, render_map_string
+from .rendering import render_map_string
+from .ui.terminal import Renderer
+from .input import keys
 from .stats_logger import StatsLogger
 
 # ---------------------------------------------------------------------------
@@ -759,7 +761,9 @@ class DungeonBase:
                         "0. Wait 1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit 8. Show Map 9. View Leaderboard"
                     )
                 )
-                choice = input(_("Action: "))
+                key = input(_("Action: "))
+                action = keys.get_action(key)
+                choice = keys.to_choice(action) if action else key
                 if not self.handle_input(choice):
                     self.stats_logger.finalize(self, self.player.cause_of_death or "Quit")
                     return
