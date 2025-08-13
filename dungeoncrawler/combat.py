@@ -43,6 +43,7 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
     """
 
     player = game.player
+    game.stats_logger.battle_start()
     print(
         _(
             f"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability else ''} Boss incoming!"
@@ -98,4 +99,5 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
             player.collect_item(loot)
             print(_(f"The {enemy.name} dropped {loot.name}!"))
             game.announce(_(f"{player.name} obtains {loot.name}!"))
+    game.stats_logger.battle_end(player.is_alive(), enemy.name)
     game.check_quest_progress()
