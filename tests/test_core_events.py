@@ -4,7 +4,7 @@ from dungeoncrawler.core.combat import (
     resolve_player_action,
 )
 from dungeoncrawler.core.entity import Entity
-from dungeoncrawler.core.events import AttackResolved, StatusApplied
+from dungeoncrawler.core.events import AttackResolved, IntentTelegraphed, StatusApplied
 from dungeoncrawler.core.map import GameMap
 
 
@@ -39,7 +39,8 @@ def test_enemy_turn_returns_attack_event():
     player = Entity("Hero", {"health": 10})
     enemy = Entity("Gob", {"health": 5, "attack": 3})
     events = resolve_enemy_turn(enemy, player)
-    assert isinstance(events[0], AttackResolved)
+    assert isinstance(events[0], IntentTelegraphed)
+    assert isinstance(events[1], AttackResolved)
 
 
 def test_update_visibility_yields_events():
