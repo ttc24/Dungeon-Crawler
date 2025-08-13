@@ -23,6 +23,7 @@ try:  # pragma: no cover - exercised indirectly in the tests
     from rich.table import Table  # type: ignore
     from rich.text import Text  # type: ignore
 except ModuleNotFoundError:  # pragma: no cover
+
     class Console:
         """Very small subset of :class:`rich.console.Console`.
 
@@ -61,6 +62,7 @@ except ModuleNotFoundError:  # pragma: no cover
 
         def __str__(self) -> str:  # pragma: no cover - trivial
             return "".join(self.fragments)
+
 
 from ..config import config
 from ..core.events import Event
