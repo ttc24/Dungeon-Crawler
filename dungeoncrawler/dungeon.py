@@ -731,6 +731,8 @@ class DungeonBase:
             self.renderer.show_message(_(f"===== Entering Floor {floor} ====="))
             self.generate_dungeon(floor)
             self.stats_logger.start_floor(self, floor)
+            if floor == 1:
+                self._foreshadow(floor)
             self.trigger_floor_event(floor)
 
             while self.player.is_alive():
@@ -878,6 +880,16 @@ class DungeonBase:
 
         return self.check_floor_completion(floor)
 
+    def _foreshadow(self, floor: int) -> None:
+        """Print a hint about upcoming features for the next floor."""
+
+        if floor == 1:
+            self.renderer.show_message(_("Rumor has it new classes await ahead."))
+        elif floor == 2:
+            self.renderer.show_message(_("Guild banners flutter somewhere below."))
+        elif floor == 3:
+            self.renderer.show_message(_("Whispers speak of diverse races deeper within."))
+
     def check_floor_completion(self, floor: int):
         """Determine if the current floor has been completed.
 
@@ -897,6 +909,7 @@ class DungeonBase:
                 self.player.temp_strength = 0
                 self.player.temp_intelligence = 0
                 self.save_game(floor)
+                self._foreshadow(floor)
                 return floor, False
             self.renderer.show_message(_("You chose to exit the dungeon."))
             self.renderer.show_message(_(f"Final Score: {self.player.get_score()}"))
