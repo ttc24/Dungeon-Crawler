@@ -1,3 +1,4 @@
+import copy
 import json
 import os
 import random
@@ -267,7 +268,7 @@ class DungeonBase:
         # Load a fresh copy of the floor configuration for each game instance
         # so tests that mutate the underlying JSON can observe the changes
         # without leaking state between runs.
-        self.floor_configs = load_floor_configs()
+        self.floor_configs = copy.deepcopy(load_floor_configs())
         for cfg in self.floor_configs.values():
             cfg.setdefault("events", self.random_events)
             for ev, weight in zip(self.random_events, self.random_event_weights):
