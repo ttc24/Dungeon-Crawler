@@ -36,6 +36,29 @@ def test_load_config_negative_values(tmp_path, key):
         load_config(cfg_file)
 
 
+# The README notes that numeric settings must be positive integers. These tests
+# mirror those examples to provide clearer coverage of invalid configuration
+# values.
+
+
+def test_readme_negative_screen_width(tmp_path):
+    """Loading a config with a negative ``screen_width`` raises ``ValueError``."""
+
+    cfg_file = tmp_path / "config.json"
+    cfg_file.write_text(json.dumps({"screen_width": -5}))
+    with pytest.raises(ValueError):
+        load_config(cfg_file)
+
+
+def test_readme_negative_max_floors(tmp_path):
+    """Loading a config with a negative ``max_floors`` raises ``ValueError``."""
+
+    cfg_file = tmp_path / "config.json"
+    cfg_file.write_text(json.dumps({"max_floors": -3}))
+    with pytest.raises(ValueError):
+        load_config(cfg_file)
+
+
 def test_new_keys_default(tmp_path):
     cfg_file = tmp_path / "config.json"
     cfg_file.write_text("{}")
