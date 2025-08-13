@@ -185,11 +185,13 @@ class LoreNoteEvent(BaseEvent):
         ]
         note = random.choice(notes)
         output_func(note["text"])
-        if note["text"] not in game.player.codex:
-            game.player.codex.append(note["text"])
-        if "effect" in note:
+
+        player = game.player
+        if player and note["text"] not in player.codex:
+            player.codex.append(note["text"])
+        if player and "effect" in note:
             effect, duration = note["effect"]
-            add_status_effect(game.player, effect, duration)
+            add_status_effect(player, effect, duration)
 
 
 class ShrineEvent(BaseEvent):

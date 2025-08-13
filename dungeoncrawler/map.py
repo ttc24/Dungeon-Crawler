@@ -15,7 +15,6 @@ from .events import BaseEvent, CacheEvent, FountainEvent
 from .flavor import generate_room_flavor
 from .items import Item
 from .quests import EscortNPC
-from .rendering import render_map_string
 
 if TYPE_CHECKING:  # pragma: no cover - type hints only
     from .dungeon import DungeonBase
