@@ -2,45 +2,24 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
   pull_request:
-    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.10", "3.11"]
 
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          fetch-depth: 0  # needed so we can push back
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: pip
-          cache-dependency-path: requirements.txt
-
+          python-version: '3.11'
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          # If you don't have black/isort in requirements.txt, add:
-          # pip install black isort
-
-      - name: Format with Black and isort
+          pip install .[dev] coverage
+      - name: Run flake8
+        run: flake8 .
+      - name: Run tests
         run: |
-          black .
-          isort --profile black .
-
-      - name: Commit changes (if any)
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "Apply Black and isort formatting" || echo "No changes to commit"
-          git push
+          coverage run -m pytest
+          coverage report
