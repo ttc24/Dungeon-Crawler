@@ -6,7 +6,7 @@
 
 Dungeon Crawler is a small text-based adventure that borrows the core ideas of the *Dungeon Crawler Carl* where you guide your hero through procedurally generated floors filled with monsters, treasure, and meaningful character choices.
 
-Full documentation is available at [ttc24.github.io/Dungeon-Crawler](https://ttc24.github.io/Dungeon-Crawler/).
+Full documentation is available in [docs/README.md](docs/README.md).
 
 ## Quickstart
 
