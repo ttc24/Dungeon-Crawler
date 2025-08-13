@@ -36,3 +36,41 @@ def test_floor_fifteen_event_riddle_rewards_gold():
         gold_before = dungeon.player.gold
         dungeon.trigger_floor_event(15)
         assert dungeon.player.gold == gold_before + 50
+
+
+def test_floor_progression_unlocks_features():
+    dungeon = setup_dungeon()
+
+    class DummyEvent:
+        def trigger(self, dungeon):
+            pass
+
+    called = {"class": False, "guild": False, "race": False}
+
+    def fake_offer_class(self):
+        called["class"] = True
+        self.player.choose_class("Warrior")
+
+    def fake_offer_guild(self):
+        called["guild"] = True
+        self.player.join_guild("Warriors' Guild")
+
+    def fake_offer_race(self):
+        called["race"] = True
+        self.player.choose_race("Elf")
+
+    with (
+        patch("dungeoncrawler.dungeon.random.choice", return_value=DummyEvent),
+        patch("dungeoncrawler.dungeon.random.randint", return_value=1),
+        patch.object(DungeonBase, "offer_class", new=fake_offer_class, create=True),
+        patch.object(DungeonBase, "offer_guild", new=fake_offer_guild),
+        patch.object(DungeonBase, "offer_race", new=fake_offer_race),
+    ):
+        dungeon.trigger_floor_event(1)
+        dungeon.trigger_floor_event(2)
+        dungeon.trigger_floor_event(3)
+
+    assert dungeon.player.class_type == "Warrior"
+    assert dungeon.player.guild == "Warriors' Guild"
+    assert dungeon.player.race == "Elf"
+    assert called == {"class": True, "guild": True, "race": True}
