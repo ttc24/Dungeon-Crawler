@@ -28,6 +28,14 @@ def test_load_config_invalid_range(tmp_path):
         load_config(cfg_file)
 
 
+@pytest.mark.parametrize("key", ["screen_width", "screen_height", "max_floors"])
+def test_load_config_negative_values(tmp_path, key):
+    cfg_file = tmp_path / "config.json"
+    cfg_file.write_text(json.dumps({key: -1}))
+    with pytest.raises(ValueError):
+        load_config(cfg_file)
+
+
 def test_new_keys_default(tmp_path):
     cfg_file = tmp_path / "config.json"
     cfg_file.write_text("{}")
