@@ -9,7 +9,6 @@ from pathlib import Path
 from . import combat as combat_module
 from . import map as map_module
 from . import shop as shop_module
-from .rendering import Renderer, render_map_string
 from .constants import (
     ANNOUNCER_LINES,
     INVALID_KEY_MSG,
@@ -33,6 +32,7 @@ from .events import (
 from .items import Item, Weapon
 from .plugins import apply_enemy_plugins, apply_item_plugins
 from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
+from .rendering import Renderer, render_map_string
 from .stats_logger import StatsLogger
 
 # ---------------------------------------------------------------------------
@@ -768,7 +768,9 @@ class DungeonBase:
                     break
 
         self.renderer.show_message(_("You have died. Game Over!"))
-        self.renderer.show_message(_(f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'"))
+        self.renderer.show_message(
+            _(f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'")
+        )
         self.renderer.show_message(_(f"Final Score: {self.player.get_score()}"))
         self.record_score(floor)
         self.stats_logger.finalize(self, self.player.cause_of_death or "Unknown")
@@ -884,7 +886,9 @@ class DungeonBase:
 
     def audience_gift(self):
         if random.random() < 0.1:
-            self.renderer.show_message(_("A package falls from above! It's a gift from the audience."))
+            self.renderer.show_message(
+                _("A package falls from above! It's a gift from the audience.")
+            )
             if random.random() < 0.5:
                 item = Item("Health Potion", "Restores 20 health")
                 self.player.collect_item(item)

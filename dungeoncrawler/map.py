@@ -1,6 +1,7 @@
 """Map generation and navigation utilities."""
 
 from __future__ import annotations
+
 import random
 from collections import deque
 from gettext import gettext as _
@@ -217,6 +218,8 @@ def move_player(game: "DungeonBase", direction: str) -> None:
         update_visibility(game)
     else:
         return game.queue_message(_("You can't move that way."))
+
+
 def handle_room(game: "DungeonBase", x: int, y: int) -> None:
     """Execute logic for entering a room at ``x``, ``y``."""
 
@@ -293,7 +296,9 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
             game.queue_message(_("1. Poison  2. Burn  3. Freeze  4. Cancel"))
             choice = input(_("Choose enchantment: "))
             if game.player.weapon.effect:
-                game.queue_message(_("Your weapon is already enchanted! You can't add another enchantment."))
+                game.queue_message(
+                    _("Your weapon is already enchanted! You can't add another enchantment.")
+                )
             elif game.player.gold >= 30 and choice in ["1", "2", "3"]:
                 effect = {"1": "poison", "2": "burn", "3": "freeze"}[choice]
                 game.player.weapon.description += f" (Enchanted: {effect})"
@@ -316,7 +321,9 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
                     f"Your weapon: {game.player.weapon.name} ({game.player.weapon.min_damage}-{game.player.weapon.max_damage})"
                 )
             )
-            game.queue_message(_("Would you like to upgrade your weapon for 50 gold? +3 min/max damage"))
+            game.queue_message(
+                _("Would you like to upgrade your weapon for 50 gold? +3 min/max damage")
+            )
             confirm = input(_("Upgrade? (y/n): "))
             if confirm.lower() == "y" and game.player.gold >= 50:
                 game.player.weapon.min_damage += 3

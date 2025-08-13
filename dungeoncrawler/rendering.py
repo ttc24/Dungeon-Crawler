@@ -38,8 +38,10 @@ class Renderer:
         """
 
         player = game_state.player
-        status = _(f"Health: {player.health}/{player.max_health} | STA: {player.stamina}/{player.max_stamina} | "
-                   f"XP: {player.xp} | Gold: {player.gold} | Level: {player.level} | Floor: {game_state.current_floor}")
+        status = _(
+            f"Health: {player.health}/{player.max_health} | STA: {player.stamina}/{player.max_stamina} | "
+            f"XP: {player.xp} | Gold: {player.gold} | Level: {player.level} | Floor: {game_state.current_floor}"
+        )
         self.output_func(status)
 
     def draw_map(self, map_string: str) -> None:
@@ -51,6 +53,7 @@ class Renderer:
 # ----------------------------------------------------------------------
 # Map rendering utilities – migrated from :mod:`map`
 # ----------------------------------------------------------------------
+
 
 def render_map_string(game) -> str:
     """Return a simple string representation of the dungeon map."""
@@ -79,4 +82,3 @@ def render_map(game) -> None:
 
     renderer = getattr(game, "renderer", Renderer())
     renderer.draw_map(render_map_string(game))
-

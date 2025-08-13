@@ -1,7 +1,7 @@
+from dungeoncrawler import map as map_module
 from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.entities import Player
 from dungeoncrawler.items import Item
-from dungeoncrawler import map as map_module
 
 
 def make_game():
