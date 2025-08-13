@@ -6,6 +6,8 @@ from collections import deque
 from dataclasses import dataclass, field
 from typing import Any, List, Optional, Set, Tuple
 
+from .events import TileDiscovered
+
 
 Tile = Optional[Any]
 
@@ -47,13 +49,21 @@ class GameMap:
                     queue.append((nx, ny, dist + 1))
         return visited
 
-    def update_visibility(self, px: int, py: int, radius: int) -> None:
-        """Recompute visibility arrays starting from ``(px, py)``."""
+    def update_visibility(self, px: int, py: int, radius: int) -> List[TileDiscovered]:
+        """Recompute visibility arrays starting from ``(px, py)``.
+
+        Returns a list of :class:`TileDiscovered` events for any tiles newly
+        revealed during this update.
+        """
 
         self.visible = [[False for _ in row] for row in self.grid]
+        events: List[TileDiscovered] = []
         for x, y in self.compute_visibility(px, py, radius):
             self.visible[y][x] = True
-            self.discovered[y][x] = True
+            if not self.discovered[y][x]:
+                self.discovered[y][x] = True
+                events.append(TileDiscovered(f"Tile ({x},{y}) discovered", x, y))
+        return events
 
 
 def compute_visibility(grid: List[List[Tile]], px: int, py: int, radius: int) -> Set[Tuple[int, int]]:
@@ -61,12 +71,18 @@ def compute_visibility(grid: List[List[Tile]], px: int, py: int, radius: int) ->
     return GameMap(grid).compute_visibility(px, py, radius)
 
 
-def update_visibility(game) -> None:
-    """Update ``game`` object's visibility arrays in-place."""
+def update_visibility(game) -> List[TileDiscovered]:
+    """Update ``game`` object's visibility arrays in-place.
+
+    Returns a list of :class:`TileDiscovered` events for tiles newly seen by the
+    player.
+    """
+
     gm = GameMap(game.rooms)
     gm.discovered = game.discovered
     gm.visible = [[False for __ in range(game.width)] for __ in range(game.height)]
     radius = 6 if getattr(game, "current_floor", 1) == 1 else 3 + game.current_floor // 2
-    gm.update_visibility(game.player.x, game.player.y, radius)
+    events = gm.update_visibility(game.player.x, game.player.y, radius)
     game.visible = gm.visible
     game.discovered = gm.discovered
+    return events
