@@ -31,3 +31,22 @@ def test_render_map_snapshot():
         "##########..########"
     )
     assert rendered == expected
+
+
+def test_render_map_symbols_after_show_map():
+    random.seed(0)
+    load_floor_configs()
+    game = DungeonBase(1, 1)
+    game.player = Player("Tester")
+    dungeon_map.generate_dungeon(game, floor=1)
+
+    # Simulate selecting "Show Map" from the menu
+    game.handle_input("8")
+
+    rendered = dungeon_map.render_map_string(game)
+
+    assert "@" in rendered
+    assert "." in rendered
+    assert "#" in rendered
+    assert "E" in rendered
+    assert rendered.count("@") == 1
