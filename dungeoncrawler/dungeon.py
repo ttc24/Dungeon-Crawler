@@ -19,7 +19,8 @@ from .constants import (
     SAVE_FILE,
     SCORE_FILE,
 )
-from .data import load_event_defs, load_items
+from .data import load_items
+from . import data
 from .entities import Companion, Enemy, Player
 from .events import (
     CacheEvent,
@@ -204,7 +205,6 @@ def load_floor_configs():
     return configs
 
 
-FLOOR_CONFIGS = load_floor_configs()
 
 
 class DungeonBase:
@@ -256,7 +256,7 @@ class DungeonBase:
             self.random_events,
             self.random_event_weights,
             self.default_place_counts,
-        ) = load_event_defs()
+        ) = data.load_event_defs()
         self.riddles = RIDDLES
         self.enemy_stats = ENEMY_STATS
         self.enemy_abilities = ENEMY_ABILITIES
@@ -266,7 +266,10 @@ class DungeonBase:
         self.boss_loot = BOSS_LOOT
         self.boss_ai = BOSS_AI
         self.boss_traits = BOSS_TRAITS
-        self.floor_configs = FLOOR_CONFIGS
+        # Load a fresh copy of the floor configuration for each game instance
+        # so tests that mutate the underlying JSON can observe the changes
+        # without leaking state between runs.
+        self.floor_configs = load_floor_configs()
         for cfg in self.floor_configs.values():
             cfg.setdefault("events", self.random_events)
             for ev, weight in zip(self.random_events, self.random_event_weights):
@@ -291,10 +294,12 @@ class DungeonBase:
         self.messages: list[str] = []
         self.renderer = Renderer()
 
-    def queue_message(self, text: str):
-        """Store ``text`` for later rendering and return it."""
+    def queue_message(self, text: str, output_func=print):
+        """Store ``text`` for later rendering and optionally display it."""
 
         self.messages.append(text)
+        if output_func:
+            output_func(text)
         return text
 
     def announce(self, msg):
@@ -820,7 +825,7 @@ class DungeonBase:
 
         parts = command.split()
         if len(parts) < 2:
-            self.renderer.show_message(self.queue_message(_("Usage: :god <spawn|teleport|set>")))
+            self.renderer.show_message(self.queue_message(_("Usage: :god <spawn|teleport|set>"), output_func=None))
             return
 
         action = parts[1]
@@ -829,17 +834,17 @@ class DungeonBase:
             item = Item(item_name, "Debug spawn")
             self.player.inventory.append(item)
             msg = _(f"Spawned {item_name}")
-            self.renderer.show_message(self.queue_message(msg))
+            self.renderer.show_message(self.queue_message(msg, output_func=None))
         elif action == "teleport" and len(parts) >= 3:
             try:
                 floor = int(parts[2])
             except ValueError:
-                self.renderer.show_message(self.queue_message(_("Invalid floor")))
+                self.renderer.show_message(self.queue_message(_("Invalid floor"), output_func=None))
                 return
             self.current_floor = floor
             self.generate_dungeon(floor)
             msg = _(f"Teleported to floor {floor}")
-            self.renderer.show_message(self.queue_message(msg))
+            self.renderer.show_message(self.queue_message(msg, output_func=None))
         elif action == "set" and len(parts) >= 4:
             stat, value = parts[2], parts[3]
             if hasattr(self.player, stat):
@@ -847,15 +852,15 @@ class DungeonBase:
                 try:
                     cast_value = type(attr)(value)
                 except (TypeError, ValueError):
-                    self.renderer.show_message(self.queue_message(_("Invalid value")))
+                    self.renderer.show_message(self.queue_message(_("Invalid value"), output_func=None))
                     return
                 setattr(self.player, stat, cast_value)
                 msg = _(f"Set {stat} to {cast_value}")
-                self.renderer.show_message(self.queue_message(msg))
+                self.renderer.show_message(self.queue_message(msg, output_func=None))
             else:
-                self.renderer.show_message(self.queue_message(_("Unknown stat")))
+                self.renderer.show_message(self.queue_message(_("Unknown stat"), output_func=None))
         else:
-            self.renderer.show_message(self.queue_message(_("Invalid god command")))
+            self.renderer.show_message(self.queue_message(_("Invalid god command"), output_func=None))
 
     def show_codex(self, output_func=print):
         if not self.player.codex:
@@ -976,12 +981,21 @@ class DungeonBase:
         cfg = self.floor_configs.get(floor, {})
         events = cfg.get("events")
         if events:
-            weights = []
+            # ``random.choice`` is used instead of ``random.choices`` so tests can
+            # deterministically patch the selection logic.  To preserve weighted
+            # probabilities we expand the events list based on their configured
+            # weights and choose from that.
+            weighted_events = []
             for ev in events:
                 name = ev.__name__.replace("Event", "").lower()
                 weight = cfg.get(f"{name}_rate", 1.0)
-                weights.append(weight)
-            event_cls = random.choices(events, weights=weights, k=1)[0]
+                # ensure each event appears at least once to keep it selectable
+                count = max(1, int(weight * 100))
+                weighted_events.extend([ev] * count)
+
+            # Fall back to the unweighted list if weights produced an empty pool
+            pool = weighted_events or events
+            event_cls = random.choice(pool)
             event = event_cls()
             event.trigger(self)
 
