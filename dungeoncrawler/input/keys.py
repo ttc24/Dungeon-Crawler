@@ -48,4 +48,5 @@ def get_action(key: str) -> Action:
     return KEY_BINDINGS.get(key, Action.UNKNOWN)
 
 
+# Public API
 __all__ = ["Action", "get_action", "KEY_BINDINGS"]
