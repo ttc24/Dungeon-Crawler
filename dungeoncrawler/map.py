@@ -12,6 +12,7 @@ from .combat import battle
 from .entities import Companion, Enemy
 from .events import BaseEvent, CacheEvent, FountainEvent
 from .items import Item
+from .data import load_companions
 from .quests import EscortNPC
 
 if TYPE_CHECKING:  # pragma: no cover - type hints only
@@ -177,22 +178,12 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
         place(loot)
 
     place(Item("Key", "A magical key dropped by the boss"))
-    companion_options = [
-        Companion("Battle Priest", "heal"),
-        Companion("Hired Blade", "attack"),
-    ]
+    companion_options = load_companions()
     place(random.choice(companion_options))
     if floor <= 3:
         place(FountainEvent())
         place(CacheEvent())
-    default_places = {
-        "Trap": 3,
-        "Treasure": 3,
-        "Enchantment": 2,
-        "Sanctuary": 2,
-        "Blacksmith": 1,
-    }
-    place_counts = default_places.copy()
+    place_counts = game.default_place_counts.copy()
     place_counts.update(cfg.get("places", {}))
     for pname, count in place_counts.items():
         for __ in range(count):

@@ -1,0 +1,18 @@
+{
+  "shop": [
+    {"type": "Item", "name": "Health Potion", "description": "Restores 20 health"},
+    {"type": "Weapon", "name": "Sword", "description": "A sharp sword", "min_damage": 10, "max_damage": 15, "price": 40},
+    {"type": "Weapon", "name": "Axe", "description": "A heavy axe", "min_damage": 12, "max_damage": 18, "price": 65},
+    {"type": "Weapon", "name": "Dagger", "description": "A quick dagger", "min_damage": 8, "max_damage": 12, "price": 35},
+    {"type": "Weapon", "name": "Warhammer", "description": "Crushes armor and bone", "min_damage": 14, "max_damage": 22, "price": 85},
+    {"type": "Weapon", "name": "Rapier", "description": "A slender, piercing blade", "min_damage": 9, "max_damage": 17, "price": 50},
+    {"type": "Weapon", "name": "Flame Blade", "description": "Glows with searing heat", "min_damage": 13, "max_damage": 20, "price": 95},
+    {"type": "Weapon", "name": "Crossbow", "description": "Ranged attack with bolts", "min_damage": 11, "max_damage": 19, "price": 60}
+  ],
+  "rare": [
+    {"type": "Weapon", "name": "Elven Longbow", "description": "Bow of unmatched accuracy.", "min_damage": 15, "max_damage": 25, "price": 0},
+    {"type": "Item", "name": "Blessed Charm", "description": "Said to bring good fortune."},
+    {"type": "Weapon", "name": "Dwarven Waraxe", "description": "Forged in the deep halls.", "min_damage": 12, "max_damage": 20, "price": 0},
+    {"type": "Item", "name": "Shadow Cloak", "description": "Grants an air of mystery"}
+  ]
+}

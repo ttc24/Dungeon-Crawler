@@ -1,0 +1,20 @@
+{
+  "random": {
+    "MerchantEvent": 1.0,
+    "PuzzleEvent": 1.0,
+    "TrapEvent": 1.0,
+    "FountainEvent": 1.0,
+    "CacheEvent": 1.0,
+    "LoreNoteEvent": 1.0,
+    "ShrineEvent": 1.0,
+    "MiniQuestHookEvent": 1.0,
+    "HazardEvent": 1.0
+  },
+  "dungeon": {
+    "Trap": 3,
+    "Treasure": 3,
+    "Enchantment": 2,
+    "Sanctuary": 2,
+    "Blacksmith": 1
+  }
+}
