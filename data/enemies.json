@@ -347,5 +347,43 @@
     ],
     "ai": {},
     "traits": []
+  },
+  {
+    "name": "Spectral Rat",
+    "stats": [
+      40,
+      60,
+      5,
+      12,
+      2
+    ],
+    "ai": {},
+    "traits": ["ethereal"],
+    "ability": "phase"
+  },
+  {
+    "name": "Clockwork Guard",
+    "stats": [
+      120,
+      160,
+      14,
+      24,
+      8
+    ],
+    "ai": {"aggressive": 2, "defensive": 2},
+    "traits": ["mechanical"],
+    "ability": "stun"
+  },
+  {
+    "name": "Fungal Brute",
+    "stats": [
+      150,
+      190,
+      18,
+      26,
+      7
+    ],
+    "ai": {},
+    "traits": ["poisonous"]
   }
 ]
