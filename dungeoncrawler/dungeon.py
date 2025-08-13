@@ -9,6 +9,7 @@ from pathlib import Path
 from . import combat as combat_module
 from . import map as map_module
 from . import shop as shop_module
+from .rendering import Renderer, render_map_string
 from .constants import (
     ANNOUNCER_LINES,
     INVALID_KEY_MSG,
@@ -288,9 +289,17 @@ class DungeonBase:
         self.active_quest = None
         # Balance metrics logger
         self.stats_logger = StatsLogger()
+        self.messages: list[str] = []
+        self.renderer = Renderer()
+
+    def queue_message(self, text: str):
+        """Store ``text`` for later rendering and return it."""
+
+        self.messages.append(text)
+        return text
 
     def announce(self, msg):
-        print(_(f"[Announcer] {random.choice(ANNOUNCER_LINES)} {msg}"))
+        self.queue_message(_(f"[Announcer] {random.choice(ANNOUNCER_LINES)} {msg}"))
 
     def save_game(self, floor):
         def serialize_item(item):
@@ -718,33 +727,29 @@ class DungeonBase:
         self.seed = random.randrange(2**32)
         random.seed(self.seed)
         self.run_start = time.time()
-        print(_("Welcome to Dungeon Crawler!"))
+        self.renderer.show_message(_("Welcome to Dungeon Crawler!"))
         while self.player.is_alive() and floor <= 18:
-            print(_(f"===== Entering Floor {floor} ====="))
+            self.renderer.show_message(_(f"===== Entering Floor {floor} ====="))
             self.generate_dungeon(floor)
             self.stats_logger.start_floor(self, floor)
             self.trigger_floor_event(floor)
 
             while self.player.is_alive():
-                print(
+                self.renderer.show_message(
                     _(
                         f"Position: ({self.player.x}, {self.player.y}) - {self.room_names[self.player.y][self.player.x]}"
                     )
                 )
-                print(
-                    _(
-                        f"Health: {self.player.health} | STA: {self.player.stamina}/{self.player.max_stamina} | XP: {self.player.xp} | Gold: {self.player.gold} | Level: {self.player.level} | Floor: {floor}"
-                    )
-                )
+                self.renderer.show_status(self)
                 if self.player.guild:
-                    print(_(f"Guild: {self.player.guild}"))
+                    self.renderer.show_message(_(f"Guild: {self.player.guild}"))
                 if self.player.race:
-                    print(_(f"Race: {self.player.race}"))
+                    self.renderer.show_message(_(f"Race: {self.player.race}"))
                 if self.active_quest:
-                    print(_(f"Quest: {self.active_quest.status(self)}"))
+                    self.renderer.show_message(_(f"Quest: {self.active_quest.status(self)}"))
                 else:
-                    print(_("Quest: None"))
-                print(
+                    self.renderer.show_message(_("Quest: None"))
+                self.renderer.show_message(
                     _(
                         "0. Wait 1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit 8. Show Map 9. View Leaderboard"
                     )
@@ -762,9 +767,9 @@ class DungeonBase:
                     self.stats_logger.end_floor(self)
                     break
 
-        print(_("You have died. Game Over!"))
-        print(_(f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'"))
-        print(_(f"Final Score: {self.player.get_score()}"))
+        self.renderer.show_message(_("You have died. Game Over!"))
+        self.renderer.show_message(_(f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'"))
+        self.renderer.show_message(_(f"Final Score: {self.player.get_score()}"))
         self.record_score(floor)
         self.stats_logger.finalize(self, self.player.cause_of_death or "Unknown")
         if os.path.exists(SAVE_FILE):
@@ -795,7 +800,7 @@ class DungeonBase:
         elif choice == "6":
             self.show_inventory()
         elif choice == "7":
-            print(_("Thanks for playing!"))
+            self.renderer.show_message(_("Thanks for playing!"))
             return False
         elif choice == "8":
             self.render_map()
@@ -804,7 +809,7 @@ class DungeonBase:
         elif choice == ":codex":
             self.show_codex()
         else:
-            print(_(INVALID_KEY_MSG))
+            self.renderer.show_message(_(INVALID_KEY_MSG))
         return True
 
     def show_codex(self, output_func=print):
@@ -839,7 +844,7 @@ class DungeonBase:
             and self.player.y == self.exit_coords[1]
             and self.player.has_item("Key")
         ):
-            print(_("You reach the Sealed Gate."))
+            self.renderer.show_message(_("You reach the Sealed Gate."))
             proceed = input(_("Would you like to descend to the next floor? (y/n): ")).lower()
             if proceed == "y":
                 floor += 1
@@ -848,8 +853,8 @@ class DungeonBase:
                 self.player.temp_intelligence = 0
                 self.save_game(floor)
                 return floor, False
-            print(_("You chose to exit the dungeon."))
-            print(_(f"Final Score: {self.player.get_score()}"))
+            self.renderer.show_message(_("You chose to exit the dungeon."))
+            self.renderer.show_message(_(f"Final Score: {self.player.get_score()}"))
             self.record_score(floor)
             if os.path.exists(SAVE_FILE):
                 try:
@@ -862,13 +867,14 @@ class DungeonBase:
 
     def move_player(self, direction):
         prev = (self.player.x, self.player.y)
-        map_module.move_player(self, direction)
+        msg = map_module.move_player(self, direction)
         if (self.player.x, self.player.y) != prev:
             self.stats_logger.record_move()
             self.player.regen_stamina(20)
+        return msg
 
     def render_map(self):
-        map_module.render_map(self)
+        self.renderer.draw_map(render_map_string(self))
 
     def handle_room(self, x, y):
         map_module.handle_room(self, x, y)
@@ -878,16 +884,16 @@ class DungeonBase:
 
     def audience_gift(self):
         if random.random() < 0.1:
-            print(_("A package falls from above! It's a gift from the audience."))
+            self.renderer.show_message(_("A package falls from above! It's a gift from the audience."))
             if random.random() < 0.5:
                 item = Item("Health Potion", "Restores 20 health")
                 self.player.collect_item(item)
-                print(_(f"You received a {item.name}."))
+                self.renderer.show_message(_(f"You received a {item.name}."))
                 self.announce(f"{self.player.name} gains a helpful item!")
             else:
                 damage = random.randint(5, 15)
                 self.player.take_damage(damage, source="Audience Gift")
-                print(_(f"Uh-oh! It explodes and deals {damage} damage."))
+                self.renderer.show_message(_(f"Uh-oh! It explodes and deals {damage} damage."))
                 self.announce("The crowd loves a good prank!")
 
     def grant_inspiration(self, turns=3):
