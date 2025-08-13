@@ -11,7 +11,8 @@ from __future__ import annotations
 from typing import List
 
 from .entity import Entity
-from .events import AttackResolved, Event, StatusApplied
+from .events import AttackResolved, Event, IntentTelegraphed, StatusApplied
+
 
 def calculate_hit(attacker: Entity, defender: Entity) -> int:
     """Return the attacker's hit chance against ``defender``.
@@ -153,11 +154,33 @@ def resolve_player_action(player: Entity, enemy: Entity, action: str) -> List[Ev
 def resolve_enemy_turn(enemy: Entity, player: Entity) -> List[Event]:
     """Resolve the enemy's turn against ``player``.
 
-    Currently this simply performs a basic attack if the enemy is alive.
+    The enemy first telegraphs its intent then performs the action. If no intent
+    generator is provided the enemy defaults to a basic attack.
     """
 
     if not enemy.is_alive():
         return [
             StatusApplied(f"{enemy.name} is defeated and cannot act.", enemy.name, "defeated", 0)
         ]
-    return [resolve_attack(enemy, player)]
+
+    events: List[Event] = []
+
+    action = "attack"
+    message = f"{enemy.name} attacks."
+    if enemy.intent is not None:
+        try:
+            action, message = next(enemy.intent)
+        except StopIteration:
+            pass
+
+    events.append(IntentTelegraphed(message, enemy.name, action))
+
+    if action == "attack":
+        events.append(resolve_attack(enemy, player))
+    elif action == "defend":
+        enemy.status.extend(["defend_damage", "defend_attack"])
+        events.append(StatusApplied(f"{enemy.name} defends.", enemy.name, "defend", 1))
+    else:
+        events.append(resolve_attack(enemy, player))
+
+    return events

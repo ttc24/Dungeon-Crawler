@@ -33,6 +33,14 @@ class StatusApplied(Event):
 
 
 @dataclass
+class IntentTelegraphed(Event):
+    """An enemy revealed its next action before taking it."""
+
+    actor: str
+    intent: str
+
+
+@dataclass
 class TileDiscovered(Event):
     """A new map tile has been revealed to the player."""
 
