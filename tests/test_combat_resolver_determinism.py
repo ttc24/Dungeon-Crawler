@@ -1,5 +1,6 @@
 import random
-from dungeoncrawler.core.combat import resolve_player_action, resolve_enemy_turn
+
+from dungeoncrawler.core.combat import resolve_enemy_turn, resolve_player_action
 from dungeoncrawler.core.entity import Entity
 
 

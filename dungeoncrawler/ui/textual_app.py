@@ -24,11 +24,13 @@ class ActionsPanel(Static):
 class DungeonApp(App):
     """Textual interface composed of resizable panels."""
 
-    CSS = ".grid {grid-size: 2 2; grid-columns: 2fr 1fr; grid-rows: 3fr 1fr;}\n" \
-          "#map {grid-column: 1; grid-row: 1 / span 2;}\n" \
-          "#stats {grid-column: 2; grid-row: 1;}\n" \
-          "#log {grid-column: 2; grid-row: 2;}\n" \
-          "#actions {grid-column: 1; grid-row: 2;}\n"
+    CSS = (
+        ".grid {grid-size: 2 2; grid-columns: 2fr 1fr; grid-rows: 3fr 1fr;}\n"
+        "#map {grid-column: 1; grid-row: 1 / span 2;}\n"
+        "#stats {grid-column: 2; grid-row: 1;}\n"
+        "#log {grid-column: 2; grid-row: 2;}\n"
+        "#actions {grid-column: 1; grid-row: 2;}\n"
+    )
 
     def compose(self) -> ComposeResult:
         with Grid(classes="grid"):
