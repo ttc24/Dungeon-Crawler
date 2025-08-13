@@ -29,6 +29,13 @@ def enemy_turn(enemy: "Enemy", player: "Player") -> None:
         skip = enemy.apply_status_effects()
         if enemy.is_alive() and not skip:
             enemy.take_turn(player)
+        if enemy.ai and hasattr(enemy.ai, "choose_intent"):
+            enemy.next_action, enemy.intent_message = enemy.ai.choose_intent(enemy, player)
+        else:
+            enemy.next_action = None
+            enemy.intent_message = ""
+        if enemy.heavy_cd > 0:
+            enemy.heavy_cd -= 1
 
 
 def battle(game: "DungeonBase", enemy: "Enemy") -> None:

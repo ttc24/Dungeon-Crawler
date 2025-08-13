@@ -37,7 +37,7 @@ class IntentAI:
 
     TELEGRAPHS = {
         "Goblin": {
-            "aggressive": "Goblin steadies a heavy strike…",
+            "aggressive": "Goblin winds up a heavy strike…",
             "defensive": "Goblin raises its guard.",
             "unpredictable": "The Goblin grins wildly, unpredictable…",
         },

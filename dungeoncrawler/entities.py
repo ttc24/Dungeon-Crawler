@@ -613,13 +613,6 @@ class Enemy(Entity):
             self.attack(player)
         else:
             self.attack(player)
-        if self.ai and hasattr(self.ai, "choose_intent"):
-            self.next_action, self.intent_message = self.ai.choose_intent(self, player)
-        else:
-            self.next_action = None
-            self.intent_message = ""
-        if self.heavy_cd > 0:
-            self.heavy_cd -= 1
 
     def attack(self, player):
         hit_chance = 60
