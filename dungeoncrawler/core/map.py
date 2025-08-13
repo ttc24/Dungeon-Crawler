@@ -8,7 +8,6 @@ from typing import Any, List, Optional, Set, Tuple
 
 from .events import TileDiscovered
 
-
 Tile = Optional[Any]
 
 
@@ -66,7 +65,9 @@ class GameMap:
         return events
 
 
-def compute_visibility(grid: List[List[Tile]], px: int, py: int, radius: int) -> Set[Tuple[int, int]]:
+def compute_visibility(
+    grid: List[List[Tile]], px: int, py: int, radius: int
+) -> Set[Tuple[int, int]]:
     """Convenience wrapper around :meth:`GameMap.compute_visibility`."""
     return GameMap(grid).compute_visibility(px, py, radius)
 
