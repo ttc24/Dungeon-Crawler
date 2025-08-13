@@ -14,6 +14,7 @@ from .entities import Companion, Enemy
 from .events import BaseEvent, CacheEvent, FountainEvent
 from .flavor import generate_room_flavor
 from .items import Item
+from .config import config
 from .quests import EscortNPC
 from .rendering import render_map, render_map_string  # re-exported for compatibility
 
@@ -183,8 +184,14 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     companion_options = load_companions()
     place(random.choice(companion_options))
     if floor <= 3:
-        place(FountainEvent())
-        place(CacheEvent())
+        total = config.trap_chance + config.loot_multiplier
+        fountain_prob = config.trap_chance / total if total else 0.5
+        event_cls = FountainEvent if random.random() < fountain_prob else CacheEvent
+        event = event_cls()
+        if floor == 1:
+            place_near_start(event, 10)
+        else:
+            place(event)
     place_counts = game.default_place_counts.copy()
     place_counts.update(cfg.get("places", {}))
     for pname, count in place_counts.items():

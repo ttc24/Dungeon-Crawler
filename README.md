@@ -51,8 +51,8 @@ Available configuration options:
 | `max_floors` | int | `18` | Number of dungeon floors to generate. |
 | `screen_width` | int | `10` | Width of each dungeon floor in rooms. |
 | `screen_height` | int | `10` | Height of each dungeon floor in rooms. |
-| `trap_chance` | float | `0.1` | Probability that a room contains a trap. |
-| `loot_multiplier` | float | `1.0` | Multiplies the amount of loot found. |
+| `trap_chance` | float | `0.1` | Probability that a room contains a trap; higher values favor healing fountains on early floors. |
+| `loot_multiplier` | float | `1.0` | Multiplies the amount of loot found; higher values favor treasure caches on early floors. |
 | `verbose_combat` | bool | `false` | Log additional combat details. |
 | `enable_debug` | bool | `false` | Toggle extra debug output. |
 
