@@ -31,9 +31,7 @@ def test_generate_dungeon_size_and_population():
     assert abs(px - ex) + abs(py - ey) <= 4
 
     # Early floors should always include helpful events
-    assert any(
-        isinstance(obj, FountainEvent) for row in dungeon.rooms for obj in row
-    )
+    assert any(isinstance(obj, FountainEvent) for row in dungeon.rooms for obj in row)
     assert any(isinstance(obj, CacheEvent) for row in dungeon.rooms for obj in row)
 
     enemy_count = sum(isinstance(obj, Enemy) for row in dungeon.rooms for obj in row)
