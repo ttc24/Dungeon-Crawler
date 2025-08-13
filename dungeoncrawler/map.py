@@ -9,12 +9,12 @@ from typing import TYPE_CHECKING
 
 from .ai import IntentAI
 from .combat import battle
+from .config import config
 from .data import load_companions
 from .entities import Companion, Enemy
 from .events import BaseEvent, CacheEvent, FountainEvent
 from .flavor import generate_room_flavor
 from .items import Item
-from .config import config
 from .quests import EscortNPC
 from .rendering import render_map, render_map_string  # re-exported for compatibility
 
