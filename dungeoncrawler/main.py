@@ -10,7 +10,7 @@ import argparse
 from gettext import gettext as _
 
 from . import tutorial
-from .config import load_config
+from .config import Config, load_config
 from .dungeon import DungeonBase
 from .entities import Player
 from .i18n import set_language
@@ -35,8 +35,19 @@ def build_character(input_func=input, output_func=print):
     return player
 
 
-def main(argv=None, input_func=input, output_func=print):
-    """Run the game with optional command line arguments."""
+def main(argv=None, input_func=input, output_func=print, cfg: Config | None = None):
+    """Run the game with optional command line arguments.
+
+    Parameters
+    ----------
+    argv:
+        Optional sequence of arguments to parse instead of ``sys.argv``.
+    input_func, output_func:
+        Hooks used primarily for testing to simulate user interaction.
+    cfg:
+        Pre-loaded configuration.  When ``None`` the configuration is loaded
+        from ``config.json`` automatically.
+    """
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -49,7 +60,7 @@ def main(argv=None, input_func=input, output_func=print):
 
     set_language(args.lang)
 
-    cfg = load_config()
+    cfg = cfg or load_config()
     game = DungeonBase(cfg.screen_width, cfg.screen_height)
     cont = input_func(_("Load existing save? (y/n): ")).strip().lower()
     if cont == "y":

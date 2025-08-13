@@ -12,7 +12,10 @@ CONFIG_PATH = Path(__file__).resolve().parent.parent / "config.json"
 class Config:
     """Game configuration loaded from ``config.json``.
 
-    Defaults mirror the previous hard-coded constants so the game remains
+    Besides basic layout settings such as ``screen_width`` and
+    ``screen_height`` the configuration also exposes gameplay toggles like
+    ``trap_chance``, ``loot_multiplier`` and ``verbose_combat``.  Default
+    values mirror the previous hard-coded constants so the game remains
     playable even if no configuration file is provided.
     """
 
@@ -47,8 +50,8 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
     ------
     ValueError
         If a configuration value has an invalid type or falls outside the
-        accepted range. For example ``screen_width`` and ``screen_height`` must
-        be positive integers.
+        accepted range. For example ``screen_width`` and ``max_floors`` must be
+        positive integers.
     """
 
     cfg = Config()
