@@ -613,8 +613,8 @@ class Enemy(Entity):
             self.attack(player)
         else:
             self.attack(player)
-        if self.ai and hasattr(self.ai, "plan_next"):
-            self.next_action, self.intent_message = self.ai.plan_next(self, player)
+        if self.ai and hasattr(self.ai, "choose_intent"):
+            self.next_action, self.intent_message = self.ai.choose_intent(self, player)
         else:
             self.next_action = None
             self.intent_message = ""

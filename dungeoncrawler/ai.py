@@ -57,11 +57,14 @@ class IntentAI:
         }
 
     # ------------------------------------------------------------------
-    def plan_next(self, enemy, player):
-        """Choose the next intent and telegraph it.
+    def choose_intent(self, enemy, player):
+        """Select the next action and telegraph it to the player.
 
-        Returns a tuple ``(action, message)`` which is stored on the enemy
-        and executed on the subsequent turn.
+        Returns
+        -------
+        tuple[str, str]
+            A pair ``(action, message)`` describing what the enemy will do on
+            its next turn and the text used to foreshadow that intent.
         """
 
         intents = list(self.weights.keys())
@@ -71,7 +74,7 @@ class IntentAI:
         # Map intents to actions and default telegraphs
         action = "attack"
         message = {
-            "aggressive": f"The {enemy.name} prepares a heavy strike…",
+            "aggressive": f"The {enemy.name} winds up for a heavy strike…",
             "defensive": f"The {enemy.name} raises its guard.",
             "unpredictable": f"The {enemy.name} wavers unpredictably…",
         }[intent]
@@ -88,6 +91,9 @@ class IntentAI:
         message = telegraphs.get(intent, message)
 
         return action, message
+
+    # Backwards compatibility for older saves/tests
+    plan_next = choose_intent
 
 
 # Default archetype weights for enemies that use IntentAI
