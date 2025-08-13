@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 from .ai import IntentAI
 from .combat import battle
 from .entities import Companion, Enemy
-from .events import BaseEvent
+from .events import BaseEvent, CacheEvent, FountainEvent
 from .items import Item
 from .quests import EscortNPC
 
@@ -44,7 +44,7 @@ def update_visibility(game: "DungeonBase") -> None:
     """Recompute visible and discovered tiles for ``game``."""
 
     game.visible = [[False for __ in range(game.width)] for __ in range(game.height)]
-    radius = 3 + game.current_floor // 2
+    radius = 6 if game.current_floor == 1 else 3 + game.current_floor // 2
     for x, y in compute_visibility(game.rooms, game.player.x, game.player.y, radius):
         game.visible[y][x] = True
         game.discovered[y][x] = True
@@ -118,7 +118,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
         return place(obj)
 
     if floor == 1:
-        game.exit_coords = place_near_start("Exit", 10)
+        game.exit_coords = place_near_start("Exit", 4)
     else:
         game.exit_coords = place("Exit")
     place(Item("Key", "Opens the dungeon exit"))
@@ -183,6 +183,9 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
         Companion("Hired Blade", "attack"),
     ]
     place(random.choice(companion_options))
+    if floor <= 3:
+        place(FountainEvent())
+        place(CacheEvent())
     default_places = {
         "Trap": 3,
         "Treasure": 3,
