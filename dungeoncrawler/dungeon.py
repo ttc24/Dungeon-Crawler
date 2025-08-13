@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import sys
 import time
 from functools import lru_cache
 from gettext import gettext as _
@@ -442,10 +443,23 @@ class DungeonBase:
         except IOError:
             return
 
-        self.view_leaderboard(records)
+        # Use a dummy input function when running in a non-interactive
+        # environment so tests do not block waiting for keyboard input.
+        input_func = input if sys.stdin.isatty() else (lambda _: "1")
+        try:
+            self.view_leaderboard(records, input_func=input_func)
+        except (OSError, EOFError):
+            # ``input`` may still fail when stdin is redirected; simply skip
+            # showing the interactive leaderboard in that case.
+            pass
 
-    def view_leaderboard(self, records=None):
-        """Display leaderboard entries stored on disk."""
+    def view_leaderboard(self, records=None, input_func=input):
+        """Display leaderboard entries stored on disk.
+
+        The interactive portion asking the player to choose a class is skipped
+        when no player is set or when ``input_func`` cannot obtain input.  This
+        prevents tests from hanging waiting for user input.
+        """
 
         if records is None:
             records = []
@@ -468,6 +482,11 @@ class DungeonBase:
                     f"{r.get('epitaph', '')}"
                 )
             )
+
+        # If no player is present there is nothing further to do – the
+        # leaderboard was displayed solely for informational purposes.
+        if self.player is None:
+            return
 
         classes = {
             "1": "Warrior",
@@ -496,7 +515,11 @@ class DungeonBase:
         }
 
         while True:
-            raw = input(_("Class: ")).strip().lower()
+            try:
+                raw = input_func(_("Class: ")).strip().lower()
+            except (EOFError, OSError):
+                # Abort gracefully if no input is available
+                return
             choice = None
             if raw.isdigit() and raw in classes:
                 choice = raw
