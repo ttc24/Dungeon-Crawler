@@ -26,3 +26,19 @@ def test_load_config_invalid_range(tmp_path):
     cfg_file.write_text(json.dumps({"screen_height": 0}))
     with pytest.raises(ValueError):
         load_config(cfg_file)
+
+
+def test_new_keys_default(tmp_path):
+    cfg_file = tmp_path / "config.json"
+    cfg_file.write_text("{}")
+    cfg = load_config(cfg_file)
+    assert cfg.trap_chance == 0.1
+    assert cfg.loot_multiplier == 1.0
+    assert cfg.enable_debug is False
+
+
+def test_unknown_keys_preserved(tmp_path):
+    cfg_file = tmp_path / "config.json"
+    cfg_file.write_text(json.dumps({"future_option": 42}))
+    cfg = load_config(cfg_file)
+    assert cfg.extras["future_option"] == 42

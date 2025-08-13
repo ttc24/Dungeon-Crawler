@@ -40,6 +40,20 @@ no custom configuration is supplied. When providing your own configuration,
 ensure numeric values like `screen_width`, `screen_height`, and `max_floors`
 are positive integers—invalid entries will raise a `ValueError` at start-up.
 
+Available configuration options:
+
+| Key | Type | Default | Description |
+| --- | ---- | ------- | ----------- |
+| `save_file` | string | `"savegame.json"` | Location of the saved game file. |
+| `score_file` | string | `"scores.json"` | Path to the leaderboard data. |
+| `max_floors` | int | `18` | Number of dungeon floors to generate. |
+| `screen_width` | int | `10` | Width of each dungeon floor in rooms. |
+| `screen_height` | int | `10` | Height of each dungeon floor in rooms. |
+| `trap_chance` | float | `0.1` | Probability that a room contains a trap. |
+| `loot_multiplier` | float | `1.0` | Multiplies the amount of loot found. |
+| `verbose_combat` | bool | `false` | Log additional combat details. |
+| `enable_debug` | bool | `false` | Toggle extra debug output. |
+
 ## Running the Game
 
 When launching the game you start by entering a name. Your class is chosen on
