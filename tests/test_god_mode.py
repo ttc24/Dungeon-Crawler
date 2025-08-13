@@ -1,5 +1,3 @@
-import pytest
-
 from dungeoncrawler.config import config
 
 

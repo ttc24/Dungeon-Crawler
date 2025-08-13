@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import random
 from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import Tuple
 
 from .entities import Enemy
 from .items import Item

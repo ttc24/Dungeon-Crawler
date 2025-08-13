@@ -25,9 +25,7 @@ from .events import (
     FountainEvent,
     HazardEvent,
     LoreNoteEvent,
-    MerchantEvent,
     MiniQuestHookEvent,
-    PuzzleEvent,
     ShrineEvent,
     TrapEvent,
 )
@@ -567,40 +565,18 @@ class DungeonBase:
         self.player.choose_race(race)
 
     def generate_room_name(self, room_type=None):
-        lore = {
-            "Treasure": (
-                "Glittering Vault",
-                "The air shimmers with unseen magic. Ancient riches may lie within.",
-            ),
-            "Trap": (
-                "Booby-Trapped Passage",
-                "This corridor is riddled with pressure plates and crumbled bones.",
-            ),
-            "Enemy": (
-                "Cursed Hall",
-                "The shadows shift... something watches from the dark.",
-            ),
-            "Exit": (
-                "Sealed Gate",
-                "Massive stone doors sealed by arcane runes. It might be the only way out.",
-            ),
-            "Key": (
-                "Hidden Niche",
-                "A hollow carved into the wall, forgotten by time. Something valuable glints inside.",
-            ),
-            "Sanctuary": (
-                "Sacred Sanctuary",
-                "A calm aura fills this room, soothing your wounds.",
-            ),
-            "Empty": (
-                "Silent Chamber",
-                "Dust covers everything. It appears long abandoned.",
-            ),
-            "default": (None, None),
+        names = {
+            "Treasure": "Glittering Vault",
+            "Trap": "Booby-Trapped Passage",
+            "Enemy": "Cursed Hall",
+            "Exit": "Sealed Gate",
+            "Key": "Hidden Niche",
+            "Sanctuary": "Sacred Sanctuary",
+            "Empty": "Silent Chamber",
         }
 
-        if room_type in lore:
-            return lore[room_type][0]
+        if room_type in names:
+            return names[room_type]
 
         return f"{random.choice(ROOM_NAME_ADJECTIVES)} {random.choice(ROOM_NAME_NOUNS)}"
 
@@ -1010,13 +986,13 @@ class DungeonBase:
     def _floor_two_event(self):
         self.offer_guild()
         options = [CacheEvent, TrapEvent, LoreNoteEvent]
-        for _ in range(random.randint(1, 2)):
+        for __ in range(random.randint(1, 2)):
             random.choice(options)().trigger(self)
 
     def _floor_three_event(self):
         self.offer_race()
         options = [ShrineEvent, MiniQuestHookEvent, HazardEvent]
-        for _ in range(2):
+        for __ in range(2):
             random.choice(options)().trigger(self)
 
     def _floor_five_event(self):
