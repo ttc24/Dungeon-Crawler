@@ -42,7 +42,7 @@ jobs:
           branch: ci/formatting
           title: "Apply Black and isort formatting"
           commit-message: "Apply Black and isort formatting"
-          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          author: "github-actions[bot]"
           body: |
             This PR applies automated formatting (Black + isort).
           delete-branch: true
