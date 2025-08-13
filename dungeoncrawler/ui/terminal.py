@@ -13,9 +13,54 @@ import time
 from gettext import gettext as _
 from typing import Callable
 
-from rich.console import Console
-from rich.table import Table
-from rich.text import Text
+# ``rich`` is an optional dependency.  When it is not available we fall back to
+# very small stand‑ins that implement just the pieces of API used in the test
+# suite.  This keeps the package lightweight while avoiding import errors in
+# environments where ``rich`` is absent.
+
+try:  # pragma: no cover - exercised indirectly in the tests
+    from rich.console import Console  # type: ignore
+    from rich.table import Table  # type: ignore
+    from rich.text import Text  # type: ignore
+except ModuleNotFoundError:  # pragma: no cover
+    class Console:
+        """Very small subset of :class:`rich.console.Console`.
+
+        Only the :meth:`print` method is required which simply proxies to the
+        builtin :func:`print`.
+        """
+
+        def print(self, *args, **kwargs):  # noqa: D401 - small helper
+            print(*args)
+
+    class Table:
+        """Minimal table that stores rows and prints them plainly."""
+
+        def __init__(self, *args, **kwargs):
+            self.rows: list[tuple[str, str]] = []
+
+        def add_row(self, *columns: str) -> None:
+            self.rows.append(tuple(columns))
+
+        def __str__(self) -> str:  # pragma: no cover - trivial
+            return "\n".join("\t".join(row) for row in self.rows)
+
+    class Text:
+        """Simple stand in for :class:`rich.text.Text`.
+
+        The real ``Text`` type allows rich styling.  For the purposes of the
+        tests we only need to accumulate plain characters, so this class keeps a
+        list of fragments which are joined when converted to ``str``.
+        """
+
+        def __init__(self) -> None:
+            self.fragments: list[str] = []
+
+        def append(self, text: str, style: str | None = None) -> None:
+            self.fragments.append(text)
+
+        def __str__(self) -> str:  # pragma: no cover - trivial
+            return "".join(self.fragments)
 
 from ..config import config
 from ..core.events import Event
