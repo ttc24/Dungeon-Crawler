@@ -58,6 +58,9 @@ Available configuration options:
 | `trap_chance` | float | `0.1` | Probability that a room contains a trap; higher values favor healing fountains on early floors. |
 | `loot_multiplier` | float | `1.0` | Multiplies the amount of loot found; higher values favor treasure caches on early floors. |
 | `verbose_combat` | bool | `false` | Log additional combat details. |
+| `slow_messages` | bool | `false` | Introduce a short delay between message prints. |
+| `key_repeat_delay` | float | `0.5` | Time in seconds before held keys repeat. |
+| `colorblind_mode` | bool | `false` | Use an alternative palette for improved contrast. |
 | `enable_debug` | bool | `false` | Toggle extra debug output. |
 
 ## Running the Game

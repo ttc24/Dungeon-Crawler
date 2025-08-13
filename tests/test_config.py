@@ -66,6 +66,9 @@ def test_new_keys_default(tmp_path):
     assert cfg.trap_chance == 0.1
     assert cfg.loot_multiplier == 1.0
     assert cfg.verbose_combat is False
+    assert cfg.slow_messages is False
+    assert cfg.key_repeat_delay == 0.5
+    assert cfg.colorblind_mode is False
     assert cfg.enable_debug is False
 
 
@@ -74,3 +77,23 @@ def test_unknown_keys_preserved(tmp_path):
     cfg_file.write_text(json.dumps({"future_option": 42}))
     cfg = load_config(cfg_file)
     assert cfg.extras["future_option"] == 42
+
+
+def test_key_repeat_delay_validation(tmp_path):
+    cfg_file = tmp_path / "config.json"
+    cfg_file.write_text(json.dumps({"key_repeat_delay": -1}))
+    with pytest.raises(ValueError):
+        load_config(cfg_file)
+    cfg_file.write_text(json.dumps({"key_repeat_delay": "fast"}))
+    with pytest.raises(ValueError):
+        load_config(cfg_file)
+
+
+def test_bool_toggle_validation(tmp_path):
+    cfg_file = tmp_path / "config.json"
+    cfg_file.write_text(json.dumps({"slow_messages": "yes"}))
+    with pytest.raises(ValueError):
+        load_config(cfg_file)
+    cfg_file.write_text(json.dumps({"colorblind_mode": "no"}))
+    with pytest.raises(ValueError):
+        load_config(cfg_file)

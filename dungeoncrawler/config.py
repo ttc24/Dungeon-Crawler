@@ -25,6 +25,9 @@ class Config:
     screen_width: int = 10
     screen_height: int = 10
     verbose_combat: bool = False
+    slow_messages: bool = False
+    key_repeat_delay: float = 0.5
+    colorblind_mode: bool = False
     trap_chance: float = 0.1
     loot_multiplier: float = 1.0
     enable_debug: bool = False
@@ -70,7 +73,7 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
                 elif key in {"save_file", "score_file"}:
                     if not isinstance(value, str):
                         raise ValueError(f"{key} must be a string, got {type(value).__name__}")
-                elif key in {"verbose_combat", "enable_debug"}:
+                elif key in {"verbose_combat", "enable_debug", "slow_messages", "colorblind_mode"}:
                     if not isinstance(value, bool):
                         raise ValueError(f"{key} must be a boolean, got {type(value).__name__}")
                 elif key == "trap_chance":
@@ -84,6 +87,12 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
                         raise ValueError(f"{key} must be a number, got {type(value).__name__}")
                     if float(value) <= 0:
                         raise ValueError(f"{key} must be greater than 0, got {value}")
+                    value = float(value)
+                elif key == "key_repeat_delay":
+                    if not isinstance(value, (int, float)):
+                        raise ValueError(f"{key} must be a number, got {type(value).__name__}")
+                    if float(value) < 0:
+                        raise ValueError(f"{key} must be greater than or equal to 0, got {value}")
                     value = float(value)
                 setattr(cfg, key, value)
             else:
