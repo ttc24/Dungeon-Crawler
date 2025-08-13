@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -22,7 +22,10 @@ class Config:
     screen_width: int = 10
     screen_height: int = 10
     verbose_combat: bool = False
+    trap_chance: float = 0.1
+    loot_multiplier: float = 1.0
     enable_debug: bool = False
+    extras: dict[str, Any] = field(default_factory=dict)
 
 
 def load_config(path: Path = CONFIG_PATH) -> Config:
@@ -67,7 +70,21 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
                 elif key in {"verbose_combat", "enable_debug"}:
                     if not isinstance(value, bool):
                         raise ValueError(f"{key} must be a boolean, got {type(value).__name__}")
+                elif key == "trap_chance":
+                    if not isinstance(value, (int, float)):
+                        raise ValueError(f"{key} must be a number, got {type(value).__name__}")
+                    if not 0 <= float(value) <= 1:
+                        raise ValueError(f"{key} must be between 0 and 1, got {value}")
+                    value = float(value)
+                elif key == "loot_multiplier":
+                    if not isinstance(value, (int, float)):
+                        raise ValueError(f"{key} must be a number, got {type(value).__name__}")
+                    if float(value) <= 0:
+                        raise ValueError(f"{key} must be greater than 0, got {value}")
+                    value = float(value)
                 setattr(cfg, key, value)
+            else:
+                cfg.extras[key] = value
     return cfg
 
 
