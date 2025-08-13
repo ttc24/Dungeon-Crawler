@@ -8,6 +8,7 @@ from gettext import gettext as _
 from pathlib import Path
 
 from . import combat as combat_module
+from . import data
 from . import map as map_module
 from . import shop as shop_module
 from .config import config
@@ -20,7 +21,6 @@ from .constants import (
     SCORE_FILE,
 )
 from .data import load_items
-from . import data
 from .entities import Companion, Enemy, Player
 from .events import (
     CacheEvent,
@@ -203,8 +203,6 @@ def load_floor_configs():
         # Event configuration will be filled with defaults during game init
         configs[floor] = cfg
     return configs
-
-
 
 
 class DungeonBase:
@@ -825,7 +823,9 @@ class DungeonBase:
 
         parts = command.split()
         if len(parts) < 2:
-            self.renderer.show_message(self.queue_message(_("Usage: :god <spawn|teleport|set>"), output_func=None))
+            self.renderer.show_message(
+                self.queue_message(_("Usage: :god <spawn|teleport|set>"), output_func=None)
+            )
             return
 
         action = parts[1]
@@ -852,7 +852,9 @@ class DungeonBase:
                 try:
                     cast_value = type(attr)(value)
                 except (TypeError, ValueError):
-                    self.renderer.show_message(self.queue_message(_("Invalid value"), output_func=None))
+                    self.renderer.show_message(
+                        self.queue_message(_("Invalid value"), output_func=None)
+                    )
                     return
                 setattr(self.player, stat, cast_value)
                 msg = _(f"Set {stat} to {cast_value}")
@@ -860,7 +862,9 @@ class DungeonBase:
             else:
                 self.renderer.show_message(self.queue_message(_("Unknown stat"), output_func=None))
         else:
-            self.renderer.show_message(self.queue_message(_("Invalid god command"), output_func=None))
+            self.renderer.show_message(
+                self.queue_message(_("Invalid god command"), output_func=None)
+            )
 
     def show_codex(self, output_func=print):
         if not self.player.codex:
