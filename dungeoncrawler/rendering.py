@@ -10,7 +10,6 @@ from __future__ import annotations
 
 from .ui.terminal import Renderer  # re-export for existing imports
 
-
 # ----------------------------------------------------------------------
 # Map rendering utilities – migrated from :mod:`map`
 # ----------------------------------------------------------------------
@@ -46,4 +45,3 @@ def render_map(game) -> None:
 
 
 __all__ = ["Renderer", "render_map", "render_map_string"]
-

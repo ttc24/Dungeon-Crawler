@@ -30,7 +30,9 @@ def run(game, input_func=input, renderer: Renderer | None = None) -> None:
             break
         renderer.show_message(_("Please use one of 1, 2, 3 or 4 to move."))
 
-    renderer.show_message(_("Now let's practice combat. Type 'attack' to strike the training dummy."))
+    renderer.show_message(
+        _("Now let's practice combat. Type 'attack' to strike the training dummy.")
+    )
     while True:
         action = input_func(_("Action: ")).strip().lower()
         if action == "attack":
