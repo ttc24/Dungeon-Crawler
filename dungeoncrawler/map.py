@@ -5,8 +5,6 @@ from __future__ import annotations
 import random
 from collections import deque
 from gettext import gettext as _
-
-from .flavor import generate_room_flavor
 from typing import TYPE_CHECKING
 
 from .ai import IntentAI
@@ -14,6 +12,7 @@ from .combat import battle
 from .data import load_companions
 from .entities import Companion, Enemy
 from .events import BaseEvent, CacheEvent, FountainEvent
+from .flavor import generate_room_flavor
 from .items import Item
 from .quests import EscortNPC
 
