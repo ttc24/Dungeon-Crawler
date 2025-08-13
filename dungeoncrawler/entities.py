@@ -191,6 +191,7 @@ class Player(Entity):
             # Guard bonus consumed once you swing
             self.guard_attack = False
             self.status_effects.pop("guard", None)
+            print(_("Your steady stance improves your aim (+10% hit)."))
         if getattr(self, "novice_luck_active", False):
             hit_chance += 10
         if "blessed" in self.status_effects:
@@ -256,11 +257,7 @@ class Player(Entity):
         self.guard_damage = True
         self.guard_attack = True
         self.status_effects["guard"] = 1
-        print(
-            _(
-                "You brace yourself. Incoming damage -40% next hit; your next strike steadies (+10% hit)."
-            )
-        )
+        print(_("You brace yourself. Incoming damage reduced."))
 
     def take_damage(self, damage, source=None):
         if self.guard_damage:
