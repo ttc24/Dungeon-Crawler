@@ -17,6 +17,7 @@ from .constants import (
     SAVE_FILE,
     SCORE_FILE,
 )
+from .config import config
 from .data import load_event_defs, load_items
 from .entities import Companion, Enemy, Player
 from .events import (
@@ -787,11 +788,55 @@ class DungeonBase:
             self.render_map()
         elif choice == "9":
             self.view_leaderboard()
+        elif config.enable_debug and choice.startswith(":god"):
+            self.god_mode(choice)
         elif choice == ":codex":
             self.show_codex()
         else:
             self.renderer.show_message(_(INVALID_KEY_MSG))
         return True
+
+    def god_mode(self, command: str) -> None:
+        """Execute debug commands when ``config.enable_debug`` is True."""
+
+        parts = command.split()
+        if len(parts) < 2:
+            self.renderer.show_message(self.queue_message(_("Usage: :god <spawn|teleport|set>")))
+            return
+
+        action = parts[1]
+        if action == "spawn" and len(parts) >= 3:
+            item_name = " ".join(parts[2:])
+            item = Item(item_name, "Debug spawn")
+            self.player.inventory.append(item)
+            msg = _(f"Spawned {item_name}")
+            self.renderer.show_message(self.queue_message(msg))
+        elif action == "teleport" and len(parts) >= 3:
+            try:
+                floor = int(parts[2])
+            except ValueError:
+                self.renderer.show_message(self.queue_message(_("Invalid floor")))
+                return
+            self.current_floor = floor
+            self.generate_dungeon(floor)
+            msg = _(f"Teleported to floor {floor}")
+            self.renderer.show_message(self.queue_message(msg))
+        elif action == "set" and len(parts) >= 4:
+            stat, value = parts[2], parts[3]
+            if hasattr(self.player, stat):
+                attr = getattr(self.player, stat)
+                try:
+                    cast_value = type(attr)(value)
+                except (TypeError, ValueError):
+                    self.renderer.show_message(self.queue_message(_("Invalid value")))
+                    return
+                setattr(self.player, stat, cast_value)
+                msg = _(f"Set {stat} to {cast_value}")
+                self.renderer.show_message(self.queue_message(msg))
+            else:
+                self.renderer.show_message(self.queue_message(_("Unknown stat")))
+        else:
+            self.renderer.show_message(self.queue_message(_("Invalid god command")))
 
     def show_codex(self, output_func=print):
         if not self.player.codex:

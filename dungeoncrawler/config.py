@@ -22,6 +22,7 @@ class Config:
     screen_width: int = 10
     screen_height: int = 10
     verbose_combat: bool = False
+    enable_debug: bool = False
 
 
 def load_config(path: Path = CONFIG_PATH) -> Config:
@@ -63,7 +64,7 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
                 elif key in {"save_file", "score_file"}:
                     if not isinstance(value, str):
                         raise ValueError(f"{key} must be a string, got {type(value).__name__}")
-                elif key == "verbose_combat":
+                elif key in {"verbose_combat", "enable_debug"}:
                     if not isinstance(value, bool):
                         raise ValueError(f"{key} must be a boolean, got {type(value).__name__}")
                 setattr(cfg, key, value)
