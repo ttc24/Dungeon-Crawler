@@ -8,6 +8,8 @@ from typing import TYPE_CHECKING
 
 from .constants import INVALID_KEY_MSG
 from .status_effects import format_status_tags
+from .core.entity import Entity as CoreEntity
+from .core.combat import resolve_enemy_turn, resolve_player_action
 
 if TYPE_CHECKING:  # pragma: no cover - for type hints only
     from .dungeon import DungeonBase
@@ -28,7 +30,19 @@ def enemy_turn(enemy: "Enemy", player: "Player") -> None:
     if enemy.is_alive():
         skip = enemy.apply_status_effects()
         if enemy.is_alive() and not skip:
-            enemy.take_turn(player)
+            enemy_entity = CoreEntity(
+                enemy.name,
+                {"health": enemy.health, "attack": getattr(enemy, "attack_power", 0), "speed": getattr(enemy, "speed", 0)},
+            )
+            player_entity = CoreEntity(
+                player.name,
+                {"health": player.health, "defense": 0, "speed": getattr(player, "speed", 0)},
+            )
+            events = resolve_enemy_turn(enemy_entity, player_entity)
+            enemy.health = enemy_entity.stats["health"]
+            player.health = player_entity.stats["health"]
+            for event in events:
+                print(_(event.message))
         if enemy.ai and hasattr(enemy.ai, "choose_intent"):
             enemy.next_action, enemy.intent_message = enemy.ai.choose_intent(enemy, player)
         else:
@@ -77,11 +91,55 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
         print(_("1. Attack\n2. Defend\n3. Use Health Potion\n4. Use Skill\n5. Flee"))
         choice = input(_("Choose action: "))
         if choice == "1":
-            player.attack(enemy)
+            p_entity = CoreEntity(
+                player.name,
+                {
+                    "health": player.health,
+                    "attack": getattr(player, "attack_power", 0),
+                    "max_health": player.max_health,
+                    "speed": getattr(player, "speed", 0),
+                },
+            )
+            e_entity = CoreEntity(
+                enemy.name,
+                {
+                    "health": enemy.health,
+                    "attack": getattr(enemy, "attack_power", 0),
+                    "max_health": enemy.max_health,
+                    "speed": getattr(enemy, "speed", 0),
+                },
+            )
+            events = resolve_player_action(p_entity, e_entity, "attack")
+            player.health = p_entity.stats["health"]
+            enemy.health = e_entity.stats["health"]
+            for event in events:
+                print(_(event.message))
             game.announce(_("A fierce attack lands!"))
             enemy_turn(enemy, player)
         elif choice == "2":
-            player.defend(enemy)
+            p_entity = CoreEntity(
+                player.name,
+                {
+                    "health": player.health,
+                    "attack": getattr(player, "attack_power", 0),
+                    "max_health": player.max_health,
+                    "speed": getattr(player, "speed", 0),
+                },
+            )
+            e_entity = CoreEntity(
+                enemy.name,
+                {
+                    "health": enemy.health,
+                    "attack": getattr(enemy, "attack_power", 0),
+                    "max_health": enemy.max_health,
+                    "speed": getattr(enemy, "speed", 0),
+                },
+            )
+            events = resolve_player_action(p_entity, e_entity, "defend")
+            player.health = p_entity.stats["health"]
+            enemy.health = e_entity.stats["health"]
+            for event in events:
+                print(_(event.message))
             enemy_turn(enemy, player)
         elif choice == "3":
             player.use_health_potion()
@@ -91,7 +149,28 @@ def battle(game: "DungeonBase", enemy: "Enemy") -> None:
             game.announce(_("Special skill unleashed!"))
             enemy_turn(enemy, player)
         elif choice == "5":
-            if player.flee(enemy):
+            p_entity = CoreEntity(
+                player.name,
+                {
+                    "health": player.health,
+                    "attack": getattr(player, "attack_power", 0),
+                    "max_health": player.max_health,
+                    "speed": getattr(player, "speed", 0),
+                },
+            )
+            e_entity = CoreEntity(
+                enemy.name,
+                {
+                    "health": enemy.health,
+                    "attack": getattr(enemy, "attack_power", 0),
+                    "max_health": enemy.max_health,
+                    "speed": getattr(enemy, "speed", 0),
+                },
+            )
+            events = resolve_player_action(p_entity, e_entity, "flee")
+            for event in events:
+                print(_(event.message))
+            if events[-1].data.get("success"):
                 game.announce(f"{player.name} flees from {enemy.name}!")
                 break
             enemy_turn(enemy, player)
