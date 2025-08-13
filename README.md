@@ -13,8 +13,8 @@ Full documentation is available at [ttc24.github.io/Dungeon-Crawler](https://ttc
 Clone the repository and start the game with Python 3:
 
 ```bash
-git clone https://github.com/ttc24/dungeoncrawler.git
-cd dungeoncrawler
+git clone https://github.com/ttc24/Dungeon-Crawler.git
+cd Dungeon-Crawler
 python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 python -m dungeoncrawler
