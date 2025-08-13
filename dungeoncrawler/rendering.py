@@ -44,4 +44,5 @@ def render_map(game) -> None:
     renderer.draw_map(render_map_string(game))
 
 
+# Public API
 __all__ = ["Renderer", "render_map", "render_map_string"]

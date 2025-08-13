@@ -70,4 +70,5 @@ class Renderer:
             self.show_message(line)
 
 
+# Public API
 __all__ = ["Renderer"]
