@@ -1,7 +1,7 @@
 # Dungeon Crawler
 
 [![CI](https://github.com/ttc24/Dungeon-Crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/ttc24/Dungeon-Crawler/actions/workflows/ci.yml)
-[![Coverage](coverage.svg)](https://github.com/ttc24/Dungeon-Crawler/actions/workflows/ci.yml)
+![Coverage](coverage.svg)
 [![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://ttc24.github.io/Dungeon-Crawler/)
 
 Dungeon Crawler is a small text-based adventure that borrows the core ideas of the *Dungeon Crawler Carl* where you guide your hero through procedurally generated floors filled with monsters, treasure, and meaningful character choices.
