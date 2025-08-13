@@ -9,6 +9,7 @@ from pathlib import Path
 from . import combat as combat_module
 from . import map as map_module
 from . import shop as shop_module
+from .config import config
 from .constants import (
     ANNOUNCER_LINES,
     INVALID_KEY_MSG,
@@ -17,7 +18,6 @@ from .constants import (
     SAVE_FILE,
     SCORE_FILE,
 )
-from .config import config
 from .data import load_event_defs, load_items
 from .entities import Companion, Enemy, Player
 from .events import (

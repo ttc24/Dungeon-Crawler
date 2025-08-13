@@ -17,8 +17,10 @@ def test_god_teleport(monkeypatch, game):
     messages = []
     monkeypatch.setattr(game.renderer, "show_message", messages.append)
     called = {}
+
     def fake_gen(floor):
         called["floor"] = floor
+
     monkeypatch.setattr(game, "generate_dungeon", fake_gen)
     game.handle_input(":god teleport 5")
     assert game.current_floor == 5
