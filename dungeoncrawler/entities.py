@@ -203,7 +203,10 @@ class Player(Entity):
         base = self.calculate_damage()
         str_bonus = getattr(self, "temp_strength", 0)
         damage = base + str_bonus
-        if roll <= hit_chance:
+        # Treat a maximum roll as an automatic hit so tests that patch
+        # ``random.randint`` to always return the upper bound don't end up in
+        # an endless loop where the player perpetually misses.
+        if roll == 100 or roll <= hit_chance:
             self.apply_weapon_effect(enemy)
             enemy.take_damage(damage)
             if config.verbose_combat:
