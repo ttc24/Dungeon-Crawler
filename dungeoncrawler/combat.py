@@ -101,7 +101,9 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
         if enemy.intent_message:
             renderer.show_message(_(enemy.intent_message))
         renderer.show_message(_(f"Stamina: {player.stamina}/{player.max_stamina}"))
-        renderer.show_message(_("1. Attack\n2. Defend\n3. Use Health Potion\n4. Use Skill\n5. Flee"))
+        renderer.show_message(
+            _("1. Attack\n2. Defend\n3. Use Health Potion\n4. Use Skill\n5. Flee")
+        )
         choice = input_func(_("Choose action: "))
         if choice == "1":
             p_entity = CoreEntity(

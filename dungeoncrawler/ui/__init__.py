@@ -3,4 +3,3 @@
 from .terminal import Renderer
 
 __all__ = ["Renderer"]
-

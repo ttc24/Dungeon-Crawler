@@ -49,4 +49,3 @@ def get_action(key: str) -> Action:
 
 
 __all__ = ["Action", "get_action", "KEY_BINDINGS"]
-
