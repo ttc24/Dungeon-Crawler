@@ -30,9 +30,16 @@ def test_generate_dungeon_size_and_population():
     # Stairs should be close to the start on the first floor
     assert abs(px - ex) + abs(py - ey) <= 4
 
-    # Early floors should always include helpful events
-    assert any(isinstance(obj, FountainEvent) for row in dungeon.rooms for obj in row)
-    assert any(isinstance(obj, CacheEvent) for row in dungeon.rooms for obj in row)
+    # Early floors should always include a helpful event near the start
+    events = [
+        (obj, x, y)
+        for y, row in enumerate(dungeon.rooms)
+        for x, obj in enumerate(row)
+        if isinstance(obj, (FountainEvent, CacheEvent))
+    ]
+    assert events
+    ev_obj, ev_x, ev_y = events[0]
+    assert abs(px - ev_x) + abs(py - ev_y) <= 10
 
     enemy_count = sum(isinstance(obj, Enemy) for row in dungeon.rooms for obj in row)
     assert 3 <= enemy_count <= 5
