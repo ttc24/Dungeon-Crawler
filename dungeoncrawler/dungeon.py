@@ -30,6 +30,7 @@ from .events import (
     TrapEvent,
 )
 from .items import Item, Weapon
+from .data import load_items, load_event_defs
 from .plugins import apply_enemy_plugins, apply_item_plugins
 from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
 from .rendering import Renderer, render_map_string
@@ -185,18 +186,6 @@ def floor_size(floor: int) -> tuple[int, int]:
 
 # Floor specific configuration loaded from data/floors.json
 
-EVENT_TYPES = [
-    MerchantEvent,
-    PuzzleEvent,
-    TrapEvent,
-    FountainEvent,
-    CacheEvent,
-    LoreNoteEvent,
-    ShrineEvent,
-    MiniQuestHookEvent,
-    HazardEvent,
-]
-
 
 @lru_cache(maxsize=None)
 def load_floor_configs():
@@ -210,12 +199,7 @@ def load_floor_configs():
         # Always compute size programmatically so adjustments in ``floor_size``
         # apply without requiring updates to the JSON data.
         cfg["size"] = tuple(floor_size(floor))
-        cfg.setdefault("events", EVENT_TYPES)
-        # Allow optional per-event spawn rates such as ``fountain_rate`` and
-        # ``cache_rate``. These default to 1.0 if not specified in
-        # ``floors.json`` so designers can tweak them without touching code.
-        cfg.setdefault("fountain_rate", 1.0)
-        cfg.setdefault("cache_rate", 1.0)
+        # Event configuration will be filled with defaults during game init
         configs[floor] = cfg
     return configs
 
@@ -246,23 +230,13 @@ class DungeonBase:
         self.player = None
         self.exit_coords = None
         self.tutorial_complete = False
-        self.shop_items = [
-            Item("Health Potion", "Restores 20 health"),
-            Weapon("Sword", "A sharp sword", 10, 15, 40),
-            Weapon("Axe", "A heavy axe", 12, 18, 65),
-            Weapon("Dagger", "A quick dagger", 8, 12, 35),
-            Weapon("Warhammer", "Crushes armor and bone", 14, 22, 85),
-            Weapon("Rapier", "A slender, piercing blade", 9, 17, 50),
-            Weapon("Flame Blade", "Glows with searing heat", 13, 20, 95),
-            Weapon("Crossbow", "Ranged attack with bolts", 11, 19, 60),
-        ]
-        self.rare_loot = [
-            Weapon("Elven Longbow", "Bow of unmatched accuracy.", 15, 25, 0),
-            Item("Blessed Charm", "Said to bring good fortune."),
-            Weapon("Dwarven Waraxe", "Forged in the deep halls.", 12, 20, 0),
-            Item("Shadow Cloak", "Grants an air of mystery"),
-        ]
+        self.shop_items, self.rare_loot = load_items()
         apply_item_plugins(self.shop_items)
+        (
+            self.random_events,
+            self.random_event_weights,
+            self.default_place_counts,
+        ) = load_event_defs()
         self.riddles = RIDDLES
         self.enemy_stats = ENEMY_STATS
         self.enemy_abilities = ENEMY_ABILITIES
@@ -273,6 +247,11 @@ class DungeonBase:
         self.boss_ai = BOSS_AI
         self.boss_traits = BOSS_TRAITS
         self.floor_configs = FLOOR_CONFIGS
+        for cfg in self.floor_configs.values():
+            cfg.setdefault("events", self.random_events)
+            for ev, weight in zip(self.random_events, self.random_event_weights):
+                name = ev.__name__.replace("Event", "").lower()
+                cfg.setdefault(f"{name}_rate", weight)
         # Tracking for leaderboard entries
         self.run_start = None
         self.seed = None

@@ -1,0 +1,4 @@
+[
+  {"name": "Battle Priest", "effect": "heal", "heal_amount": 5},
+  {"name": "Hired Blade", "effect": "attack", "attack_power": 5}
+]
