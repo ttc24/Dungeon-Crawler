@@ -204,6 +204,42 @@ def load_floor_configs():
         # Always compute size programmatically so adjustments in ``floor_size``
         # apply without requiring updates to the JSON data.
         cfg["size"] = tuple(floor_size(floor))
+
+        # ------------------------------------------------------------------
+        # Weighted enemy / boss tables
+        # ------------------------------------------------------------------
+        # Floors can optionally specify enemy or boss collections either as a
+        # simple list or as a mapping of ``name -> weight``.  Using a mapping
+        # allows individual entries to appear more or less frequently when the
+        # dungeon is generated.  To keep selection simple (and easily patchable
+        # in tests) we expand the weighted tables into a list "pool" where each
+        # name is repeated ``weight`` times.  ``random.choice`` can then be used
+        # without the need for ``random.choices`` which is harder to monkeypatch
+        # deterministically.
+
+        enemies = cfg.get("enemies", [])
+        if isinstance(enemies, dict):
+            pool: list[str] = []
+            for name, weight in enemies.items():
+                pool.extend([name] * max(1, int(weight)))
+            cfg["enemy_pool"] = pool
+        else:
+            # Preserve original list but also expose a pool for weighted picks
+            cfg["enemy_pool"] = list(enemies)
+
+        bosses = cfg.get("bosses", [])
+        if isinstance(bosses, dict):
+            pool: list[str] = []
+            for name, weight in bosses.items():
+                pool.extend([name] * max(1, int(weight)))
+            cfg["boss_pool"] = pool
+        else:
+            cfg["boss_pool"] = list(bosses)
+
+        # Allow configuration to define multiple boss slots per floor.  Default
+        # to a single boss to maintain existing behaviour.
+        cfg.setdefault("boss_slots", 1)
+
         # Event configuration will be filled with defaults during game init
         configs[floor] = cfg
     return configs
@@ -670,8 +706,19 @@ class DungeonBase:
         return f"{random.choice(ROOM_NAME_ADJECTIVES)} {random.choice(ROOM_NAME_NOUNS)}"
 
     def generate_dungeon(self, floor=1):
+        """Generate the dungeon layout for ``floor`` and persist progress.
+
+        The original implementation simply delegated to
+        :mod:`dungeoncrawler.map`.  To support automatic saving between floors we
+        now hook in a call to :meth:`save_game` after generation.  This mirrors
+        how the interactive game behaves and ensures the tests have access to a
+        freshly saved state whenever a new floor is created.
+        """
+
         map_module.generate_dungeon(self, floor)
         self.generate_quest(floor)
+        # Persist progress so players can safely quit between floors
+        self.save_game(floor)
 
     def generate_quest(self, floor):
         """Create a simple quest for the current floor."""

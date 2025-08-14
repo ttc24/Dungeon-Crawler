@@ -108,14 +108,16 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     event_cls = FountainEvent if random.random() < fountain_prob else CacheEvent
     place_near_start(event_cls(), 10)
 
-    enemy_names = cfg["enemies"]
+    enemy_pool = cfg.get("enemy_pool", cfg.get("enemies", []))
     early_game_bonus = 5 if floor <= 3 else 0
     walkable = (game.width * game.height) // 2
     density_map = {1: (3, 4), 2: (5, 6), 3: (7, 8)}
     low, high = density_map.get(floor, (8, 9))
     enemy_total = max(1, walkable * random.randint(low, high) // 100)
     for __ in range(enemy_total):
-        name = random.choice(enemy_names)
+        if not enemy_pool:
+            break
+        name = random.choice(enemy_pool)
         hp_min, hp_max, atk_min, atk_max, defense = game.enemy_stats[name]
 
         hp_scale = 1 if floor <= 3 else 2
@@ -145,33 +147,40 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
 
         place(enemy)
 
-    boss_names = cfg["bosses"]
-    name = random.choice(boss_names)
-    hp, atk, dfs, gold, ability = game.boss_stats[name]
-    game.queue_message(_(f"A powerful boss guards this floor! The {name} lurks nearby..."))
-    boss_weights = game.boss_ai.get(name)
-    boss_ai = IntentAI(**boss_weights) if boss_weights else None
-    boss = Enemy(
-        name,
-        int((hp + floor * 10) * config.enemy_hp_mult),
-        int((atk + floor) * config.enemy_dmg_mult),
-        dfs + floor // 2,
-        gold + floor * 5,
-        ability=ability,
-        ai=boss_ai,
-        traits=game.boss_traits.get(name),
-    )
-    place(boss)
-    boss_drop = game.boss_loot.get(name, [])
-    if boss_drop:
-        loot = random.choice(boss_drop)
-        game.queue_message(_(f"✨ The boss dropped a unique weapon: {loot.name}!"))
-        place(loot)
-    else:
-        game.queue_message(_("⚡ You absorb residual power (+1 attack)."))
-        game.player.attack_power += 1
+    boss_pool = cfg.get("boss_pool", cfg.get("bosses", []))
+    boss_slots = cfg.get("boss_slots", 1)
+    for __ in range(boss_slots):
+        if not boss_pool:
+            break
+        name = random.choice(boss_pool)
+        hp, atk, dfs, gold, ability = game.boss_stats[name]
+        game.queue_message(
+            _(f"A powerful boss guards this floor! The {name} lurks nearby...")
+        )
+        boss_weights = game.boss_ai.get(name)
+        boss_ai = IntentAI(**boss_weights) if boss_weights else None
+        boss = Enemy(
+            name,
+            int((hp + floor * 10) * config.enemy_hp_mult),
+            int((atk + floor) * config.enemy_dmg_mult),
+            dfs + floor // 2,
+            gold + floor * 5,
+            ability=ability,
+            ai=boss_ai,
+            traits=game.boss_traits.get(name),
+        )
+        place(boss)
+        boss_drop = game.boss_loot.get(name, [])
+        if boss_drop:
+            loot = random.choice(boss_drop)
+            game.queue_message(_(f"✨ The boss dropped a unique weapon: {loot.name}!"))
+            place(loot)
+        else:
+            game.queue_message(_("⚡ You absorb residual power (+1 attack)."))
+            game.player.attack_power += 1
+        # Each boss yields a key to progress
+        place(Item("Key", "A magical key dropped by the boss"))
 
-    place(Item("Key", "A magical key dropped by the boss"))
     companion_options = load_companions()
     place(random.choice(companion_options))
     place_counts = game.default_place_counts.copy()
