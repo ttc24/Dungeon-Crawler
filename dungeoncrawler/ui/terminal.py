@@ -92,6 +92,7 @@ class Renderer:
         self.console = Console()
         self.lines: list[str] = []
         self.palette = COLORBLIND_PALETTE if config.colorblind_mode else DEFAULT_PALETTE
+        self.legend_visible = False
         if event_bus is not None and hasattr(event_bus, "subscribe"):
             event_bus.subscribe(self.handle_event)
 
@@ -147,6 +148,23 @@ class Renderer:
             if self.output_func is not print:
                 self.output_func(line)
             self.lines.append(line)
+
+        if self.legend_visible:
+            legend = [
+                _("Legend:"),
+                _(" @ - You"),
+                _(" E - Exit"),
+                _(" . - Floor"),
+                _(" · - Discovered"),
+                _(" # - Unexplored"),
+            ]
+            for entry in legend:
+                self.show_message(entry)
+
+    def toggle_legend(self) -> None:
+        """Toggle display of the map legend."""
+
+        self.legend_visible = not self.legend_visible
 
 
 # Public API

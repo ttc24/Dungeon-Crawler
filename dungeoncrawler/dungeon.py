@@ -873,7 +873,7 @@ class DungeonBase:
             self.renderer.show_message(_("Thanks for playing!"))
             return False
         elif choice == "8":
-            self.render_map()
+            self.view_map()
         elif choice == "9":
             self.view_leaderboard()
         elif config.enable_debug and choice.startswith(":god"):
@@ -1031,6 +1031,17 @@ class DungeonBase:
 
     def render_map(self):
         self.renderer.draw_map(render_map_string(self))
+
+    def view_map(self, input_func=None):
+        if input_func is None:
+            input_func = input if sys.stdin.isatty() else (lambda _: "")
+        while True:
+            self.render_map()
+            response = input_func(_("Press '?' for legend, any other key to exit: ")).strip()
+            if response == "?":
+                self.renderer.toggle_legend()
+                continue
+            break
 
     def handle_room(self, x, y):
         map_module.handle_room(self, x, y)
