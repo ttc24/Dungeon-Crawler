@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import random
+from dataclasses import dataclass
 from typing import Callable, List, Optional, Tuple
 
 from .data import load_events
@@ -113,16 +113,12 @@ class Fountain:
             if roll < self.bless_chance:
                 player.status.append("blessed")
                 events.append(
-                    StatusApplied(
-                        f"{player.name} feels blessed.", player.name, "blessed", 30
-                    )
+                    StatusApplied(f"{player.name} feels blessed.", player.name, "blessed", 30)
                 )
             elif roll < self.bless_chance + self.curse_chance:
                 player.status.append("cursed")
                 events.append(
-                    StatusApplied(
-                        f"{player.name} feels cursed.", player.name, "cursed", 30
-                    )
+                    StatusApplied(f"{player.name} feels cursed.", player.name, "cursed", 30)
                 )
         elif action == "bottle":
             player.inventory.append("fountain_water")
@@ -190,9 +186,7 @@ class LockedCache:
         if not self.key_spawned:
             spawn_key(self.key_name)
             self.key_spawned = True
-            events.append(
-                Event("You notice scratches leading away as if something was dragged.")
-            )
+            events.append(Event("You notice scratches leading away as if something was dragged."))
         return events
 
 
@@ -221,16 +215,12 @@ class LoreNote:
             status, duration = self.effect
             player.status.append(status)
             events.append(
-                StatusApplied(
-                    f"{player.name} gains {status}.", player.name, status, duration
-                )
+                StatusApplied(f"{player.name} gains {status}.", player.name, status, duration)
             )
         return events
 
 
-def handle_lore_note(
-    player, text: str, effect: Optional[Tuple[str, int]] = None
-) -> List[Event]:
+def handle_lore_note(player, text: str, effect: Optional[Tuple[str, int]] = None) -> List[Event]:
     """Convenience wrapper around :class:`LoreNote.interact`."""
 
     note = LoreNote(text, effect)

@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
-
 # Rarity modifiers used to scale damage and effect durations
 RARITY_MODIFIERS = {
     "common": 1.0,

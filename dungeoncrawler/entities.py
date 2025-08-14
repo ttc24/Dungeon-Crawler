@@ -10,7 +10,7 @@ from pathlib import Path
 
 from .config import config
 from .constants import ANNOUNCER_LINES
-from .items import Armor, Item, Trinket, Weapon, RARITY_MODIFIERS
+from .items import RARITY_MODIFIERS, Armor, Item, Trinket, Weapon
 from .status_effects import add_status_effect
 from .status_effects import apply_status_effects as apply_effects
 

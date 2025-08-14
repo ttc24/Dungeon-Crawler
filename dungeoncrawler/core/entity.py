@@ -47,6 +47,7 @@ class Entity:
 # Enemy archetypes
 # ---------------------------------------------------------------------------
 
+
 def _make_intent_factory(intents: List[Dict[str, str]]):
     def generator() -> Iterator[Tuple[str, str]]:
         while True:
