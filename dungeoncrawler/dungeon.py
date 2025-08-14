@@ -638,6 +638,8 @@ class DungeonBase:
             "4": ("Orc", _("Savage")),
             "5": ("Gnome", _("Clever")),
             "6": ("Tiefling", _("Fiendish")),
+            "7": ("Dragonborn", _("Draconic")),
+            "8": ("Goblin", _("Sneaky")),
         }
         skill_tip = ", ".join(f"{s['name']} ({s['cost']} stamina)" for s in SKILL_DEFS)
         for key, (name, desc) in races.items():
