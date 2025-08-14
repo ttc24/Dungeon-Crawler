@@ -107,6 +107,13 @@ class Player(Entity):
             "Cleric": (110, 9),
             "Barbarian": (130, 12),
             "Ranger": (105, 11),
+            "Druid": (100, 11),
+            "Sorcerer": (75, 15),
+            "Monk": (95, 13),
+            "Warlock": (85, 14),
+            "Necromancer": (90, 13),
+            "Shaman": (110, 10),
+            "Alchemist": (90, 12),
         }
 
         if class_type not in stats:
