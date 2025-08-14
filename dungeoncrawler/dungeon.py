@@ -1,10 +1,10 @@
 import copy
 import json
+import logging
 import os
 import random
 import sys
 import time
-import logging
 from functools import lru_cache
 from gettext import gettext as _
 from pathlib import Path
@@ -30,7 +30,6 @@ from .plugins import apply_enemy_plugins, apply_item_plugins
 from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
 from .rendering import Renderer, render_map_string
 from .stats_logger import StatsLogger
-
 
 logger = logging.getLogger(__name__)
 

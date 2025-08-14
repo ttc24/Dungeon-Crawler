@@ -8,9 +8,8 @@ for unit testing and simulations.
 
 from __future__ import annotations
 
-from typing import List
-
 import random
+from typing import List
 
 from .data import load_items
 from .entity import Entity

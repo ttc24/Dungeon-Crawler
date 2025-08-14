@@ -38,9 +38,7 @@ def test_use_potion_event():
 
 def test_enemy_turn_returns_attack_event(monkeypatch):
     rolls = iter([1, 100])
-    monkeypatch.setattr(
-        "dungeoncrawler.core.combat.random.randint", lambda a, b: next(rolls)
-    )
+    monkeypatch.setattr("dungeoncrawler.core.combat.random.randint", lambda a, b: next(rolls))
     player = Entity("Hero", {"health": 10})
     enemy = Entity("Gob", {"health": 5, "attack": 3})
     events = resolve_enemy_turn(enemy, player)

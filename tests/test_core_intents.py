@@ -5,9 +5,7 @@ from dungeoncrawler.core.events import AttackResolved, IntentTelegraphed, Status
 
 def test_telegraph_precedes_action(monkeypatch):
     rolls = iter([1, 100])
-    monkeypatch.setattr(
-        "dungeoncrawler.core.combat.random.randint", lambda a, b: next(rolls)
-    )
+    monkeypatch.setattr("dungeoncrawler.core.combat.random.randint", lambda a, b: next(rolls))
     player = Entity("Hero", {"health": 10})
     enemy = make_enemy("Goblin Skirm")
     events = resolve_enemy_turn(enemy, player)
@@ -17,9 +15,7 @@ def test_telegraph_precedes_action(monkeypatch):
 
 def test_defend_consumption(monkeypatch):
     rolls = iter([1, 100, 1, 100])
-    monkeypatch.setattr(
-        "dungeoncrawler.core.combat.random.randint", lambda a, b: next(rolls)
-    )
+    monkeypatch.setattr("dungeoncrawler.core.combat.random.randint", lambda a, b: next(rolls))
     player = Entity("Hero", {"health": 20, "attack": 8})
     enemy = make_enemy("Guard Beetle")
     events = resolve_enemy_turn(enemy, player)
@@ -42,9 +38,7 @@ def test_defend_consumption(monkeypatch):
 
 def test_heavy_attack_increases_damage(monkeypatch):
     rolls = iter([1, 100])
-    monkeypatch.setattr(
-        "dungeoncrawler.core.combat.random.randint", lambda a, b: next(rolls)
-    )
+    monkeypatch.setattr("dungeoncrawler.core.combat.random.randint", lambda a, b: next(rolls))
     player = Entity("Hero", {"health": 50})
     enemy = Entity("Orc", {"health": 10, "attack": 10})
     enemy.intent = (item for item in [("heavy_attack", "")])
@@ -56,9 +50,7 @@ def test_heavy_attack_increases_damage(monkeypatch):
 
 def test_wild_attack_accuracy_penalty(monkeypatch):
     rolls = iter([60])
-    monkeypatch.setattr(
-        "dungeoncrawler.core.combat.random.randint", lambda a, b: next(rolls)
-    )
+    monkeypatch.setattr("dungeoncrawler.core.combat.random.randint", lambda a, b: next(rolls))
     player = Entity("Hero", {"health": 50})
     enemy = Entity("Orc", {"health": 10, "attack": 10})
     base_hit = calculate_hit(enemy, player)
