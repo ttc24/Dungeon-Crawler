@@ -1,6 +1,3 @@
-import json
-from pathlib import Path
-
 from dungeoncrawler.config import Config, load_config, settings_menu
 
 
