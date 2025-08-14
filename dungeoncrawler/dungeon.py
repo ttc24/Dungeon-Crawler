@@ -569,6 +569,13 @@ class DungeonBase:
             "4": ("Cleric", _("Holy healer")),
             "5": ("Barbarian", _("Brutal strength")),
             "6": ("Ranger", _("Skilled hunter")),
+            "7": ("Druid", _("Nature's guardian")),
+            "8": ("Sorcerer", _("Chaotic caster")),
+            "9": ("Monk", _("Disciplined striker")),
+            "10": ("Warlock", _("Pact magic")),
+            "11": ("Necromancer", _("Master of the dead")),
+            "12": ("Shaman", _("Spiritual guide")),
+            "13": ("Alchemist", _("Potion expert")),
         }
         names = {v[0].lower(): k for k, v in classes.items()}
         skill_tip = ", ".join(f"{s['name']} ({s['cost']} stamina)" for s in SKILL_DEFS)
@@ -591,7 +598,7 @@ class DungeonBase:
                 if key in names:
                     choice = names[key]
             if choice is None:
-                print(_("Please enter a number (1–6) or a valid class name."))
+                print(_("Please enter a number (1–13) or a valid class name."))
                 continue
             self.player.choose_class(classes[choice][0])
             break

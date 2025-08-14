@@ -3,6 +3,8 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+import pytest
+
 from dungeoncrawler.entities import Player
 from dungeoncrawler.main import build_character
 
@@ -29,6 +31,26 @@ def test_choose_barbarian_stats():
     assert player.class_type == "Barbarian"
     assert player.max_health == 130
     assert player.attack_power == 12
+
+
+@pytest.mark.parametrize(
+    "cls,hp,atk",
+    [
+        ("Druid", 100, 11),
+        ("Sorcerer", 75, 15),
+        ("Monk", 95, 13),
+        ("Warlock", 85, 14),
+        ("Necromancer", 90, 13),
+        ("Shaman", 110, 10),
+        ("Alchemist", 90, 12),
+    ],
+)
+def test_new_class_stats(cls, hp, atk):
+    player = Player("Test")
+    player.choose_class(cls)
+    assert player.class_type == cls
+    assert player.max_health == hp
+    assert player.attack_power == atk
 
 
 def test_race_and_guild_bonuses():

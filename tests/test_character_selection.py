@@ -39,3 +39,12 @@ def test_offer_race_screen(capsys):
     assert "permanent" in out
     assert "power strike" in out
     assert dungeon.player.race == "Elf"
+
+def test_offer_class_lists_new_classes(capsys):
+    dungeon = _setup()
+    inputs = iter(["13"])
+    dungeon.offer_class(input_func=lambda _: next(inputs))
+    out = capsys.readouterr().out.lower()
+    assert "druid" in out
+    assert "alchemist" in out
+    assert dungeon.player.class_type == "Alchemist"
