@@ -16,7 +16,13 @@ def test_attack_companion_deals_damage(monkeypatch):
     game.player.companions.append(wolf)
 
     monkeypatch.setattr("builtins.input", lambda _: "2")  # defend
-    monkeypatch.setattr(random, "randint", lambda a, b: b)
+
+    def rigged_randint(a, b):
+        if (a, b) == (1, 100):
+            return a
+        return b
+
+    monkeypatch.setattr(random, "randint", rigged_randint)
 
     game.battle(enemy)
 
@@ -32,7 +38,13 @@ def test_healer_companion_restores_health(monkeypatch):
     game.player.companions.append(healer)
 
     monkeypatch.setattr("builtins.input", lambda _: "1")  # attack
-    monkeypatch.setattr(random, "randint", lambda a, b: b)
+
+    def rigged_randint(a, b):
+        if (a, b) == (1, 100):
+            return a
+        return b
+
+    monkeypatch.setattr(random, "randint", rigged_randint)
 
     game.battle(enemy)
 

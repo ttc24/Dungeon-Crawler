@@ -45,7 +45,7 @@ def test_puzzle_event_rewards_on_correct_answer():
 def test_puzzle_event_handles_no_riddles():
     """Ensure the puzzle event gracefully handles an empty riddle list."""
     game = setup_game()
-    game.riddles.clear()
+    game.riddles = []
     event = PuzzleEvent()
     # ``random.choice`` would raise IndexError if called; patch to track usage.
     with patch("dungeoncrawler.events.random.choice") as mock_choice:
