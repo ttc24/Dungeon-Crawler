@@ -73,5 +73,3 @@ def test_init_logs_when_run_stats_unreadable(tmp_path, monkeypatch, caplog):
     with caplog.at_level(logging.ERROR):
         DungeonBase(1, 1)
     assert any("Failed to load run statistics" in rec.getMessage() for rec in caplog.records)
-
-

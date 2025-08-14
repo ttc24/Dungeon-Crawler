@@ -21,6 +21,7 @@ from .i18n import set_language
 
 logger = logging.getLogger(__name__)
 
+
 def _load_unlocks():
     unlocks = {"class": False, "guild": False, "race": False}
     if RUN_FILE.exists():
