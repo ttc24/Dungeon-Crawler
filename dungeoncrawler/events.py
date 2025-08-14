@@ -23,8 +23,11 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 @lru_cache(maxsize=None)
 def load_event_config():
     path = DATA_DIR / "events.json"
-    with open(path) as f:
-        return json.load(f)
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
 
 
 EVENT_CONFIG = load_event_config()
