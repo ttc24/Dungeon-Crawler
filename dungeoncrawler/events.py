@@ -239,10 +239,22 @@ class MiniQuestHookEvent(BaseEvent):
     """Placeholder for mini-quest hooks."""
 
     def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
-        if getattr(game, "active_quest", None):
-            output_func(game.active_quest.flavor)
-        else:
-            output_func(_("A mysterious figure hints at a quest to come."))
+        quest = getattr(game, "active_quest", None)
+        if quest:
+            if quest.is_complete(game):
+                output_func(_("Quest complete!"))
+                game.player.gold += quest.reward
+                if getattr(game, "stats_logger", None):
+                    game.stats_logger.record_reward()
+                game.active_quest = None
+            else:
+                output_func(_(f"Quest ongoing: {quest.status(game)}"))
+            return
+
+        npc = EscortNPC(_("Lost Villager"))
+        quest = EscortQuest(npc, reward=50, flavor=_("Escort the villager to the exit."))
+        game.active_quest = quest
+        output_func(_("A lost villager begs for escort."))
 
 
 class HazardEvent(BaseEvent):
