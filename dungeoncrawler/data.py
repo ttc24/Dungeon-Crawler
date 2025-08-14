@@ -19,7 +19,7 @@ from .events import (
     ShrineEvent,
     TrapEvent,
 )
-from .items import Item, Weapon
+from .items import Armor, Item, Trinket, Weapon
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
@@ -47,14 +47,33 @@ def load_items() -> Tuple[List[Item], List[Item]]:
         data = json.load(f)
 
     def make(cfg: Dict) -> Item:
-        if cfg.get("type") == "Weapon":
+        t = cfg.get("type")
+        if t == "Weapon":
             return Weapon(
                 cfg["name"],
                 cfg.get("description", ""),
                 cfg.get("min_damage", 0),
                 cfg.get("max_damage", 0),
                 cfg.get("price", 0),
+                cfg.get("rarity", "common"),
                 cfg.get("effect"),
+            )
+        if t == "Armor":
+            return Armor(
+                cfg["name"],
+                cfg.get("description", ""),
+                cfg.get("defense", 0),
+                cfg.get("price", 0),
+                cfg.get("rarity", "common"),
+                cfg.get("effect"),
+            )
+        if t == "Trinket":
+            return Trinket(
+                cfg["name"],
+                cfg.get("description", ""),
+                cfg.get("effect"),
+                cfg.get("price", 0),
+                cfg.get("rarity", "common"),
             )
         return Item(cfg["name"], cfg.get("description", ""))
 

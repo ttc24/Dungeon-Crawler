@@ -30,6 +30,9 @@ class Entity:
     stats: Dict[str, int]
     inventory: List[str] = field(default_factory=list)
     status: List[str] = field(default_factory=list)
+    weapon: Optional[str] = None
+    armor: Optional[str] = None
+    trinket: Optional[str] = None
     intent: Optional[Iterator[Tuple[str, str]]] = None
     rarity: str = "common"
 
