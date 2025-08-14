@@ -9,6 +9,7 @@ from typing import Dict, List, Tuple
 
 from .entities import Companion
 from .events import (
+    BaseEvent,
     CacheEvent,
     EscortMissionEvent,
     FountainEvent,
@@ -98,21 +99,21 @@ def load_companions() -> List[Companion]:
 
 
 @lru_cache(maxsize=None)
-def load_event_defs() -> Tuple[List[type], List[float], Dict[str, int], List[type]]:
+def load_event_defs() -> Tuple[List[type[BaseEvent]], List[float], Dict[str, int], List[type[BaseEvent]]]:
     """Load event definitions including signature encounters."""
     path = DATA_DIR / "events_extended.json"
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
 
-    events = []
-    weights = []
+    events: List[type[BaseEvent]] = []
+    weights: List[float] = []
     for name, weight in data.get("random", {}).items():
         cls = EVENT_CLASS_MAP.get(name)
         if cls:
             events.append(cls)
             weights.append(weight)
 
-    signature: List[type] = []
+    signature: List[type[BaseEvent]] = []
     for name in data.get("signature", []):
         cls = EVENT_CLASS_MAP.get(name)
         if cls:

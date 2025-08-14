@@ -17,7 +17,8 @@ def run(game, input_func=input, renderer: Renderer | None = None) -> None:
     the next section.
     """
 
-    renderer = renderer or getattr(game, "renderer", Renderer())
+    existing = getattr(game, "renderer", None)
+    renderer = renderer or (existing if isinstance(existing, Renderer) else None) or Renderer()
     renderer.show_message(_("=== Welcome to the Dungeon Crawler tutorial! ==="))
     renderer.show_message(
         _("Let's begin with movement. Use '1' (left), '2' (right), '3' (up) or '4' (down).")
