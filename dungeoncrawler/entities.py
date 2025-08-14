@@ -512,6 +512,12 @@ class Player(Entity):
             self.health += 2
         elif race == "Tiefling":
             self.attack_power += 2
+        elif race == "Dragonborn":
+            self.max_health += 2
+            self.health += 2
+            self.attack_power += 2
+        elif race == "Goblin":
+            self.attack_power += 1
         print(_(f"Race selected: {race}."))
 
     def equip_weapon(self, weapon):

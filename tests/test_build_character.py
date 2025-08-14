@@ -60,3 +60,18 @@ def test_race_and_guild_bonuses():
     player.join_guild("Healers' Circle")
     assert player.max_health == 108
     assert player.health == 108
+
+
+@pytest.mark.parametrize(
+    "race,hp,atk",
+    [
+        ("Tiefling", 100, 12),
+        ("Dragonborn", 102, 12),
+        ("Goblin", 100, 11),
+    ],
+)
+def test_new_race_bonuses(race, hp, atk):
+    player = Player("Sam")
+    player.choose_race(race)
+    assert player.max_health == hp
+    assert player.attack_power == atk
