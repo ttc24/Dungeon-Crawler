@@ -22,7 +22,7 @@ from .constants import (
     SCORE_FILE,
 )
 from .data import load_items
-from .entities import Companion, Enemy, Player
+from .entities import Companion, Enemy, Player, SKILL_DEFS
 from .events import (
     CacheEvent,
     FountainEvent,
@@ -547,37 +547,43 @@ class DungeonBase:
         if self.player is None:
             return
 
+        # Prompt for a class if the player has not yet chosen one.
+        self.offer_class(input_func=input_func)
+
+    def offer_class(self, input_func=input):
+        """Allow the player to choose a class.
+
+        The choice is permanent and only offered if the player is still a
+        Novice. A short description for each option acts as a tooltip and the
+        currently available stamina-based skills are shown.
+        """
+
+        if self.player.class_type != "Novice":
+            return
+
+        print(_("It's time to choose your class! This choice is permanent."))
         classes = {
-            "1": "Warrior",
-            "2": "Mage",
-            "3": "Rogue",
-            "4": "Cleric",
-            "5": "Paladin",
-            "6": "Bard",
-            "7": "Barbarian",
-            "8": "Druid",
-            "9": "Ranger",
-            "10": "Sorcerer",
-            "11": "Monk",
-            "12": "Warlock",
-            "13": "Necromancer",
-            "14": "Shaman",
-            "15": "Alchemist",
+            "1": ("Warrior", _("Balanced fighter")),
+            "2": ("Mage", _("Master of spells")),
+            "3": ("Rogue", _("Stealthy attacker")),
+            "4": ("Cleric", _("Holy healer")),
+            "5": ("Barbarian", _("Brutal strength")),
+            "6": ("Ranger", _("Skilled hunter")),
         }
-        names = {v.lower(): k for k, v in classes.items()}
-        aliases = {
-            "wiz": "mage",
-            "sorc": "sorcerer",
-            "necro": "necromancer",
-            "lock": "warlock",
-            "pally": "paladin",
-        }
+        names = {v[0].lower(): k for k, v in classes.items()}
+        skill_tip = ", ".join(
+            f"{s['name']} ({s['cost']} stamina)" for s in SKILL_DEFS
+        )
+        for key, (name, desc) in classes.items():
+            print(_(f"{key}. {name} - {desc}"))
+        print(_(f"Skills: {skill_tip}"))
+
+        aliases = {"wiz": "mage"}
 
         while True:
             try:
                 raw = input_func(_("Class: ")).strip().lower()
             except (EOFError, OSError):
-                # Abort gracefully if no input is available
                 return
             choice = None
             if raw.isdigit() and raw in classes:
@@ -587,64 +593,59 @@ class DungeonBase:
                 if key in names:
                     choice = names[key]
             if choice is None:
-                print(_("Please enter a number (1–15) or a valid class name."))
+                print(_("Please enter a number (1–6) or a valid class name."))
                 continue
-            self.player.choose_class(classes[choice])
+            self.player.choose_class(classes[choice][0])
             break
 
-    def offer_guild(self):
+    def offer_guild(self, input_func=None):
         if self.player.guild:
             return
-        print(_("Guilds now accept new members!"))
-        print(_("1. Warriors' Guild - Bonus Health"))
-        print(_("2. Mages' Guild - Bonus Attack"))
-        print(_("3. Rogues' Guild - Faster Skills"))
-        print(_("4. Healers' Circle - Extra Vitality"))
-        print(_("5. Shadow Brotherhood - Heavy Strikes"))
-        print(_("6. Arcane Order - Arcane Mastery"))
-        print(_("7. Rangers' Lodge - Balanced Training"))
-        print(_("8. Berserkers' Clan - Brutal Strength"))
-        choice = input(_("Join which guild? (1-8 or skip): "))
+        if input_func is None:
+            input_func = input
+        print(_("Guilds now accept new members! This choice is permanent."))
         guilds = {
-            "1": "Warriors' Guild",
-            "2": "Mages' Guild",
-            "3": "Rogues' Guild",
-            "4": "Healers' Circle",
-            "5": "Shadow Brotherhood",
-            "6": "Arcane Order",
-            "7": "Rangers' Lodge",
-            "8": "Berserkers' Clan",
+            "1": ("Warriors' Guild", _("Bonus Health")),
+            "2": ("Mages' Guild", _("Bonus Attack")),
+            "3": ("Rogues' Guild", _("Faster Skills")),
+            "4": ("Healers' Circle", _("Extra Vitality")),
+            "5": ("Shadow Brotherhood", _("Heavy Strikes")),
+            "6": ("Arcane Order", _("Arcane Mastery")),
         }
+        skill_tip = ", ".join(
+            f"{s['name']} ({s['cost']} stamina)" for s in SKILL_DEFS
+        )
+        for key, (name, desc) in guilds.items():
+            print(_(f"{key}. {name} - {desc}"))
+        print(_(f"Skills: {skill_tip}"))
+        choice = input_func(_("Join which guild? (1-6 or skip): "))
         if choice in guilds:
-            self.player.join_guild(guilds[choice])
+            self.player.join_guild(guilds[choice][0])
 
-    def offer_race(self):
+    def offer_race(self, input_func=None):
         if self.player.race:
             return
-        print(_("New races are available to you!"))
-        print(_("1. Human 2. Elf 3. Dwarf 4. Orc 5. Gnome 6. Halfling"))
-        print(_("7. Catfolk 8. Lizardfolk 9. Tiefling 10. Aasimar 11. Goblin"))
-        print(_("12. Dragonborn 13. Half-Elf 14. Kobold 15. Triton"))
-        choice = input(_("Choose your race: "))
+        if input_func is None:
+            input_func = input
+        print(_("New races are available to you! This choice is permanent."))
         races = {
-            "1": "Human",
-            "2": "Elf",
-            "3": "Dwarf",
-            "4": "Orc",
-            "5": "Gnome",
-            "6": "Halfling",
-            "7": "Catfolk",
-            "8": "Lizardfolk",
-            "9": "Tiefling",
-            "10": "Aasimar",
-            "11": "Goblin",
-            "12": "Dragonborn",
-            "13": "Half-Elf",
-            "14": "Kobold",
-            "15": "Triton",
+            "1": ("Human", _("Versatile")),
+            "2": ("Elf", _("Graceful")),
+            "3": ("Dwarf", _("Stout")),
+            "4": ("Orc", _("Savage")),
+            "5": ("Gnome", _("Clever")),
+            "6": ("Tiefling", _("Fiendish")),
         }
-        race = races.get(choice, "Human")
-        self.player.choose_race(race)
+        skill_tip = ", ".join(
+            f"{s['name']} ({s['cost']} stamina)" for s in SKILL_DEFS
+        )
+        for key, (name, desc) in races.items():
+            print(_(f"{key}. {name} - {desc}"))
+        print(_(f"Skills: {skill_tip}"))
+        choice = input_func(_("Choose your race: "))
+        race = races.get(choice)
+        if race:
+            self.player.choose_race(race[0])
 
     def generate_room_name(self, room_type=None):
         names = {
