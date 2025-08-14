@@ -1,0 +1,37 @@
+{
+  "enemies": [
+    {
+      "name": "Goblin Skirm",
+      "rarity": "common",
+      "stats": {"health": 6, "attack": 3, "defense": 1, "speed": 4},
+      "intents": [
+        {"action": "attack", "message": "Goblin darts forward with a rusty blade."}
+      ]
+    },
+    {
+      "name": "Guard Beetle",
+      "rarity": "common",
+      "stats": {"health": 12, "attack": 2, "defense": 4, "speed": 2},
+      "intents": [
+        {"action": "defend", "message": "Beetle curls into its shell."},
+        {"action": "attack", "message": "Beetle snaps out with its mandibles."}
+      ]
+    },
+    {
+      "name": "Rabid Bat",
+      "rarity": "common",
+      "stats": {"health": 5, "attack": 2, "defense": 0, "speed": 6},
+      "intents": [
+        {"action": "attack", "message": "Bat screeches and dives."}
+      ]
+    },
+    {
+      "name": "Cult Acolyte",
+      "rarity": "rare",
+      "stats": {"health": 8, "attack": 4, "defense": 1, "speed": 3},
+      "intents": [
+        {"action": "attack", "message": "Acolyte begins channeling dark energy."}
+      ]
+    }
+  ]
+}
