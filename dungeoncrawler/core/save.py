@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict, is_dataclass
-from pathlib import Path
 from typing import Any, Dict, Optional
 
+from ..constants import SAVE_FILE
+
 SCHEMA_VERSION = 1
-SAVE_FILE = Path.home() / ".dungeon_crawler" / "saves" / "savegame.json"
 
 
 def save_game(state: Any) -> None:

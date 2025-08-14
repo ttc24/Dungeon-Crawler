@@ -30,6 +30,14 @@ from .events import CacheEvent
 from .rendering import Renderer, render_map_string
 from .stats_logger import StatsLogger
 
+# Mapping of leaderboard sorting options to record keys and sort direction.
+# ``True`` indicates descending order.
+LEADERBOARD_SORT_KEYS = {
+    "score": ("score", True),
+    "depth": ("floor_reached", True),
+    "time": ("run_duration", False),
+}
+
 # ---------------------------------------------------------------------------
 # Data loading utilities
 # ---------------------------------------------------------------------------
@@ -538,7 +546,8 @@ class DungeonBase:
                 "epitaph": epitaph,
             }
         )
-        records = sorted(records, key=lambda x: x["score"], reverse=True)[:10]
+        # Keep the last 100 entries to prevent the file from growing indefinitely.
+        records = records[-100:]
         try:
             with open(SCORE_FILE, "w") as f:
                 json.dump(records, f, indent=2)
@@ -555,8 +564,14 @@ class DungeonBase:
             # showing the interactive leaderboard in that case.
             pass
 
-    def view_leaderboard(self, records=None, input_func=input):
+    def view_leaderboard(self, records=None, input_func=input, sort_by: str = "score"):
         """Display leaderboard entries stored on disk.
+
+        Parameters
+        ----------
+        sort_by:
+            Determines the ranking metric. Accepts ``"score"``, ``"depth"``
+            or ``"time"``. Defaults to ``"score"``.
 
         The interactive portion asking the player to choose a class is skipped
         when no player is set or when ``input_func`` cannot obtain input.  This
@@ -571,6 +586,13 @@ class DungeonBase:
                         records = json.load(f)
                 except (IOError, json.JSONDecodeError):
                     records = []
+
+        key, reverse = LEADERBOARD_SORT_KEYS.get(
+            sort_by, LEADERBOARD_SORT_KEYS["score"]
+        )
+        records = sorted(
+            records, key=lambda x: x.get(key, 0), reverse=reverse
+        )[:10]
 
         print(_("-- Leaderboard --"))
         if not records:

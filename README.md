@@ -78,14 +78,15 @@ Progress is automatically saved whenever you clear a floor. On the next launch y
 
 Save data is written to `~/.dungeon_crawler/saves/savegame.json`. The file is a
 JSON document containing the current floor and full player state including
-statistics, inventory, equipped weapon and companions. High scores are stored in
-`scores.json` alongside the save file.
+statistics, inventory, equipped weapon and companions. Save games and leaderboard
+entries are written to `~/.dungeon_crawler` in your home directory.
 
 ## Objectives
 
 - Survive each floor and defeat the boss to descend.
 - Collect powerful weapons and trustworthy companions.
-- Rack up the highest score on the in-game leaderboard.
+- Rack up the highest score on the in-game leaderboard. Runs can be ranked by
+  score, deepest floor reached or fastest completion time.
 
 ## Features
 

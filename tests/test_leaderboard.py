@@ -48,3 +48,39 @@ def test_view_leaderboard_display(tmp_path, monkeypatch, capsys):
     assert "Alice" in captured.out
     assert "Floor 4" in captured.out
     assert "Seed 42" in captured.out
+
+
+def test_leaderboard_sorting(tmp_path, monkeypatch, capsys):
+    score_path = tmp_path / "scores.json"
+    records = [
+        {
+            "player_name": "Alice",
+            "score": 100,
+            "floor_reached": 4,
+            "run_duration": 30,
+            "seed": 42,
+        },
+        {
+            "player_name": "Bob",
+            "score": 80,
+            "floor_reached": 6,
+            "run_duration": 20,
+            "seed": 43,
+        },
+    ]
+    score_path.write_text(json.dumps(records))
+    monkeypatch.setattr(dungeon_module, "SCORE_FILE", str(score_path))
+
+    dungeon = DungeonBase(1, 1)
+
+    dungeon.view_leaderboard(sort_by="depth")
+    out = capsys.readouterr().out.splitlines()
+    assert out[1].startswith("Bob")
+
+    dungeon.view_leaderboard(sort_by="time")
+    out = capsys.readouterr().out.splitlines()
+    assert out[1].startswith("Bob")
+
+    dungeon.view_leaderboard(sort_by="score")
+    out = capsys.readouterr().out.splitlines()
+    assert out[1].startswith("Alice")
