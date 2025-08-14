@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, Iterator, List, Optional, Tuple
+from typing import Callable, Dict, Iterator, List, Optional, Tuple, TypedDict, cast
 
 from .data import load_enemies
 
@@ -57,19 +57,28 @@ def _make_intent_factory(intents: List[Dict[str, str]]):
     return generator
 
 
-def _load_archetypes() -> Dict[str, Dict[str, object]]:
+class ArchetypeData(TypedDict):
+    stats: Dict[str, int]
+    intent: Callable[[], Iterator[Tuple[str, str]]]
+    rarity: str
+
+
+def _load_archetypes() -> Dict[str, ArchetypeData]:
     data = load_enemies()
-    archetypes: Dict[str, Dict[str, object]] = {}
+    archetypes: Dict[str, ArchetypeData] = {}
     for name, cfg in data.items():
+        stats_cfg: Dict[str, int] = cast(Dict[str, int], cfg.get("stats", {}))
+        intents_cfg: List[Dict[str, str]] = cast(List[Dict[str, str]], cfg.get("intents", []))
+        rarity_cfg: str = cast(str, cfg.get("rarity", "common"))
         archetypes[name] = {
-            "stats": cfg.get("stats", {}),
-            "intent": _make_intent_factory(cfg.get("intents", [])),
-            "rarity": cfg.get("rarity", "common"),
+            "stats": stats_cfg,
+            "intent": _make_intent_factory(intents_cfg),
+            "rarity": rarity_cfg,
         }
     return archetypes
 
 
-ARCHETYPES = _load_archetypes()
+ARCHETYPES: Dict[str, ArchetypeData] = _load_archetypes()
 
 
 def make_enemy(archetype: str) -> Entity:
@@ -78,4 +87,4 @@ def make_enemy(archetype: str) -> Entity:
     data = ARCHETYPES[archetype]
     stats = dict(data["stats"])
     intent_gen = data["intent"]()
-    return Entity(archetype, stats, intent=intent_gen, rarity=data.get("rarity", "common"))
+    return Entity(archetype, stats, intent=intent_gen, rarity=data["rarity"])

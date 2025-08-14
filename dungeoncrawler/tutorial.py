@@ -59,6 +59,6 @@ if __name__ == "__main__":  # pragma: no cover - convenience script
     from .main import build_character
 
     cfg = load_config()
-    game = DungeonBase(cfg.screen_width, cfg.screen_height)
-    game.player = build_character()
-    run(game)
+    demo_game = DungeonBase(cfg.screen_width, cfg.screen_height)
+    demo_game.player = build_character()
+    run(demo_game)

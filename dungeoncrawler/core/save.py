@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict, is_dataclass
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Mapping, Optional
 
 from ..constants import SAVE_FILE
 
 SCHEMA_VERSION = 1
 
 
-def save_game(state: Any) -> None:
+def save_game(state: Mapping[str, Any] | object) -> None:
     """Persist ``state`` to :data:`SAVE_FILE` using JSON.
 
     The object is serialised using :func:`dataclasses.asdict` when applicable and
@@ -19,10 +19,12 @@ def save_game(state: Any) -> None:
     """
 
     SAVE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    if is_dataclass(state):
+    if is_dataclass(state) and not isinstance(state, type):
         payload: Dict[str, Any] = asdict(state)
+    elif isinstance(state, Mapping):
+        payload = dict(state)
     else:
-        payload = state  # type: ignore[assignment]
+        raise TypeError("state must be a dataclass instance or mapping")
 
     data = {"version": SCHEMA_VERSION, "state": payload}
     with SAVE_FILE.open("w", encoding="utf-8") as f:
