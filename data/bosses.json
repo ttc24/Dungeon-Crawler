@@ -7,8 +7,8 @@
       12,
       120
     ],
-    "ai": {},
-    "traits": [],
+    "ai": {"aggressive": 3, "defensive": 1, "unpredictable": 1},
+    "traits": ["armored"],
     "ability": "lifesteal",
     "loot": [
       {
@@ -28,8 +28,8 @@
       16,
       160
     ],
-    "ai": {},
-    "traits": [],
+    "ai": {"aggressive": 4, "defensive": 1, "unpredictable": 1},
+    "traits": ["berserker"],
     "ability": "double_strike",
     "loot": [
       {
@@ -49,8 +49,8 @@
       16,
       158
     ],
-    "ai": {},
-    "traits": [],
+    "ai": {"aggressive": 3, "defensive": 1, "unpredictable": 2},
+    "traits": ["regenerator"],
     "ability": "burn",
     "loot": [
       {
@@ -70,8 +70,8 @@
       13,
       130
     ],
-    "ai": {},
-    "traits": [],
+    "ai": {"aggressive": 1, "defensive": 3, "unpredictable": 1},
+    "traits": ["armored"],
     "ability": "freeze",
     "loot": [
       {
@@ -91,8 +91,8 @@
       14,
       133
     ],
-    "ai": {},
-    "traits": [],
+    "ai": {"aggressive": 2, "defensive": 2, "unpredictable": 1},
+    "traits": ["regenerator"],
     "ability": "freeze",
     "loot": [
       {
@@ -112,8 +112,8 @@
       15,
       138
     ],
-    "ai": {},
-    "traits": [],
+    "ai": {"aggressive": 2, "defensive": 3, "unpredictable": 1},
+    "traits": ["armored"],
     "ability": "lifesteal",
     "loot": [
       {
@@ -133,8 +133,8 @@
       14,
       140
     ],
-    "ai": {},
-    "traits": [],
+    "ai": {"aggressive": 3, "defensive": 2, "unpredictable": 1},
+    "traits": ["armored"],
     "ability": "burn",
     "loot": [
       {
@@ -154,8 +154,8 @@
       15,
       150
     ],
-    "ai": {},
-    "traits": [],
+    "ai": {"aggressive": 3, "defensive": 1, "unpredictable": 2},
+    "traits": ["berserker"],
     "ability": "poison",
     "loot": [
       {
@@ -175,8 +175,8 @@
       15,
       145
     ],
-    "ai": {},
-    "traits": [],
+    "ai": {"aggressive": 3, "defensive": 1, "unpredictable": 2},
+    "traits": ["berserker"],
     "ability": "double_strike",
     "loot": [
       {
@@ -196,8 +196,8 @@
       17,
       155
     ],
-    "ai": {},
-    "traits": [],
+    "ai": {"aggressive": 2, "defensive": 1, "unpredictable": 3},
+    "traits": ["regenerator"],
     "ability": "poison",
     "loot": [
       {

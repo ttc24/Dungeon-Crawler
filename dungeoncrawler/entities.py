@@ -574,6 +574,7 @@ class Enemy(Entity):
         ability=None,
         ai=None,
         speed=10,
+        traits=None,
     ):
         super().__init__(name, "")
         self.health = health
@@ -585,6 +586,7 @@ class Enemy(Entity):
         self.ai = ai
         self.xp = 10
         self.speed = speed
+        self.traits = traits or []
         # Intent planning and cooldowns
         self.next_action = None
         self.intent_message = ""
@@ -597,14 +599,23 @@ class Enemy(Entity):
         if "shield" in self.status_effects:
             damage = max(0, damage - 5)
             print(_(f"The {self.name}'s shield absorbs 5 damage!"))
+        if "armored" in self.traits:
+            damage = max(0, damage - 3)
+            print(_(f"The {self.name}'s armor softens the blow!"))
         self.health = max(0, self.health - damage)
 
     def drop_gold(self):
         return self.gold
 
     def apply_status_effects(self):
-        """Delegate to the shared status effect helper."""
-        return apply_effects(self)
+        """Delegate to the shared status effect helper and traits."""
+        skip = apply_effects(self)
+        if "regenerator" in self.traits and self.health > 0:
+            heal = min(5, self.max_health - self.health)
+            if heal > 0:
+                self.health += heal
+                print(_(f"The {self.name} regenerates {heal} health!"))
+        return skip
 
     def defend(self):
         add_status_effect(self, "shield", 1)
@@ -650,6 +661,9 @@ class Enemy(Entity):
         damage = int(damage * RARITY_MODIFIERS.get(self.rarity, 1.0))
         if self.status_effects.pop("heavy", 0):
             damage = int(damage * 1.5)
+        if "berserker" in self.traits and self.health <= self.max_health // 2:
+            damage = int(damage * 1.5)
+            print(_(f"The {self.name} goes berserk!"))
         if roll <= hit_chance:
             if wild and roll >= 95:
                 damage *= 2

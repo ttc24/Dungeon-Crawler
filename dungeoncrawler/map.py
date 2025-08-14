@@ -139,7 +139,8 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
         ability = game.enemy_abilities.get(name)
         weights = game.enemy_ai.get(name)
         ai = IntentAI(**weights) if weights else None
-        enemy = Enemy(name, health, attack, defense, gold, ability, ai)
+        traits = game.enemy_traits.get(name)
+        enemy = Enemy(name, health, attack, defense, gold, ability, ai, traits=traits)
         enemy.xp = max(5, (health + attack + defense) // 15)
 
         place(enemy)
@@ -158,13 +159,17 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
         gold + floor * 5,
         ability=ability,
         ai=boss_ai,
+        traits=game.boss_traits.get(name),
     )
     place(boss)
     boss_drop = game.boss_loot.get(name, [])
-    if boss_drop and random.random() < 0.5:
+    if boss_drop:
         loot = random.choice(boss_drop)
         game.queue_message(_(f"✨ The boss dropped a unique weapon: {loot.name}!"))
         place(loot)
+    else:
+        game.queue_message(_("⚡ You absorb residual power (+1 attack)."))
+        game.player.attack_power += 1
 
     place(Item("Key", "A magical key dropped by the boss"))
     companion_options = load_companions()
