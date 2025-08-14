@@ -1,4 +1,6 @@
+import json
 import random
+from pathlib import Path
 
 
 class AggressiveAI:
@@ -94,6 +96,25 @@ class IntentAI:
 
     # Backwards compatibility for older saves/tests
     plan_next = choose_intent
+
+
+# Extend telegraphs for enemies defined in floors.json
+try:
+    _floors_path = Path(__file__).resolve().parents[1] / "data" / "floors.json"
+    with _floors_path.open() as _f:
+        _floors = json.load(_f)
+    for _cfg in _floors.values():
+        for _name in _cfg.get("enemies", []):
+            IntentAI.TELEGRAPHS.setdefault(
+                _name,
+                {
+                    "aggressive": f"{_name} prepares a vicious strike.",
+                    "defensive": f"{_name} braces for incoming attacks.",
+                    "unpredictable": f"{_name} shifts unpredictably.",
+                },
+            )
+except FileNotFoundError:
+    pass
 
 
 # Default archetype weights for enemies that use IntentAI
