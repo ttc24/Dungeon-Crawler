@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - Enemies now select weighted combat intents (Aggressive, Defensive or Unpredictable) and telegraph their actions to the player.
+- Console script entry point `dungeoncrawler`.
+- Defined project metadata (name, version, required Python) in `pyproject.toml`.
 
 ## [0.9.0b1] - 2025-08-11
 ### Added
