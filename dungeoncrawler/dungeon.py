@@ -22,7 +22,7 @@ from .constants import (
     SCORE_FILE,
 )
 from .data import load_items
-from .entities import Companion, Enemy, Player, SKILL_DEFS
+from .entities import SKILL_DEFS, Companion, Enemy, Player
 from .events import (
     CacheEvent,
     FountainEvent,
@@ -571,9 +571,7 @@ class DungeonBase:
             "6": ("Ranger", _("Skilled hunter")),
         }
         names = {v[0].lower(): k for k, v in classes.items()}
-        skill_tip = ", ".join(
-            f"{s['name']} ({s['cost']} stamina)" for s in SKILL_DEFS
-        )
+        skill_tip = ", ".join(f"{s['name']} ({s['cost']} stamina)" for s in SKILL_DEFS)
         for key, (name, desc) in classes.items():
             print(_(f"{key}. {name} - {desc}"))
         print(_(f"Skills: {skill_tip}"))
@@ -612,9 +610,7 @@ class DungeonBase:
             "5": ("Shadow Brotherhood", _("Heavy Strikes")),
             "6": ("Arcane Order", _("Arcane Mastery")),
         }
-        skill_tip = ", ".join(
-            f"{s['name']} ({s['cost']} stamina)" for s in SKILL_DEFS
-        )
+        skill_tip = ", ".join(f"{s['name']} ({s['cost']} stamina)" for s in SKILL_DEFS)
         for key, (name, desc) in guilds.items():
             print(_(f"{key}. {name} - {desc}"))
         print(_(f"Skills: {skill_tip}"))
@@ -636,9 +632,7 @@ class DungeonBase:
             "5": ("Gnome", _("Clever")),
             "6": ("Tiefling", _("Fiendish")),
         }
-        skill_tip = ", ".join(
-            f"{s['name']} ({s['cost']} stamina)" for s in SKILL_DEFS
-        )
+        skill_tip = ", ".join(f"{s['name']} ({s['cost']} stamina)" for s in SKILL_DEFS)
         for key, (name, desc) in races.items():
             print(_(f"{key}. {name} - {desc}"))
         print(_(f"Skills: {skill_tip}"))
