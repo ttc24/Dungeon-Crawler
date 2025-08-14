@@ -7,15 +7,23 @@ At any time choose **8. Show Map** to display the dungeon grid. The map marks yo
 
 Progress is automatically saved whenever you clear a floor.
 
-Random Events
--------------
-As you explore, floors can trigger random events:
+Boss Encounters
+---------------
+Each floor culminates in a boss battle. Every boss showcases a distinctive
+mechanic—such as a channelled nuke that must be interrupted, a summoner that
+spawns adds, or a teleporting assassin—to keep encounters fresh. Defeating a
+boss always grants a guaranteed reward like rare loot, a permanent stat boost,
+or a choice of upgrades.
 
-* **MerchantEvent** – a travelling merchant appears and opens the shop.
-* **PuzzleEvent** – solve a riddle for a chance to earn extra gold.
-* **TrapEvent** – an unexpected hazard deals damage to the player.
+Special Events
+--------------
+To break up the routine of combat, each floor also features one signature event:
 
-These events add variety and can occur on any floor.
+* **Shrine Gauntlet** – fight successive waves to earn blessings.
+* **Puzzle Chamber** – solve puzzles or riddles for unique gear.
+* **Escort Mission** – protect an NPC for a substantial reward.
+
+These events introduce variety and appear once per floor.
 
 Enemy Intents
 -------------
