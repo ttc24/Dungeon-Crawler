@@ -14,9 +14,7 @@ def test_settings_menu_updates_and_saves(tmp_path):
     def fake_output(msg: str) -> None:
         outputs.append(msg)
 
-    new_cfg = settings_menu(
-        cfg, path=cfg_file, input_func=fake_input, output_func=fake_output
-    )
+    new_cfg = settings_menu(cfg, path=cfg_file, input_func=fake_input, output_func=fake_output)
     assert new_cfg.screen_width == 12
     assert new_cfg.screen_height == 8
     assert new_cfg.trap_chance == 0.2

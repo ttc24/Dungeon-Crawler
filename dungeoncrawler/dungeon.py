@@ -23,10 +23,10 @@ from .constants import (
 )
 from .data import load_items
 from .entities import SKILL_DEFS, Companion, Enemy, Player
+from .events import CacheEvent
 from .items import Armor, Item, Trinket, Weapon
 from .plugins import apply_enemy_plugins, apply_item_plugins
 from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
-from .events import CacheEvent
 from .rendering import Renderer, render_map_string
 from .stats_logger import StatsLogger
 
@@ -587,12 +587,8 @@ class DungeonBase:
                 except (IOError, json.JSONDecodeError):
                     records = []
 
-        key, reverse = LEADERBOARD_SORT_KEYS.get(
-            sort_by, LEADERBOARD_SORT_KEYS["score"]
-        )
-        records = sorted(
-            records, key=lambda x: x.get(key, 0), reverse=reverse
-        )[:10]
+        key, reverse = LEADERBOARD_SORT_KEYS.get(sort_by, LEADERBOARD_SORT_KEYS["score"])
+        records = sorted(records, key=lambda x: x.get(key, 0), reverse=reverse)[:10]
 
         print(_("-- Leaderboard --"))
         if not records:

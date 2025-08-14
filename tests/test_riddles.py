@@ -7,15 +7,16 @@ from dungeoncrawler.entities import Player
 
 def test_load_riddles_invalid_data(monkeypatch):
     """``load_riddles`` should gracefully handle malformed JSON structures."""
-    import io
-    from dungeoncrawler import constants
-
     # Provide JSON that is not the expected list of riddles
     import builtins
+    import io
+
+    from dungeoncrawler import constants
+
     monkeypatch.setattr(
         builtins,
         "open",
-        lambda *args, **kwargs: io.StringIO("{\"not\": \"a list\"}"),
+        lambda *args, **kwargs: io.StringIO('{"not": "a list"}'),
     )
 
     constants.load_riddles.cache_clear()
