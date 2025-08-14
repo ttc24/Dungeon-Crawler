@@ -99,8 +99,9 @@ statistics, inventory, equipped weapon and companions. High scores are stored in
   Goblin.
 - Every floor culminates in a unique boss battle. Bosses telegraph their
   attacks and defeating one grants the entire reward table for that encounter.
-- Each floor also features a unique special event—like a shrine gauntlet,
-  puzzle chamber or escort mission—to break up the routine of boss fights.
+- Each floor also features exactly one special event drawn from a curated pool—
+  like a shrine gauntlet, puzzle chamber or escort mission—to break up the
+  routine of boss fights.
 - Floors grow in size and feature unique enemy and boss sets.
 - Battle through 18 floors of escalating challenge.
 

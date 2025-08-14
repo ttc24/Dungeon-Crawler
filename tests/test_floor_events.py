@@ -18,12 +18,6 @@ def setup_dungeon():
     return dungeon
 
 
-def test_floor_eight_event_grants_buff():
-    dungeon = setup_dungeon()
-    dungeon.trigger_floor_event(8)
-    assert "inspire" in dungeon.player.status_effects
-
-
 def test_shops_spawn_every_few_floors():
     dungeon = setup_dungeon()
     dungeon.next_shop_floor = 2
@@ -33,6 +27,7 @@ def test_shops_spawn_every_few_floors():
         patch.object(DungeonBase, "offer_guild", return_value=None),
         patch.object(DungeonBase, "offer_race", return_value=None),
         patch.object(DungeonBase, "_floor_four_event", return_value=None),
+        patch.object(DungeonBase, "trigger_signature_event", return_value=None),
     ):
         dungeon.trigger_floor_event(2)
         assert mock_shop.call_count == 1
@@ -43,15 +38,26 @@ def test_shops_spawn_every_few_floors():
         assert mock_shop.call_count == 2
 
 
-def test_floor_fifteen_event_riddle_rewards_gold():
+def test_signature_event_triggers_once_per_floor():
     dungeon = setup_dungeon()
+
+    class DummyEvent:
+        call_count = 0
+
+        def trigger(self, game, input_func=input, output_func=print):
+            DummyEvent.call_count += 1
+
+    dungeon.signature_events = [DummyEvent]
+
     with (
-        patch("dungeoncrawler.dungeon.random.choice", return_value=("riddle", "answer")),
-        patch("builtins.input", return_value="answer"),
+        patch.object(DungeonBase, "offer_class", return_value=None),
+        patch.object(DungeonBase, "offer_guild", return_value=None),
+        patch.object(DungeonBase, "offer_race", return_value=None),
     ):
-        gold_before = dungeon.player.gold
-        dungeon.trigger_floor_event(15)
-        assert dungeon.player.gold == gold_before + 50
+        for floor in range(1, 16):
+            dungeon.trigger_floor_event(floor)
+
+    assert DummyEvent.call_count == 15
 
 
 def test_floor_progression_unlocks_features():

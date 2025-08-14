@@ -33,7 +33,8 @@ table associated with that encounter, guaranteeing meaningful rewards.
 
 Special Events
 --------------
-To break up the routine of combat, each floor also features one signature event:
+To break up the routine of combat, each floor draws exactly one signature event
+from a curated pool:
 
 * **Shrine Gauntlet** – fight successive waves to earn blessings.
 * **Puzzle Chamber** – solve puzzles or riddles for unique gear.
