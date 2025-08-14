@@ -29,6 +29,7 @@ def test_shops_spawn_every_few_floors():
         patch("dungeoncrawler.dungeon.random.randint", return_value=2),
         patch.object(DungeonBase, "offer_guild", return_value=None),
         patch.object(DungeonBase, "offer_race", return_value=None),
+        patch.object(DungeonBase, "_floor_four_event", return_value=None),
     ):
         dungeon.trigger_floor_event(2)
         assert mock_shop.call_count == 1
@@ -86,3 +87,34 @@ def test_floor_progression_unlocks_features():
     assert dungeon.player.guild == "Warriors' Guild"
     assert dungeon.player.race == "Elf"
     assert called == {"class": True, "guild": True, "race": True}
+
+
+def test_trigger_floor_event_calls_expected_handler():
+    dungeon = setup_dungeon()
+    floor_method_map = {
+        1: "_floor_one_event",
+        2: "_floor_two_event",
+        3: "_floor_three_event",
+        4: "_floor_four_event",
+        5: "_floor_five_event",
+        6: "_floor_six_event",
+        7: "_floor_seven_event",
+        8: "_floor_eight_event",
+        9: "_floor_nine_event",
+        10: "_floor_ten_event",
+        11: "_floor_eleven_event",
+        12: "_floor_twelve_event",
+        13: "_floor_thirteen_event",
+        14: "_floor_fourteen_event",
+        15: "_floor_fifteen_event",
+    }
+    for floor, method in floor_method_map.items():
+        called = False
+
+        def stub(self):
+            nonlocal called
+            called = True
+
+        with patch.object(DungeonBase, method, new=stub):
+            dungeon.trigger_floor_event(floor)
+            assert called, f"{method} not triggered for floor {floor}"

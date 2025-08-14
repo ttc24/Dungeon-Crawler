@@ -31,6 +31,9 @@ from .events import (
     MiniQuestHookEvent,
     ShrineEvent,
     TrapEvent,
+    ShrineGauntletEvent,
+    PuzzleChamberEvent,
+    EscortMissionEvent,
 )
 from .items import Armor, Item, Trinket, Weapon
 from .plugins import apply_enemy_plugins, apply_item_plugins
@@ -1114,8 +1117,17 @@ class DungeonBase:
             1: self._floor_one_event,
             2: self._floor_two_event,
             3: self._floor_three_event,
+            4: self._floor_four_event,
             5: self._floor_five_event,
+            6: self._floor_six_event,
+            7: self._floor_seven_event,
             8: self._floor_eight_event,
+            9: self._floor_nine_event,
+            10: self._floor_ten_event,
+            11: self._floor_eleven_event,
+            12: self._floor_twelve_event,
+            13: self._floor_thirteen_event,
+            14: self._floor_fourteen_event,
             15: self._floor_fifteen_event,
         }
         if floor in events:
@@ -1139,12 +1151,48 @@ class DungeonBase:
         for __ in range(2):
             random.choice(options)().trigger(self)
 
+    def _floor_four_event(self):
+        print(_("A sealed chamber of puzzles blocks your advance."))
+        PuzzleChamberEvent().trigger(self)
+
     def _floor_five_event(self):
         print(_("A mysterious merchant sets up shop, selling exotic wares."))
+
+    def _floor_six_event(self):
+        print(_("You enter a corridor lined with shrines."))
+        ShrineGauntletEvent().trigger(self)
+
+    def _floor_seven_event(self):
+        print(_("A timid figure begs to be escorted to safety."))
+        EscortMissionEvent().trigger(self)
 
     def _floor_eight_event(self):
         print(_("You stumble upon a radiant shrine, filling you with determination."))
         self.grant_inspiration()
+
+    def _floor_nine_event(self):
+        print(_("Arcane puzzles hum in the air around you."))
+        PuzzleChamberEvent().trigger(self)
+
+    def _floor_ten_event(self):
+        print(_("Shrines test your resolve at every turn."))
+        ShrineGauntletEvent().trigger(self)
+
+    def _floor_eleven_event(self):
+        print(_("A desperate prisoner seeks an escort."))
+        EscortMissionEvent().trigger(self)
+
+    def _floor_twelve_event(self):
+        print(_("You wander into a hall of bewildering puzzles."))
+        PuzzleChamberEvent().trigger(self)
+
+    def _floor_thirteen_event(self):
+        print(_("The shrine gauntlet returns, more daunting than before."))
+        ShrineGauntletEvent().trigger(self)
+
+    def _floor_fourteen_event(self):
+        print(_("A wounded scout pleads for an escort."))
+        EscortMissionEvent().trigger(self)
 
     def _floor_fifteen_event(self):
         print(_("A robed sage blocks your path, offering a riddle challenge."))

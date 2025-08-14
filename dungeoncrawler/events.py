@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 from .items import Item
 from .status_effects import add_status_effect
+from .quests import EscortNPC, EscortQuest
 
 if TYPE_CHECKING:  # pragma: no cover - for type checkers only
     from .dungeon import DungeonBase
@@ -248,3 +249,34 @@ class HazardEvent(BaseEvent):
         damage = random.randint(3, 8)
         game.player.take_damage(damage, source="Environmental Hazard")
         output_func(_(f"Falling debris hits you for {damage} damage."))
+
+
+class ShrineGauntletEvent(BaseEvent):
+    """Confront a sequence of shrines one after another."""
+
+    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+        output_func(_("You step into a gauntlet of ancient shrines."))
+        for __ in range(3):
+            ShrineEvent().trigger(game, input_func=input_func, output_func=output_func)
+
+
+class PuzzleChamberEvent(BaseEvent):
+    """Face multiple riddles in a single chamber."""
+
+    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+        output_func(_("Runes glow as puzzles surround you."))
+        for __ in range(2):
+            PuzzleEvent().trigger(game, input_func=input_func, output_func=output_func)
+
+
+class EscortMissionEvent(BaseEvent):
+    """Start a quest to escort a fragile NPC to safety."""
+
+    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+        if getattr(game, "active_quest", None):
+            output_func(game.active_quest.flavor)
+            return
+        npc = EscortNPC(_("Wayward Acolyte"))
+        quest = EscortQuest(npc, reward=100, flavor=_("Guide the acolyte to the exit."))
+        game.active_quest = quest
+        output_func(_("A fearful acolyte asks for your protection."))
