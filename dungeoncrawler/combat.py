@@ -223,9 +223,9 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
     if not enemy.is_alive():
         game.announce(f"{enemy.name} has been defeated!")
         if enemy.name in game.boss_loot:
-            loot = random.choice(game.boss_loot[enemy.name])
-            player.collect_item(loot)
-            renderer.show_message(_(f"The {enemy.name} dropped {loot.name}!"))
-            game.announce(_(f"{player.name} obtains {loot.name}!"))
+            for loot in game.boss_loot[enemy.name]:
+                player.collect_item(loot)
+                renderer.show_message(_(f"The {enemy.name} dropped {loot.name}!"))
+                game.announce(_(f"{player.name} obtains {loot.name}!"))
     game.stats_logger.battle_end(player.is_alive(), enemy.name)
     game.check_quest_progress()

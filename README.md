@@ -97,8 +97,8 @@ statistics, inventory, equipped weapon and companions. High scores are stored in
 - Expanded guild and race options featuring groups such as the Healers'
   Circle or Shadow Brotherhood and races like Tiefling, Dragonborn and
   Goblin.
-- Every floor culminates in a boss battle with a distinctive mechanic and a
-  guaranteed reward such as rare loot or a permanent stat boost.
+- Every floor culminates in a unique boss battle. Bosses telegraph their
+  attacks and defeating one grants the entire reward table for that encounter.
 - Each floor also features a unique special event—like a shrine gauntlet,
   puzzle chamber or escort mission—to break up the routine of boss fights.
 - Floors grow in size and feature unique enemy and boss sets.

@@ -172,9 +172,9 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
         place(boss)
         boss_drop = game.boss_loot.get(name, [])
         if boss_drop:
-            loot = random.choice(boss_drop)
-            game.queue_message(_(f"✨ The boss dropped a unique weapon: {loot.name}!"))
-            place(loot)
+            for loot in boss_drop:
+                game.queue_message(_(f"✨ The boss dropped a unique weapon: {loot.name}!"))
+                place(loot)
         else:
             game.queue_message(_("⚡ You absorb residual power (+1 attack)."))
             game.player.attack_power += 1

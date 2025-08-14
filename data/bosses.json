@@ -208,5 +208,173 @@
         "price": 0
       }
     ]
+  },
+  {
+    "name": "Arcane Sentinel",
+    "stats": [
+      300,
+      40,
+      18,
+      170
+    ],
+    "ai": {"aggressive": 3, "defensive": 2, "unpredictable": 1},
+    "traits": ["armored"],
+    "ability": "burn",
+    "loot": [
+      {
+        "name": "Arcblade",
+        "description": "Sword humming with arcane energy.",
+        "min_damage": 27,
+        "max_damage": 35,
+        "price": 0
+      }
+    ]
+  },
+  {
+    "name": "Blight Matron",
+    "stats": [
+      305,
+      39,
+      18,
+      172
+    ],
+    "ai": {"aggressive": 2, "defensive": 2, "unpredictable": 2},
+    "traits": ["regenerator"],
+    "ability": "poison",
+    "loot": [
+      {
+        "name": "Toxic Scepter",
+        "description": "Staff dripping with virulent slime.",
+        "min_damage": 25,
+        "max_damage": 33,
+        "price": 0
+      }
+    ]
+  },
+  {
+    "name": "Chaos Djinn",
+    "stats": [
+      310,
+      41,
+      19,
+      175
+    ],
+    "ai": {"aggressive": 3, "defensive": 1, "unpredictable": 3},
+    "traits": ["berserker"],
+    "ability": "double_strike",
+    "loot": [
+      {
+        "name": "Chaotic Censer",
+        "description": "Incense burner that spills volatile magic.",
+        "min_damage": 26,
+        "max_damage": 34,
+        "price": 0
+      }
+    ]
+  },
+  {
+    "name": "Dread Colossus",
+    "stats": [
+      315,
+      42,
+      20,
+      180
+    ],
+    "ai": {"aggressive": 2, "defensive": 3, "unpredictable": 1},
+    "traits": ["armored"],
+    "ability": "lifesteal",
+    "loot": [
+      {
+        "name": "Colossal Hammer",
+        "description": "Hammer that shakes the earth with each swing.",
+        "min_damage": 28,
+        "max_damage": 36,
+        "price": 0
+      }
+    ]
+  },
+  {
+    "name": "Ethereal Harvester",
+    "stats": [
+      320,
+      43,
+      20,
+      185
+    ],
+    "ai": {"aggressive": 3, "defensive": 2, "unpredictable": 2},
+    "traits": ["regenerator"],
+    "ability": "burn",
+    "loot": [
+      {
+        "name": "Soul Reap Scythe",
+        "description": "Scythe that harvests the essence of foes.",
+        "min_damage": 27,
+        "max_damage": 35,
+        "price": 0
+      }
+    ]
+  },
+  {
+    "name": "Feral Juggernaut",
+    "stats": [
+      325,
+      44,
+      21,
+      190
+    ],
+    "ai": {"aggressive": 4, "defensive": 1, "unpredictable": 2},
+    "traits": ["berserker"],
+    "ability": "double_strike",
+    "loot": [
+      {
+        "name": "Savage Maul",
+        "description": "Brutal maul that rends armor with ease.",
+        "min_damage": 29,
+        "max_damage": 37,
+        "price": 0
+      }
+    ]
+  },
+  {
+    "name": "Gloom Shade",
+    "stats": [
+      330,
+      45,
+      21,
+      195
+    ],
+    "ai": {"aggressive": 2, "defensive": 1, "unpredictable": 4},
+    "traits": ["armored"],
+    "ability": "poison",
+    "loot": [
+      {
+        "name": "Night Veil",
+        "description": "Cloak woven from solid darkness.",
+        "min_damage": 25,
+        "max_damage": 33,
+        "price": 0
+      }
+    ]
+  },
+  {
+    "name": "Hex King",
+    "stats": [
+      335,
+      46,
+      22,
+      200
+    ],
+    "ai": {"aggressive": 3, "defensive": 2, "unpredictable": 3},
+    "traits": ["regenerator"],
+    "ability": "freeze",
+    "loot": [
+      {
+        "name": "Cursed Scepter",
+        "description": "Scepter pulsing with hexed power.",
+        "min_damage": 28,
+        "max_damage": 36,
+        "price": 0
+      }
+    ]
   }
 ]
