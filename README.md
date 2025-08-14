@@ -56,7 +56,9 @@ Available configuration options:
 | `screen_width` | int | `10` | Width of each dungeon floor in rooms. |
 | `screen_height` | int | `10` | Height of each dungeon floor in rooms. |
 | `trap_chance` | float | `0.1` | Probability that a room contains a trap; higher values favor healing fountains on early floors. |
-| `loot_multiplier` | float | `1.0` | Multiplies the amount of loot found; higher values favor treasure caches on early floors. |
+| `enemy_hp_mult` | float | `1.0` | Global multiplier applied to enemy hit points. |
+| `enemy_dmg_mult` | float | `1.0` | Global multiplier applied to enemy attack damage. |
+| `loot_mult` | float | `1.0` | Multiplies the amount of loot found; higher values favor treasure caches on early floors. |
 | `verbose_combat` | bool | `false` | Log additional combat details. |
 | `slow_messages` | bool | `false` | Introduce a short delay between message prints. |
 | `key_repeat_delay` | float | `0.5` | Time in seconds before held keys repeat. |

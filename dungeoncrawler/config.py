@@ -14,7 +14,9 @@ class Config:
 
     Besides basic layout settings such as ``screen_width`` and
     ``screen_height`` the configuration also exposes gameplay toggles like
-    ``trap_chance``, ``loot_multiplier`` and ``verbose_combat``.  Default
+    ``trap_chance`` and several multipliers that affect overall balance.  The
+    ``enemy_hp_mult`` and ``enemy_dmg_mult`` values allow quick adjustment of
+    monster statistics while ``loot_mult`` scales treasure gains.  Default
     values mirror the previous hard-coded constants so the game remains
     playable even if no configuration file is provided.
     """
@@ -29,7 +31,9 @@ class Config:
     key_repeat_delay: float = 0.5
     colorblind_mode: bool = False
     trap_chance: float = 0.1
-    loot_multiplier: float = 1.0
+    enemy_hp_mult: float = 1.0
+    enemy_dmg_mult: float = 1.0
+    loot_mult: float = 1.0
     enable_debug: bool = False
     extras: dict[str, Any] = field(default_factory=dict)
 
@@ -82,12 +86,13 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
                     if not 0 <= float(value) <= 1:
                         raise ValueError(f"{key} must be between 0 and 1, got {value}")
                     value = float(value)
-                elif key == "loot_multiplier":
+                elif key in {"loot_mult", "enemy_hp_mult", "enemy_dmg_mult", "loot_multiplier"}:
                     if not isinstance(value, (int, float)):
                         raise ValueError(f"{key} must be a number, got {type(value).__name__}")
                     if float(value) <= 0:
                         raise ValueError(f"{key} must be greater than 0, got {value}")
                     value = float(value)
+                    key = "loot_mult" if key == "loot_multiplier" else key
                 elif key == "key_repeat_delay":
                     if not isinstance(value, (int, float)):
                         raise ValueError(f"{key} must be a number, got {type(value).__name__}")

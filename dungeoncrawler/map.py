@@ -103,7 +103,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
         place_near_start("Sanctuary", 10)
 
     # Always ensure a helpful non-combat feature near the starting room
-    total = config.trap_chance + config.loot_multiplier
+    total = config.trap_chance + config.loot_mult
     fountain_prob = config.trap_chance / total if total else 0.5
     event_cls = FountainEvent if random.random() < fountain_prob else CacheEvent
     place_near_start(event_cls(), 10)
@@ -123,10 +123,16 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
 
         defense = max(1, defense + floor // 3)
 
-        health = random.randint(hp_min + floor * hp_scale, hp_max + floor * hp_scale)
-        attack = random.randint(
-            atk_min + floor * atk_scale,
-            atk_max + floor * atk_scale,
+        health = int(
+            random.randint(hp_min + floor * hp_scale, hp_max + floor * hp_scale)
+            * config.enemy_hp_mult
+        )
+        attack = int(
+            random.randint(
+                atk_min + floor * atk_scale,
+                atk_max + floor * atk_scale,
+            )
+            * config.enemy_dmg_mult
         )
         gold = random.randint(15 + early_game_bonus + floor, 30 + floor * 2)
 
@@ -146,8 +152,8 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     boss_ai = IntentAI(**boss_weights) if boss_weights else None
     boss = Enemy(
         name,
-        hp + floor * 10,
-        atk + floor,
+        int((hp + floor * 10) * config.enemy_hp_mult),
+        int((atk + floor) * config.enemy_dmg_mult),
         dfs + floor // 2,
         gold + floor * 5,
         ability=ability,
@@ -170,7 +176,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     trap_base = place_counts.get("Trap", 0)
     place_counts["Trap"] = max(0, round(trap_base * (1 + config.trap_chance)))
     treasure_base = place_counts.get("Treasure", 0)
-    place_counts["Treasure"] = max(0, round(treasure_base * config.loot_multiplier))
+    place_counts["Treasure"] = max(0, round(treasure_base * config.loot_mult))
     for pname, count in place_counts.items():
         for __ in range(count):
             place(pname)
