@@ -599,15 +599,15 @@ class DungeonBase:
         print(_("-- Leaderboard --"))
         if not records:
             print(_("No scores yet."))
-            return
-        for r in records:
-            print(
-                _(
-                    f"{r.get('player_name', '?')}: {r.get('score', 0)} "
-                    f"(Floor {r.get('floor_reached', '?')}, {r.get('run_duration', 0):.0f}s, Seed {r.get('seed', '?')}) "
-                    f"{r.get('epitaph', '')}"
+        else:
+            for r in records:
+                print(
+                    _(
+                        f"{r.get('player_name', '?')}: {r.get('score', 0)} "
+                        f"(Floor {r.get('floor_reached', '?')}, {r.get('run_duration', 0):.0f}s, Seed {r.get('seed', '?')}) "
+                        f"{r.get('epitaph', '')}"
+                    )
                 )
-            )
 
         # If no player is present there is nothing further to do – the
         # leaderboard was displayed solely for informational purposes.
