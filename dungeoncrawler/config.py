@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 CONFIG_PATH = Path(__file__).resolve().parent.parent / "config.json"
 
@@ -104,6 +104,67 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
                 setattr(cfg, key, value)
             else:
                 cfg.extras[key] = value
+    return cfg
+
+
+def save_config(cfg: Config, path: Path = CONFIG_PATH) -> None:
+    """Persist ``cfg`` to ``path``.
+
+    Parameters
+    ----------
+    cfg:
+        Configuration instance to serialize.
+    path:
+        Destination for the JSON file. Defaults to ``config.json`` in the
+        project root.
+    """
+
+    data = {k: getattr(cfg, k) for k in cfg.__dataclass_fields__ if k != "extras"}
+    if cfg.extras:
+        data.update(cfg.extras)
+    path.write_text(json.dumps(data, indent=2))
+
+
+def settings_menu(
+    cfg: Config,
+    path: Path = CONFIG_PATH,
+    input_func: Callable[[str], str] = input,
+    output_func: Callable[[str], None] = print,
+) -> Config:
+    """Interactively adjust configuration values.
+
+    The menu prompts the user for each supported setting. Pressing Enter keeps
+    the current value. Updated settings are written to ``path`` before the
+    updated configuration is returned.
+    """
+
+    output_func("Configure game settings. Press Enter to keep current values.")
+    prompts: list[tuple[str, Callable[[str], Any]]] = [
+        ("screen_width", int),
+        ("screen_height", int),
+        ("trap_chance", float),
+        ("enemy_hp_mult", float),
+        ("enemy_dmg_mult", float),
+        ("loot_mult", float),
+        (
+            "colorblind_mode",
+            lambda s: s.strip().lower() in {"y", "yes", "true", "1"},
+        ),
+    ]
+
+    for key, caster in prompts:
+        current = getattr(cfg, key)
+        raw = input_func(f"{key.replace('_', ' ').title()} [{current}]: ").strip()
+        if not raw:
+            continue
+        try:
+            value = caster(raw)
+        except ValueError:
+            output_func(f"Invalid value for {key!r}; keeping {current}.")
+            continue
+        setattr(cfg, key, value)
+
+    save_config(cfg, path)
     return cfg
 
 

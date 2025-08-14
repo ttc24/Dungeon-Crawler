@@ -11,7 +11,7 @@ import json
 from gettext import gettext as _
 
 from . import tutorial
-from .config import Config, load_config
+from .config import Config, load_config, settings_menu
 from .constants import RUN_FILE
 from .dungeon import DungeonBase
 from .entities import SKILL_DEFS, Player
@@ -166,6 +166,9 @@ def main(argv=None, input_func=input, output_func=print, cfg: Config | None = No
     set_language(args.lang)
 
     cfg = cfg or load_config()
+    change = input_func(_("Adjust settings? (y/n): ")).strip().lower()
+    if change == "y":
+        cfg = settings_menu(cfg, input_func=input_func, output_func=output_func)
     game = DungeonBase(cfg.screen_width, cfg.screen_height)
     cont = input_func(_("Load existing save? (y/n): ")).strip().lower()
     if cont == "y":
