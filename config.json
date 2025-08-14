@@ -1,0 +1,16 @@
+{
+  "save_file": "savegame.json",
+  "score_file": "scores.json",
+  "max_floors": 18,
+  "screen_width": 10,
+  "screen_height": 10,
+  "verbose_combat": false,
+  "slow_messages": false,
+  "key_repeat_delay": 0.5,
+  "colorblind_mode": false,
+  "trap_chance": 0.1,
+  "enemy_hp_mult": 1.0,
+  "enemy_dmg_mult": 1.0,
+  "loot_mult": 1.0,
+  "enable_debug": false
+}
