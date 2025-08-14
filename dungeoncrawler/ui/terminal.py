@@ -128,10 +128,22 @@ class Renderer:
         table.add_row("Gold", str(player.gold))
         table.add_row("Level", str(player.level))
         table.add_row("Floor", str(game_state.current_floor))
+
+        # Include quest progress if one is active.  ``Quest`` objects provide a
+        # :meth:`status` method which returns a human readable summary.
+        quest = getattr(game_state, "active_quest", None)
+        if quest is not None:
+            quest_status = quest.status(game_state)
+            table.add_row("Quest", quest_status)
+        else:
+            quest_status = _("None")
+            table.add_row("Quest", quest_status)
+
         self.console.print(table)
         status = _(
             f"Health: {player.health}/{player.max_health} | STA: {player.stamina}/{player.max_stamina} | "
-            f"XP: {player.xp} | Gold: {player.gold} | Level: {player.level} | Floor: {game_state.current_floor}"
+            f"XP: {player.xp} | Gold: {player.gold} | Level: {player.level} | Floor: {game_state.current_floor} | "
+            f"Quest: {quest_status}"
         )
         if self.output_func is not print:
             self.output_func(status)

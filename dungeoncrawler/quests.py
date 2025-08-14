@@ -52,14 +52,20 @@ class HuntQuest(Quest):
         return f"{self.description} ({'done' if self.is_complete(game) else 'alive'})"
 
 
+@dataclass
 class EscortNPC:
-    """Passive NPC used for escort quests."""
+    """Passive NPC used for escort quests.
 
-    def __init__(self, name: str):
-        self.name = name
-        self.x = 0
-        self.y = 0
-        self.following = False
+    The NPC only tracks its position within the dungeon and whether it has
+    started following the player.  Using a dataclass keeps the implementation
+    lightweight while still providing a clear structure for the test-suite to
+    interact with.
+    """
+
+    name: str
+    x: int = 0
+    y: int = 0
+    following: bool = False
 
 
 class EscortQuest(Quest):
