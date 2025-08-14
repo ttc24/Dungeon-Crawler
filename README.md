@@ -118,3 +118,16 @@ game = DungeonBase(10, 10)
 game.player = player
 game.play_game()
 ```
+
+## Balance Simulation
+
+A small command-line helper can simulate combat to aid balance testing. Run it
+against any enemy archetype and tweak the player's stats to model different
+classes:
+
+```bash
+python -m dungeoncrawler.sim Bandit --runs 100 --player-health 40 --player-attack 10
+```
+
+The script reports the win rate and average number of turns taken. The same
+interface is available via `scripts/simulate_battles.py`.
