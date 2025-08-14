@@ -78,3 +78,30 @@ def test_new_race_bonuses(race, hp, atk):
     player.choose_race(race)
     assert player.max_health == hp
     assert player.attack_power == atk
+
+
+def test_class_abilities_and_costs():
+    barb = Player("Grok")
+    barb.choose_class("Barbarian")
+    assert barb.class_abilities["Rage"]["cost"] == 30
+    druid = Player("Leaf")
+    druid.choose_class("Druid")
+    assert druid.class_abilities["Wild Shape"]["cost"] == 35
+
+
+def test_shadow_brotherhood_perk():
+    player = Player("Shade")
+    base_costs = {k: v["cost"] for k, v in player.skills.items()}
+    player.join_guild("Shadow Brotherhood")
+    assert player.attack_power == 14
+    for key, skill in player.skills.items():
+        assert skill["cost"] == max(0, base_costs[key] - 5)
+
+
+def test_racial_traits_recorded():
+    t = Player("Infernal")
+    t.choose_race("Tiefling")
+    assert "Infernal resistance" in t.racial_traits
+    d = Player("Draco")
+    d.choose_race("Dragonborn")
+    assert "Draconic breath" in d.racial_traits

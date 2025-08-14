@@ -7,6 +7,23 @@ At any time choose **8. Show Map** to display the dungeon grid. The map marks yo
 
 Progress is automatically saved whenever you clear a floor.
 
+Classes, Guilds and Races
+-------------------------
+Characters grow through three axes of customization.  A **class** supplies a
+stat block and unique abilities that consume stamina.  For instance, the
+Barbarian begins with 130 health, 12 attack power and can unleash *Rage*
+``(30)`` or a sweeping *Whirlwind* ``(40)``.  Druids wield nature magic through
+*Wild Shape* ``(35)`` and *Entangle* ``(20)`` while maintaining balanced stats.
+
+Joining a **guild** applies permanent perks.  The **Shadow Brotherhood** grants
++4 attack power and reduces all skill costs by 5 stamina, turning members into
+efficient assassins.  Other guilds focus on raw power, magical prowess or
+supportive talents.
+
+Selecting a **race** provides innate bonuses.  Tieflings gain +2 attack power
+and the *Infernal resistance* trait, whereas Dragonborn receive +2 health,
++2 attack power and the *Draconic breath* trait.
+
 Boss Encounters
 ---------------
 Each floor culminates in a boss battle. Every boss showcases a distinctive

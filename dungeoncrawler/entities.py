@@ -27,6 +27,147 @@ def load_skills():
 SKILL_DEFS = load_skills()
 
 
+# Definitions for player classes, guilds and races. Each class includes a
+# stat block and optional abilities with stamina costs. Guild and race
+# dictionaries specify permanent bonuses applied when joined or selected.
+
+CLASS_DEFS = {
+    "Warrior": {
+        "stats": {"max_health": 100, "attack_power": 10},
+        "abilities": {
+            "Shield Slam": {"cost": 25, "description": "Briefly stun a foe."}
+        },
+    },
+    "Mage": {
+        "stats": {"max_health": 80, "attack_power": 14},
+        "abilities": {
+            "Arcane Bolt": {"cost": 30, "description": "Ranged magical attack."}
+        },
+    },
+    "Rogue": {
+        "stats": {"max_health": 90, "attack_power": 12},
+        "abilities": {
+            "Backstab": {"cost": 20, "description": "High damage from stealth."}
+        },
+    },
+    "Cleric": {
+        "stats": {"max_health": 110, "attack_power": 9},
+        "abilities": {
+            "Heal": {"cost": 25, "description": "Restore a small amount of HP."}
+        },
+    },
+    "Barbarian": {
+        "stats": {"max_health": 130, "attack_power": 12},
+        "abilities": {
+            "Rage": {"cost": 30, "description": "Boost attack for one turn."},
+            "Whirlwind": {
+                "cost": 40,
+                "description": "Strike all adjacent enemies.",
+            },
+        },
+    },
+    "Ranger": {
+        "stats": {"max_health": 105, "attack_power": 11},
+        "abilities": {
+            "Snipe": {"cost": 20, "description": "Long-range shot."}
+        },
+    },
+    "Druid": {
+        "stats": {"max_health": 100, "attack_power": 11},
+        "abilities": {
+            "Wild Shape": {
+                "cost": 35,
+                "description": "Transform to beast and gain HP.",
+            },
+            "Entangle": {
+                "cost": 20,
+                "description": "Roots an enemy in place.",
+            },
+        },
+    },
+    "Sorcerer": {
+        "stats": {"max_health": 75, "attack_power": 15},
+        "abilities": {
+            "Chain Lightning": {"cost": 35, "description": "Hit multiple foes."}
+        },
+    },
+    "Monk": {
+        "stats": {"max_health": 95, "attack_power": 13},
+        "abilities": {
+            "Flurry": {"cost": 25, "description": "Series of rapid strikes."}
+        },
+    },
+    "Warlock": {
+        "stats": {"max_health": 85, "attack_power": 14},
+        "abilities": {
+            "Eldritch Blast": {"cost": 30, "description": "Beam of dark power."}
+        },
+    },
+    "Necromancer": {
+        "stats": {"max_health": 90, "attack_power": 13},
+        "abilities": {
+            "Raise Skeleton": {
+                "cost": 40,
+                "description": "Summon a skeletal ally.",
+            }
+        },
+    },
+    "Shaman": {
+        "stats": {"max_health": 110, "attack_power": 10},
+        "abilities": {
+            "Spirit Call": {"cost": 30, "description": "Invoke ancestral aid."}
+        },
+    },
+    "Alchemist": {
+        "stats": {"max_health": 90, "attack_power": 12},
+        "abilities": {
+            "Acid Flask": {"cost": 25, "description": "Splash corrosive acid."}
+        },
+    },
+}
+
+GUILD_DEFS = {
+    "Warriors' Guild": {"max_health": 10, "perks": ["+10 max health"]},
+    "Mages' Guild": {"attack_power": 3, "perks": ["+3 attack power"]},
+    "Rogues' Guild": {
+        "cooldown_reduction": 1,
+        "perks": ["-1 cooldown to all skills"],
+    },
+    "Healers' Circle": {
+        "max_health": 8,
+        "perks": ["+8 max health"],
+    },
+    "Shadow Brotherhood": {
+        "attack_power": 4,
+        "skill_cost_reduction": 5,
+        "perks": ["+4 attack power", "Skills cost 5 less stamina"],
+    },
+    "Arcane Order": {"attack_power": 2, "perks": ["+2 attack power"]},
+}
+
+RACE_DEFS = {
+    "Human": {
+        "max_health": 1,
+        "attack_power": 1,
+        "traits": ["Jack of all trades"],
+    },
+    "Elf": {"attack_power": 2, "traits": ["Keen senses"]},
+    "Dwarf": {"max_health": 5, "traits": ["Stonecunning"]},
+    "Orc": {
+        "max_health": 3,
+        "attack_power": 1,
+        "traits": ["Savage strength"],
+    },
+    "Gnome": {"max_health": 2, "traits": ["Trickster"]},
+    "Tiefling": {"attack_power": 2, "traits": ["Infernal resistance"]},
+    "Dragonborn": {
+        "max_health": 2,
+        "attack_power": 2,
+        "traits": ["Draconic breath"],
+    },
+    "Goblin": {"attack_power": 1, "traits": ["Sneaky"]},
+}
+
 class Entity:
     def __init__(self, name, description):
         self.name = name
@@ -59,7 +200,9 @@ class Player(Entity):
         self.inventory = []
         self.companions = []
         self.guild = None
+        self.guild_perks = []
         self.race = None
+        self.racial_traits = []
         # Record collected lore notes
         self.codex = []
         # Stamina based skill system
@@ -76,6 +219,7 @@ class Player(Entity):
                 "cooldown": 0,
                 "func": func,
             }
+        self.class_abilities = {}
         self.x = 0
         self.y = 0
         self.inventory_limit = 8
@@ -100,28 +244,17 @@ class Player(Entity):
         """
 
         self.class_type = class_type
-        stats = {
-            "Warrior": (100, 10),
-            "Mage": (80, 14),
-            "Rogue": (90, 12),
-            "Cleric": (110, 9),
-            "Barbarian": (130, 12),
-            "Ranger": (105, 11),
-            "Druid": (100, 11),
-            "Sorcerer": (75, 15),
-            "Monk": (95, 13),
-            "Warlock": (85, 14),
-            "Necromancer": (90, 13),
-            "Shaman": (110, 10),
-            "Alchemist": (90, 12),
-        }
-
-        if class_type not in stats:
+        cls = CLASS_DEFS.get(class_type)
+        if not cls:
             self.class_type = "Novice"
             self.max_health = 100
             self.attack_power = 10
+            self.class_abilities = {}
         else:
-            self.max_health, self.attack_power = stats[class_type]
+            stats = cls.get("stats", {})
+            self.max_health = stats.get("max_health", 100)
+            self.attack_power = stats.get("attack_power", 10)
+            self.class_abilities = cls.get("abilities", {})
 
         self.health = self.max_health
         if announce:
@@ -474,50 +607,33 @@ class Player(Entity):
 
     def join_guild(self, guild):
         self.guild = guild
-        if guild == "Warriors' Guild":
-            self.max_health += 10
-            self.health += 10
-        elif guild == "Mages' Guild":
-            self.attack_power += 3
-        elif guild == "Rogues' Guild":
+        perks = GUILD_DEFS.get(guild, {})
+        if "max_health" in perks:
+            self.max_health += perks["max_health"]
+            self.health += perks["max_health"]
+        if "attack_power" in perks:
+            self.attack_power += perks["attack_power"]
+        if "cooldown_reduction" in perks:
+            reduction = perks["cooldown_reduction"]
             for skill in self.skills.values():
-                skill["base_cooldown"] = max(1, skill["base_cooldown"] - 1)
-                skill["cooldown"] = max(0, skill["cooldown"] - 1)
-        elif guild == "Healers' Circle":
-            self.max_health += 8
-            self.health += 8
-        elif guild == "Shadow Brotherhood":
-            self.attack_power += 4
-        elif guild == "Arcane Order":
-            self.attack_power += 2
+                skill["base_cooldown"] = max(1, skill["base_cooldown"] - reduction)
+                skill["cooldown"] = max(0, skill["cooldown"] - reduction)
+        if "skill_cost_reduction" in perks:
+            reduction = perks["skill_cost_reduction"]
+            for skill in self.skills.values():
+                skill["cost"] = max(0, skill["cost"] - reduction)
+        self.guild_perks = perks.get("perks", [])
         print(_(f"You have joined the {guild}!"))
 
     def choose_race(self, race):
         self.race = race
-        if race == "Human":
-            self.max_health += 1
-            self.health += 1
-            self.attack_power += 1
-        elif race == "Elf":
-            self.attack_power += 2
-        elif race == "Dwarf":
-            self.max_health += 5
-            self.health += 5
-        elif race == "Orc":
-            self.attack_power += 1
-            self.max_health += 3
-            self.health += 3
-        elif race == "Gnome":
-            self.max_health += 2
-            self.health += 2
-        elif race == "Tiefling":
-            self.attack_power += 2
-        elif race == "Dragonborn":
-            self.max_health += 2
-            self.health += 2
-            self.attack_power += 2
-        elif race == "Goblin":
-            self.attack_power += 1
+        traits = RACE_DEFS.get(race, {})
+        if "max_health" in traits:
+            self.max_health += traits["max_health"]
+            self.health += traits["max_health"]
+        if "attack_power" in traits:
+            self.attack_power += traits["attack_power"]
+        self.racial_traits = traits.get("traits", [])
         print(_(f"Race selected: {race}."))
 
     def equip_weapon(self, weapon):
