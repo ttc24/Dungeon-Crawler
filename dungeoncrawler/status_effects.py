@@ -21,7 +21,15 @@ EFFECT_INFO = {
 def add_status_effect(entity, effect: str, duration: int) -> None:
     """Apply ``effect`` to ``entity`` and announce it."""
 
-    effects = getattr(entity, "status_effects", {})
+    # ``status_effects`` may not be defined on some lightweight objects used
+    # in tests or when the function is called in isolation.  Using
+    # ``getattr`` with a default dictionary would update a temporary object
+    # and the applied effect would be lost.  Ensure the attribute exists on
+    # the entity so subsequent calls can operate on the same dictionary.
+    effects = getattr(entity, "status_effects", None)
+    if effects is None:
+        effects = {}
+        setattr(entity, "status_effects", effects)
     effects[effect] = duration
     is_player = entity.__class__.__name__ == "Player"
     desc = EFFECT_INFO.get(effect, "")
@@ -241,8 +249,11 @@ STATUS_EFFECT_HANDLERS = {
 
 def apply_status_effects(entity) -> bool:
     """Update ``entity`` based on active status effects."""
-
-    effects = getattr(entity, "status_effects", {})
+    effects = getattr(entity, "status_effects", None)
+    if effects is None:
+        effects = {}
+        setattr(entity, "status_effects", effects)
+        return False
     skip_turn = False
     is_player = entity.__class__.__name__ == "Player"
     name = entity.name if hasattr(entity, "name") else ""

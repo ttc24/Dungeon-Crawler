@@ -2,6 +2,7 @@ import pytest
 
 from dungeoncrawler.status_effects import (
     STATUS_EFFECT_HANDLERS,
+    add_status_effect,
     apply_status_effects,
 )
 
@@ -75,3 +76,15 @@ def test_blessed_and_cursed_expire():
     apply_status_effects(player)
     assert "blessed" not in player.status_effects
     assert "cursed" not in player.status_effects
+
+
+def test_add_status_effect_initialises_dict_when_missing():
+    class Dummy:
+        """Entity without a ``status_effects`` attribute."""
+
+        def __init__(self):
+            self.name = "dummy"
+
+    entity = Dummy()
+    add_status_effect(entity, "poison", 3)
+    assert entity.status_effects == {"poison": 3}
