@@ -4,6 +4,7 @@ import os
 import random
 import sys
 import time
+import logging
 from functools import lru_cache
 from gettext import gettext as _
 from pathlib import Path
@@ -29,6 +30,9 @@ from .plugins import apply_enemy_plugins, apply_item_plugins
 from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
 from .rendering import Renderer, render_map_string
 from .stats_logger import StatsLogger
+
+
+logger = logging.getLogger(__name__)
 
 # Mapping of leaderboard sorting options to record keys and sort direction.
 # ``True`` indicates descending order.
@@ -324,7 +328,7 @@ class DungeonBase:
                 with open(RUN_FILE) as f:
                     self.run_stats.update(json.load(f))
             except (IOError, json.JSONDecodeError):
-                pass
+                logger.exception("Failed to load run statistics from %s", RUN_FILE)
         self.total_runs = self.run_stats.get("total_runs", 0)
         self.unlocks = self.run_stats.get(
             "unlocks", {"class": False, "guild": False, "race": False}
@@ -412,7 +416,8 @@ class DungeonBase:
             with open(SAVE_FILE, "w") as f:
                 json.dump(data, f)
         except IOError:
-            pass
+            logger.exception("Failed to save game to %s", SAVE_FILE)
+            self.renderer.show_message(_("Failed to save game."))
 
     def load_game(self):
         if os.path.exists(SAVE_FILE):
@@ -518,7 +523,8 @@ class DungeonBase:
             with open(RUN_FILE, "w") as f:
                 json.dump(self.run_stats, f)
         except IOError:
-            pass
+            logger.exception("Failed to save run statistics to %s", RUN_FILE)
+            self.renderer.show_message(_("Failed to update run statistics."))
 
     def record_score(self, floor):
         """Persist the current run to the leaderboard file and display it."""
@@ -924,7 +930,7 @@ class DungeonBase:
             try:
                 os.remove(SAVE_FILE)
             except OSError:
-                pass
+                logger.exception("Failed to remove save file %s", SAVE_FILE)
 
     def handle_input(self, choice: str) -> bool:
         """Handle a menu ``choice`` from the player.
@@ -1094,7 +1100,7 @@ class DungeonBase:
                 try:
                     os.remove(SAVE_FILE)
                 except OSError:
-                    pass
+                    logger.exception("Failed to remove save file %s", SAVE_FILE)
             return floor, None
 
         return floor, True
