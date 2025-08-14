@@ -438,17 +438,18 @@ class Player(Entity):
         skill = self.skills.get(str(choice))
         if not skill:
             print(_("Invalid skill choice."))
-            return
+            return None
         if skill["cooldown"] > 0:
             print(_(f"{skill['name']} is on cooldown for {skill['cooldown']} more turn(s)."))
-            return
+            return None
         if self.stamina < skill["cost"]:
             needed = skill["cost"] - self.stamina
             print(_(f"You're winded (need {needed} more STA)."))
-            return
+            return None
         self.stamina -= skill["cost"]
         skill["func"](enemy)
         skill["cooldown"] = skill["base_cooldown"]
+        return skill["name"]
 
     def level_up(self):
         self.level += 1

@@ -865,6 +865,8 @@ class DungeonBase:
             self.view_leaderboard()
         elif config.enable_debug and choice.startswith(":god"):
             self.god_mode(choice)
+        elif config.enable_debug and choice.startswith(":sim"):
+            self.simulate(command=choice)
         elif choice == ":codex":
             self.show_codex()
         else:
@@ -918,6 +920,33 @@ class DungeonBase:
             self.renderer.show_message(
                 self.queue_message(_("Invalid god command"), output_func=None)
             )
+
+    def simulate(self, command: str) -> None:
+        """Run automated combat simulations.
+
+        Usage: ``:sim <enemy> <runs>``
+        """
+        parts = command.split()
+        if len(parts) < 3:
+            self.renderer.show_message(
+                self.queue_message(_("Usage: :sim <enemy> <runs>"), output_func=None)
+            )
+            return
+        enemy_name = parts[1]
+        try:
+            runs = int(parts[2])
+        except ValueError:
+            self.renderer.show_message(
+                self.queue_message(_("Invalid run count"), output_func=None)
+            )
+            return
+        from .sim import simulate_battles
+
+        stats = simulate_battles(enemy_name, runs, seed=42)
+        msg = _(
+            f"Winrate: {stats['winrate']:.2%} | Avg TTK: {stats['avg_turns']:.2f}"
+        )
+        self.renderer.show_message(self.queue_message(msg, output_func=None))
 
     def show_codex(self, output_func=print):
         if not self.player.codex:
