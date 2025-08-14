@@ -8,6 +8,7 @@ races on floor 3.
 
 import argparse
 import json
+import logging
 from gettext import gettext as _
 
 from . import tutorial
@@ -18,6 +19,8 @@ from .entities import SKILL_DEFS, Player
 from .i18n import set_language
 
 
+logger = logging.getLogger(__name__)
+
 def _load_unlocks():
     unlocks = {"class": False, "guild": False, "race": False}
     if RUN_FILE.exists():
@@ -25,7 +28,7 @@ def _load_unlocks():
             with open(RUN_FILE) as f:
                 unlocks.update(json.load(f).get("unlocks", {}))
         except (IOError, json.JSONDecodeError):
-            pass
+            logger.exception("Failed to load unlocks from %s", RUN_FILE)
     return unlocks
 
 
@@ -176,7 +179,7 @@ def main(argv=None, input_func=input, output_func=print, cfg: Config | None = No
         try:
             output_func(_("Resuming on Floor {floor}.").format(floor=floor))
         except Exception:
-            pass
+            logger.exception("Failed to display resume message")
         if getattr(game, "player", None) is None:
             output_func(_("No valid save found. Starting a new game…"))
             game.player = build_character(input_func=input_func, output_func=output_func)
