@@ -49,7 +49,9 @@ def enemy_turn(enemy: "Enemy", player: "Player", renderer: Renderer | None = Non
             for event in events:
                 renderer.handle_event(event)
         if enemy.ai and hasattr(enemy.ai, "choose_intent"):
-            enemy.next_action, enemy.intent, enemy.intent_message = enemy.ai.choose_intent(enemy, player)
+            enemy.next_action, enemy.intent, enemy.intent_message = enemy.ai.choose_intent(
+                enemy, player
+            )
         else:
             enemy.next_action = None
             enemy.intent = None
@@ -80,7 +82,9 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
         )
     )
     if enemy.ai and hasattr(enemy.ai, "choose_intent"):
-        enemy.next_action, enemy.intent, enemy.intent_message = enemy.ai.choose_intent(enemy, player)
+        enemy.next_action, enemy.intent, enemy.intent_message = enemy.ai.choose_intent(
+            enemy, player
+        )
     game.announce(f"{player.name} engages {enemy.name}!")
     while player.is_alive() and enemy.is_alive():
         skip_player = player.apply_status_effects()

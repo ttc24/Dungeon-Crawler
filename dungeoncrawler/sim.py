@@ -79,7 +79,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Simulate battles against a given enemy.")
     parser.add_argument("enemy", help="Enemy name to fight")
     parser.add_argument("--runs", type=int, default=100, help="Number of battles to simulate")
-    parser.add_argument("--seed", type=int, default=None, help="Optional seed for deterministic results")
+    parser.add_argument(
+        "--seed", type=int, default=None, help="Optional seed for deterministic results"
+    )
     parser.add_argument("--player-health", type=int, default=30, help="Player health value")
     parser.add_argument("--player-attack", type=int, default=8, help="Player attack value")
     parser.add_argument("--player-speed", type=int, default=10, help="Player speed value")

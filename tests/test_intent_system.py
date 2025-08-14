@@ -1,4 +1,5 @@
 import random
+
 from dungeoncrawler.ai import IntentAI
 from dungeoncrawler.entities import Enemy
 
