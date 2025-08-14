@@ -26,6 +26,14 @@ def main() -> None:
             if row["time_to_first_reward"]:
                 rewards.append(int(row["time_to_first_reward"]))
             fog.append(float(row["fog_reveal_rate"]))
+
+    # ``statistics.mean`` raises ``StatisticsError`` when called with an empty
+    # sequence.  This can happen if ``balance.csv`` exists but contains no
+    # measurements (for example an empty file with just headers).  Guard against
+    # that scenario to keep the helper script robust.
+    if not turns:
+        print("No balance data found.")
+        return
     print("Death Causes:")
     for cause, count in Counter(runs.values()).items():
         print(f"  {cause}: {count}")
