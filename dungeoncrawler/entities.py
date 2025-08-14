@@ -353,12 +353,16 @@ class Player(Entity):
 
     def apply_weapon_effect(self, enemy: Enemy) -> None:
         """Apply equipped item effects to ``enemy`` if present."""
-        if self.weapon and getattr(self.weapon, "effect", None):
-            duration = int(3 * RARITY_MODIFIERS.get(self.weapon.rarity, 1.0))
-            add_status_effect(enemy, self.weapon.effect, duration)
-        if self.trinket and getattr(self.trinket, "effect", None):
-            duration = int(2 * RARITY_MODIFIERS.get(self.trinket.rarity, 1.0))
-            add_status_effect(enemy, self.trinket.effect, duration)
+        if self.weapon:
+            effect = getattr(self.weapon, "effect", None)
+            if effect:
+                duration = int(3 * RARITY_MODIFIERS.get(self.weapon.rarity, 1.0))
+                add_status_effect(enemy, effect, duration)
+        if self.trinket:
+            effect = getattr(self.trinket, "effect", None)
+            if effect:
+                duration = int(2 * RARITY_MODIFIERS.get(self.trinket.rarity, 1.0))
+                add_status_effect(enemy, effect, duration)
 
     def process_enemy_defeat(self, enemy: Enemy) -> None:
         """Handle rewards for defeating ``enemy`` such as XP and gold."""
@@ -391,9 +395,10 @@ class Player(Entity):
         if self.armor:
             damage = max(0, damage - self.armor.defense)
             damage = int(damage / RARITY_MODIFIERS.get(self.armor.rarity, 1.0))
-            if getattr(self.armor, "effect", None):
+            effect = getattr(self.armor, "effect", None)
+            if effect:
                 duration = int(2 * RARITY_MODIFIERS.get(self.armor.rarity, 1.0))
-                add_status_effect(self, self.armor.effect, duration)
+                add_status_effect(self, effect, duration)
         if getattr(self, "novice_luck_active", False):
             damage = max(0, damage - 1)
         self.health = max(0, self.health - damage)

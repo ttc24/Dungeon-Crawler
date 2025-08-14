@@ -22,9 +22,11 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 @lru_cache(maxsize=None)
 def load_event_config():
+    """Load event configuration from the JSON file in :data:`DATA_DIR`."""
+
     path = DATA_DIR / "events.json"
     try:
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
         return {}
@@ -182,7 +184,8 @@ class LoreNoteEvent(BaseEvent):
             {"text": _("A faded map hints at deeper treasures.")},
             {
                 "text": _(
-                    "A margin scribble reveals beetle weak points (+5% hit vs beetles for 10 turns)."
+                    "A margin scribble reveals beetle weak points "
+                    "(+5% hit vs beetles for 10 turns)."
                 ),
                 "effect": ("beetle_bane", 10),
             },

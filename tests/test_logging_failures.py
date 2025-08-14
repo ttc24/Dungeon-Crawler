@@ -1,3 +1,5 @@
+"""Tests that logging occurs when certain operations fail."""
+
 import logging
 from json import JSONDecodeError
 
