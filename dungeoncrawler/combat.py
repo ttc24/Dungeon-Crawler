@@ -36,6 +36,7 @@ def enemy_turn(enemy: "Enemy", player: "Player", renderer: Renderer | None = Non
                 {
                     "health": enemy.health,
                     "attack": getattr(enemy, "attack_power", 0),
+                    "defense": getattr(enemy, "defense", 0),
                     "speed": getattr(enemy, "speed", 0),
                 },
             )
@@ -43,7 +44,11 @@ def enemy_turn(enemy: "Enemy", player: "Player", renderer: Renderer | None = Non
             enemy_entity.intent = (item for item in [(enemy.next_action, enemy.intent_message)])
             player_entity = CoreEntity(
                 player.name,
-                {"health": player.health, "defense": 0, "speed": getattr(player, "speed", 0)},
+                {
+                    "health": player.health,
+                    "defense": getattr(player.armor, "defense", 0),
+                    "speed": getattr(player, "speed", 0),
+                },
             )
             events = resolve_enemy_turn(enemy_entity, player_entity)
             enemy.health = enemy_entity.stats["health"]
@@ -120,6 +125,7 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
                     "health": player.health,
                     "attack": getattr(player, "attack_power", 0),
                     "max_health": player.max_health,
+                    "defense": getattr(player.armor, "defense", 0),
                     "speed": getattr(player, "speed", 0),
                 },
             )
@@ -129,6 +135,7 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
                     "health": enemy.health,
                     "attack": getattr(enemy, "attack_power", 0),
                     "max_health": enemy.max_health,
+                    "defense": getattr(enemy, "defense", 0),
                     "speed": getattr(enemy, "speed", 0),
                 },
             )
@@ -151,6 +158,7 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
                     "health": player.health,
                     "attack": getattr(player, "attack_power", 0),
                     "max_health": player.max_health,
+                    "defense": getattr(player.armor, "defense", 0),
                     "speed": getattr(player, "speed", 0),
                 },
             )
@@ -160,6 +168,7 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
                     "health": enemy.health,
                     "attack": getattr(enemy, "attack_power", 0),
                     "max_health": enemy.max_health,
+                    "defense": getattr(enemy, "defense", 0),
                     "speed": getattr(enemy, "speed", 0),
                 },
             )
@@ -197,6 +206,7 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
                     "health": player.health,
                     "attack": getattr(player, "attack_power", 0),
                     "max_health": player.max_health,
+                    "defense": getattr(player.armor, "defense", 0),
                     "speed": getattr(player, "speed", 0),
                 },
             )
@@ -206,6 +216,7 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
                     "health": enemy.health,
                     "attack": getattr(enemy, "attack_power", 0),
                     "max_health": enemy.max_health,
+                    "defense": getattr(enemy, "defense", 0),
                     "speed": getattr(enemy, "speed", 0),
                 },
             )
