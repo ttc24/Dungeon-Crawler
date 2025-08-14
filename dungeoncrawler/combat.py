@@ -72,7 +72,7 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
     if input_func is None:
         input_func = input
     player = game.player
-    game.stats_logger.battle_start()
+    game.stats_logger.battle_start(enemy.name)
     renderer = getattr(game, "renderer", Renderer())
     renderer.show_message(
         _(
@@ -89,7 +89,10 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
         if not enemy.is_alive():
             break
         if skip_player:
+            before = player.health
             enemy_turn(enemy, player, renderer)
+            game.stats_logger.record_damage(taken=before - player.health)
+            game.stats_logger.record_turn()
             continue
 
         renderer.show_message(
@@ -106,6 +109,7 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
         )
         choice = input_func(_("Choose action: "))
         if choice == "1":
+            enemy_before = enemy.health
             p_entity = CoreEntity(
                 player.name,
                 {
@@ -130,8 +134,13 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
             for event in events:
                 renderer.handle_event(event)
             game.announce(_("A fierce attack lands!"))
+            game.stats_logger.record_damage(dealt=enemy_before - enemy.health)
+            before = player.health
             enemy_turn(enemy, player, renderer)
+            game.stats_logger.record_damage(taken=before - player.health)
+            game.stats_logger.record_turn()
         elif choice == "2":
+            enemy_before = enemy.health
             p_entity = CoreEntity(
                 player.name,
                 {
@@ -155,14 +164,28 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
             enemy.health = e_entity.stats["health"]
             for event in events:
                 renderer.handle_event(event)
+            game.stats_logger.record_damage(dealt=enemy_before - enemy.health)
+            before = player.health
             enemy_turn(enemy, player, renderer)
+            game.stats_logger.record_damage(taken=before - player.health)
+            game.stats_logger.record_turn()
         elif choice == "3":
             player.use_health_potion()
+            before = player.health
             enemy_turn(enemy, player, renderer)
+            game.stats_logger.record_damage(taken=before - player.health)
+            game.stats_logger.record_turn()
         elif choice == "4":
-            player.use_skill(enemy)
+            enemy_before = enemy.health
+            skill_name = player.use_skill(enemy)
+            if skill_name:
+                game.stats_logger.record_skill(skill_name)
             game.announce(_("Special skill unleashed!"))
+            game.stats_logger.record_damage(dealt=enemy_before - enemy.health)
+            before = player.health
             enemy_turn(enemy, player, renderer)
+            game.stats_logger.record_damage(taken=before - player.health)
+            game.stats_logger.record_turn()
         elif choice == "5":
             p_entity = CoreEntity(
                 player.name,
@@ -187,8 +210,12 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
                 renderer.handle_event(event)
             if events[-1].data.get("success"):
                 game.announce(f"{player.name} flees from {enemy.name}!")
+                game.stats_logger.record_turn()
                 break
+            before = player.health
             enemy_turn(enemy, player, renderer)
+            game.stats_logger.record_damage(taken=before - player.health)
+            game.stats_logger.record_turn()
         else:
             renderer.show_message(_(INVALID_KEY_MSG))
         player.decrement_cooldowns()
