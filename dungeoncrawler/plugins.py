@@ -17,8 +17,12 @@ def discover_plugins():
     for m in pkgutil.iter_modules([str(MODS_DIR)]):
         try:
             modules.append(importlib.import_module(f"mods.{m.name}"))
-        except ImportError:
-            logging.warning("Failed to import plugin '%s'", m.name)
+        except Exception:  # pragma: no cover - defensive
+            # Importing third-party plugins should not crash the game.  Any
+            # exception raised during plugin import (not just ImportError) is
+            # caught and logged so that a faulty plugin is simply skipped
+            # rather than aborting the startup sequence.
+            logging.exception("Failed to import plugin '%s'", m.name)
     return modules
 
 

@@ -97,3 +97,24 @@ def test_apply_item_plugins(monkeypatch, tmp_path):
     assert "Test Potion" in names
     assert any(isinstance(i, Weapon) for i in shop_items if i.name == "Test Sword")
     assert any(isinstance(i, Item) for i in shop_items if i.name == "Test Potion")
+
+
+def test_discover_plugins_handles_runtime_errors(monkeypatch, tmp_path, caplog):
+    """Plugins that raise arbitrary exceptions should not crash discovery."""
+    # create a plugin that raises a non-ImportError during import
+    (tmp_path / "__init__.py").write_text("")
+    faulty = tmp_path / "faulty"
+    faulty.mkdir()
+    (faulty / "__init__.py").write_text("raise ValueError('boom')\n")
+
+    mod_pkg = types.ModuleType("mods")
+    mod_pkg.__path__ = [str(tmp_path)]
+    monkeypatch.setitem(sys.modules, "mods", mod_pkg)
+    monkeypatch.setattr(plugins_module, "MODS_DIR", tmp_path)
+
+    caplog.set_level(logging.ERROR)
+    modules = plugins_module.discover_plugins()
+
+    # faulty module should be skipped without raising
+    assert modules == []
+    assert "faulty" in caplog.text
