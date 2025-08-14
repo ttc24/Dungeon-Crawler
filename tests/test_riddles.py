@@ -5,6 +5,23 @@ from dungeoncrawler import dungeon as dungeon_module
 from dungeoncrawler.entities import Player
 
 
+def test_load_riddles_invalid_data(monkeypatch):
+    """``load_riddles`` should gracefully handle malformed JSON structures."""
+    import io
+    from dungeoncrawler import constants
+
+    # Provide JSON that is not the expected list of riddles
+    import builtins
+    monkeypatch.setattr(
+        builtins,
+        "open",
+        lambda *args, **kwargs: io.StringIO("{\"not\": \"a list\"}"),
+    )
+
+    constants.load_riddles.cache_clear()
+    assert constants.load_riddles() == []
+
+
 def test_riddles_loaded_and_used(monkeypatch, capsys):
     # Ensure riddles were loaded from the data file and contain many entries
     assert isinstance(constants.RIDDLES, list)
