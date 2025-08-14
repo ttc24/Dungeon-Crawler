@@ -47,14 +47,24 @@ def load_riddles():
     data_dir = Path(__file__).resolve().parent.parent / "data"
     path = data_dir / "riddles.json"
     try:
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             riddles = json.load(f)
-    except (IOError, json.JSONDecodeError):
+    except (OSError, json.JSONDecodeError):
         return []
-    # Normalise answers for case-insensitive comparison
-    for r in riddles:
-        r["answer"] = r["answer"].lower()
-    return riddles
+
+    if not isinstance(riddles, list):
+        return []
+
+    normalised: list[dict[str, str]] = []
+    for entry in riddles:
+        if not isinstance(entry, dict):
+            continue
+        question = entry.get("question")
+        answer = entry.get("answer")
+        if not isinstance(question, str) or not isinstance(answer, str):
+            continue
+        normalised.append({"question": question, "answer": answer.lower()})
+    return normalised
 
 
 # Simple riddles used for trap rooms. Answer correctly to avoid damage.
