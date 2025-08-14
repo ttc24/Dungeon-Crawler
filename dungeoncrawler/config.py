@@ -64,8 +64,10 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
     cfg = Config()
     if path.exists():
         try:
-            data: dict[str, Any] = json.loads(path.read_text())
+            data: Any = json.loads(path.read_text())
         except json.JSONDecodeError:
+            return cfg
+        if not isinstance(data, dict):
             return cfg
         for key, value in data.items():
             if hasattr(cfg, key):
