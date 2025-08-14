@@ -22,7 +22,7 @@ def test_floor_enemies_have_custom_telegraphs():
     ai = IntentAI(aggressive=1, defensive=0, unpredictable=0)
     for name in enemies:
         dummy = DummyEnemy(name)
-        _action, msg = ai.choose_intent(dummy, dummy)
+        _action, _intent, msg = ai.choose_intent(dummy, dummy)
         default = f"The {name} winds up for a heavy strike…"
         assert msg and msg != default
 
@@ -33,6 +33,6 @@ def test_bosses_have_custom_telegraphs():
     ai = IntentAI(aggressive=1, defensive=0, unpredictable=0)
     for name in BOSS_STATS:
         dummy = DummyEnemy(name)
-        _action, msg = ai.choose_intent(dummy, dummy)
+        _action, _intent, msg = ai.choose_intent(dummy, dummy)
         default = f"The {name} winds up for a heavy strike…"
         assert msg and msg != default

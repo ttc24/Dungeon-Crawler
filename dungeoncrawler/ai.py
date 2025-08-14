@@ -64,14 +64,16 @@ class IntentAI:
 
         Returns
         -------
-        tuple[str, str]
-            A pair ``(action, message)`` describing what the enemy will do on
-            its next turn and the text used to foreshadow that intent.
+        tuple[str, str, str]
+            ``(action, intent, message)`` describing what the enemy will do on
+            its next turn, the intent category (``"Aggressive"``,
+            ``"Defensive"`` or ``"Unpredictable"``) and the text used to
+            foreshadow that intent.
         """
 
         intents = list(self.weights.keys())
         weights = list(self.weights.values())
-        intent = random.choices(intents, weights=weights, k=1)[0]
+        intent_key = random.choices(intents, weights=weights, k=1)[0]
 
         # Map intents to actions and default telegraphs
         action = "attack"
@@ -79,20 +81,21 @@ class IntentAI:
             "aggressive": f"The {enemy.name} winds up for a heavy strike…",
             "defensive": f"The {enemy.name} raises its guard.",
             "unpredictable": f"The {enemy.name} wavers unpredictably…",
-        }[intent]
+        }[intent_key]
 
-        if intent == "aggressive" and getattr(enemy, "heavy_cd", 0) == 0:
+        if intent_key == "aggressive" and getattr(enemy, "heavy_cd", 0) == 0:
             action = "heavy_attack"
-        elif intent == "defensive" and enemy.health <= enemy.max_health // 3:
+        elif intent_key == "defensive" and enemy.health <= enemy.max_health // 3:
             action = "defend"
-        elif intent == "unpredictable":
+        elif intent_key == "unpredictable":
             action = random.choice(["wild_attack", "defend"])
 
         # Custom telegraphs for specific enemy archetypes
         telegraphs = self.TELEGRAPHS.get(enemy.name, {})
-        message = telegraphs.get(intent, message)
+        message = telegraphs.get(intent_key, message)
 
-        return action, message
+        intent = intent_key.capitalize()
+        return action, intent, message
 
     # Backwards compatibility for older saves/tests
     plan_next = choose_intent
