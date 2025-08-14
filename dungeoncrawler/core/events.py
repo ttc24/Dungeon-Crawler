@@ -229,4 +229,3 @@ def handle_lore_note(
 
     note = LoreNote(text, effect)
     return note.interact(player)
-
