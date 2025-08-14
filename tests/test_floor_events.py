@@ -74,7 +74,7 @@ def test_floor_progression_unlocks_features():
     with (
         patch("dungeoncrawler.dungeon.random.choice", return_value=DummyEvent),
         patch("dungeoncrawler.dungeon.random.randint", return_value=1),
-        patch.object(DungeonBase, "offer_class", new=fake_offer_class, create=True),
+        patch.object(DungeonBase, "offer_class", new=fake_offer_class),
         patch.object(DungeonBase, "offer_guild", new=fake_offer_guild),
         patch.object(DungeonBase, "offer_race", new=fake_offer_race),
     ):

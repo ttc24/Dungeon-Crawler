@@ -101,22 +101,12 @@ class Player(Entity):
 
         self.class_type = class_type
         stats = {
+            "Warrior": (100, 10),
             "Mage": (80, 14),
             "Rogue": (90, 12),
             "Cleric": (110, 9),
-            "Paladin": (120, 11),
-            "Bard": (90, 10),
-            "Warrior": (100, 10),
-            # New classes inspired by the tabletop source material
             "Barbarian": (130, 12),
-            "Druid": (105, 11),
             "Ranger": (105, 11),
-            "Sorcerer": (85, 15),
-            "Monk": (95, 11),
-            "Warlock": (85, 14),
-            "Necromancer": (90, 13),
-            "Shaman": (100, 12),
-            "Alchemist": (95, 12),
         }
 
         if class_type not in stats:
@@ -481,6 +471,10 @@ class Player(Entity):
             self.health += 10
         elif guild == "Mages' Guild":
             self.attack_power += 3
+        elif guild == "Rogues' Guild":
+            for skill in self.skills.values():
+                skill["base_cooldown"] = max(1, skill["base_cooldown"] - 1)
+                skill["cooldown"] = max(0, skill["cooldown"] - 1)
         elif guild == "Healers' Circle":
             self.max_health += 8
             self.health += 8
@@ -488,12 +482,6 @@ class Player(Entity):
             self.attack_power += 4
         elif guild == "Arcane Order":
             self.attack_power += 2
-        elif guild == "Rangers' Lodge":
-            self.max_health += 5
-            self.health += 5
-            self.attack_power += 1
-        elif guild == "Berserkers' Clan":
-            self.attack_power += 3
         print(_(f"You have joined the {guild}!"))
 
     def choose_race(self, race):
@@ -514,33 +502,8 @@ class Player(Entity):
         elif race == "Gnome":
             self.max_health += 2
             self.health += 2
-        elif race == "Halfling":
-            pass
-        elif race == "Catfolk":
-            self.attack_power += 1
-        elif race == "Lizardfolk":
-            self.max_health += 4
-            self.health += 4
         elif race == "Tiefling":
             self.attack_power += 2
-        elif race == "Aasimar":
-            self.max_health += 4
-            self.health += 4
-        elif race == "Goblin":
-            pass
-        elif race == "Dragonborn":
-            self.attack_power += 2
-            self.max_health += 2
-            self.health += 2
-        elif race == "Half-Elf":
-            self.attack_power += 1
-            self.max_health += 2
-            self.health += 2
-        elif race == "Kobold":
-            self.attack_power += 1
-        elif race == "Triton":
-            self.max_health += 3
-            self.health += 3
         print(_(f"Race selected: {race}."))
 
     def equip_weapon(self, weapon):
