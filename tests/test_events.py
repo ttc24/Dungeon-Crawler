@@ -103,6 +103,19 @@ def test_fountain_event_bottle_adds_item():
     assert event.remaining_uses == 1
 
 
+def test_fountain_event_q_leaves_untouched():
+    game = setup_game()
+    game.player.health = 50
+    event = FountainEvent()
+    event.trigger(
+        game,
+        input_func=lambda _: "q",
+        output_func=lambda _msg: None,
+    )
+    assert game.player.health == 50
+    assert event.remaining_uses == 2
+
+
 def test_random_event_selection_from_floor_config():
     game = setup_game()
     with (
