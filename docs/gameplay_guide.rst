@@ -54,3 +54,8 @@ for example::
 
 Pay attention to these tells to decide when to Defend or attempt a Feint.
 
+Aggressive telegraphs often precede a heavy attack that deals roughly
+50% more damage.  Unpredictable intents may unleash wild attacks which
+suffer a 20% accuracy penalty but have a small chance to inflict double
+damage.
+

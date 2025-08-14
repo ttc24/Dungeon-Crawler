@@ -79,16 +79,41 @@ def calculate_damage(attacker: Entity, defender: Entity, critical: bool = False)
 
 
 def resolve_attack(attacker: Entity, defender: Entity) -> AttackResolved:
-    """Resolve a basic attack from ``attacker`` to ``defender``."""
+    """Resolve a basic attack from ``attacker`` to ``defender``.
+
+    Temporary status flags on the attacker may modify the outcome:
+
+    * ``heavy`` – increases damage by 50% and is consumed.
+    * ``wild`` – reduces hit chance by 20 and grants a small chance to
+      double damage on a successful hit. The flag is consumed.
+    """
+
+    heavy = "heavy" in attacker.status
+    wild = "wild" in attacker.status
+    if heavy:
+        attacker.status.remove("heavy")
+    if wild:
+        attacker.status.remove("wild")
 
     hit = calculate_hit(attacker, defender)
-    if random.randint(1, 100) > hit:
+    if wild:
+        hit = max(0, hit - 20)
+    roll = random.randint(1, 100)
+    if roll > hit:
         msg = f"{attacker.name} misses {defender.name}."
         return AttackResolved(msg, attacker.name, defender.name, 0, 0)
 
     crit_chance = calculate_crit(attacker, defender)
     critical = random.randint(1, 100) <= crit_chance
-    damage = calculate_damage(attacker, defender, critical)
+    base_damage = calculate_damage(attacker, defender, critical)
+    damage = base_damage
+    if heavy:
+        damage = int(damage * 1.5)
+    if wild and random.randint(1, 100) >= 95:
+        damage *= 2
+    if damage != base_damage:
+        delta = damage - base_damage
+        defender.stats["health"] = max(0, defender.stats.get("health", 0) - delta)
     defeated = int(not defender.is_alive())
     if critical:
         msg = f"{attacker.name} critically hits {defender.name} for {damage} damage."
@@ -185,6 +210,12 @@ def resolve_enemy_turn(enemy: Entity, player: Entity) -> List[Event]:
     elif action == "defend":
         enemy.status.extend(["defend_damage", "defend_attack"])
         events.append(StatusApplied(f"{enemy.name} defends.", enemy.name, "defend", 1))
+    elif action == "heavy_attack":
+        enemy.status.append("heavy")
+        events.append(resolve_attack(enemy, player))
+    elif action == "wild_attack":
+        enemy.status.append("wild")
+        events.append(resolve_attack(enemy, player))
     else:
         events.append(resolve_attack(enemy, player))
 
