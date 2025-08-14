@@ -99,7 +99,9 @@ def load_companions() -> List[Companion]:
 
 
 @lru_cache(maxsize=None)
-def load_event_defs() -> Tuple[List[type[BaseEvent]], List[float], Dict[str, int], List[type[BaseEvent]]]:
+def load_event_defs() -> (
+    Tuple[List[type[BaseEvent]], List[float], Dict[str, int], List[type[BaseEvent]]]
+):
     """Load event definitions including signature encounters."""
     path = DATA_DIR / "events_extended.json"
     with open(path, encoding="utf-8") as f:

@@ -18,7 +18,6 @@ from .dungeon import DungeonBase
 from .entities import SKILL_DEFS, Player
 from .i18n import set_language
 
-
 logger = logging.getLogger(__name__)
 
 

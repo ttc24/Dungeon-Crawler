@@ -87,9 +87,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
 
     def place_near_start(obj, max_dist):
         candidates = [
-            pos
-            for pos in available
-            if abs(pos[0] - start[0]) + abs(pos[1] - start[1]) <= max_dist
+            pos for pos in available if abs(pos[0] - start[0]) + abs(pos[1] - start[1]) <= max_dist
         ]
         random.shuffle(candidates)
         if candidates:
