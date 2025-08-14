@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from typing import List
 
+from .data import load_items
 from .entity import Entity
 from .events import AttackResolved, Event, IntentTelegraphed, StatusApplied
 
@@ -119,7 +120,8 @@ def resolve_player_action(player: Entity, enemy: Entity, action: str) -> List[Ev
     elif action == "use_health_potion":
         if "potion" in player.inventory:
             player.inventory.remove("potion")
-            heal = player.stats.get("potion_heal", 20)
+            potion = load_items().get("potion", {})
+            heal = player.stats.get("potion_heal", potion.get("potion_heal", 20))
             max_hp = player.stats.get("max_health", player.stats.get("health", 0))
             new_hp = min(max_hp, player.stats.get("health", 0) + heal)
             player.stats["health"] = new_hp

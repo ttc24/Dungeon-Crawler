@@ -6,6 +6,10 @@ from dataclasses import dataclass
 import random
 from typing import Callable, List, Optional, Tuple
 
+from .data import load_events
+
+EVENT_DATA = load_events()
+
 
 @dataclass
 class Event:
@@ -78,9 +82,10 @@ class Fountain:
         player's ``status`` list.
     """
 
-    uses: int = 2
-    bless_chance: float = 0.3
-    curse_chance: float = 0.1
+    uses: int = EVENT_DATA.get("fountain", {}).get("uses", 2)
+    bless_chance: float = EVENT_DATA.get("fountain", {}).get("bless_chance", 0.3)
+    curse_chance: float = EVENT_DATA.get("fountain", {}).get("curse_chance", 0.1)
+    rarity: str = EVENT_DATA.get("fountain", {}).get("rarity", "common")
 
     def interact(self, player, action: str) -> List[Event]:
         """Return a list of events produced by interacting with the fountain."""
@@ -157,10 +162,11 @@ class LockedCache:
     style :class:`Event` message is returned to hint at its location.
     """
 
-    loot: str = "gold"
-    key_name: str = "cache_key"
+    loot: str = EVENT_DATA.get("locked_cache", {}).get("loot", "gold")
+    key_name: str = EVENT_DATA.get("locked_cache", {}).get("key_name", "cache_key")
     opened: bool = False
     key_spawned: bool = False
+    rarity: str = EVENT_DATA.get("locked_cache", {}).get("rarity", "rare")
 
     def interact(self, player, spawn_key: Callable[[str], None]) -> List[Event]:
         events: List[Event] = []
