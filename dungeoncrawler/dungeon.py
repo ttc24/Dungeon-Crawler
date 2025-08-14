@@ -26,6 +26,7 @@ from .entities import SKILL_DEFS, Companion, Enemy, Player
 from .items import Armor, Item, Trinket, Weapon
 from .plugins import apply_enemy_plugins, apply_item_plugins
 from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
+from .events import CacheEvent
 from .rendering import Renderer, render_map_string
 from .stats_logger import StatsLogger
 
