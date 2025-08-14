@@ -7,7 +7,11 @@ from dungeoncrawler.core.combat import (
 from dungeoncrawler.core.entity import Entity
 
 
-def test_defend_reduces_damage_and_boosts_hit():
+def test_defend_reduces_damage_and_boosts_hit(monkeypatch):
+    rolls = iter([1, 100])
+    monkeypatch.setattr(
+        "dungeoncrawler.core.combat.random.randint", lambda a, b: next(rolls)
+    )
     player = Entity("Hero", {"health": 10, "attack": 5, "speed": 5})
     enemy = Entity("Gob", {"health": 10, "attack": 10, "speed": 5})
     resolve_player_action(player, enemy, "defend")
@@ -21,7 +25,11 @@ def test_defend_reduces_damage_and_boosts_hit():
     assert "defend_attack" not in player.status
 
 
-def test_flee_action_speed_difference():
+def test_flee_action_speed_difference(monkeypatch):
+    rolls = iter([1, 100, 1, 100])
+    monkeypatch.setattr(
+        "dungeoncrawler.core.combat.random.randint", lambda a, b: next(rolls)
+    )
     fast = Entity("Hero", {"health": 10, "speed": 15})
     slow_enemy = Entity("Gob", {"health": 10, "speed": 5})
     events = resolve_player_action(fast, slow_enemy, "flee")
@@ -37,7 +45,8 @@ def test_flee_action_speed_difference():
     assert "advantage" not in fast_enemy.status
 
 
-def test_critical_hits_double_damage():
+def test_critical_hits_double_damage(monkeypatch):
+    monkeypatch.setattr("dungeoncrawler.core.combat.random.randint", lambda a, b: 1)
     attacker = Entity("A", {"health": 10, "attack": 5, "crit": 150})
     defender = Entity("D", {"health": 20, "defense": 1})
     event = resolve_attack(attacker, defender)

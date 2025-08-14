@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from typing import List
 
+import random
+
 from .data import load_items
 from .entity import Entity
 from .events import AttackResolved, Event, IntentTelegraphed, StatusApplied
@@ -80,12 +82,12 @@ def resolve_attack(attacker: Entity, defender: Entity) -> AttackResolved:
     """Resolve a basic attack from ``attacker`` to ``defender``."""
 
     hit = calculate_hit(attacker, defender)
-    if hit < 50:
+    if random.randint(1, 100) > hit:
         msg = f"{attacker.name} misses {defender.name}."
         return AttackResolved(msg, attacker.name, defender.name, 0, 0)
 
     crit_chance = calculate_crit(attacker, defender)
-    critical = crit_chance >= 100
+    critical = random.randint(1, 100) <= crit_chance
     damage = calculate_damage(attacker, defender, critical)
     defeated = int(not defender.is_alive())
     if critical:
@@ -141,7 +143,8 @@ def resolve_player_action(player: Entity, enemy: Entity, action: str) -> List[Ev
     elif action == "flee":
         speed_diff = player.stats.get("speed", 0) - enemy.stats.get("speed", 0)
         chance = max(10, min(90, 40 + speed_diff * 5))
-        success = int(chance > 50)
+        roll = random.randint(1, 100)
+        success = int(roll <= chance)
         if success:
             msg = f"{player.name} flees from {enemy.name}."
         else:

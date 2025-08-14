@@ -3,7 +3,11 @@ from dungeoncrawler.core.entity import Entity, make_enemy
 from dungeoncrawler.core.events import AttackResolved, IntentTelegraphed, StatusApplied
 
 
-def test_telegraph_precedes_action():
+def test_telegraph_precedes_action(monkeypatch):
+    rolls = iter([1, 100])
+    monkeypatch.setattr(
+        "dungeoncrawler.core.combat.random.randint", lambda a, b: next(rolls)
+    )
     player = Entity("Hero", {"health": 10})
     enemy = make_enemy("Goblin Skirm")
     events = resolve_enemy_turn(enemy, player)
@@ -11,7 +15,11 @@ def test_telegraph_precedes_action():
     assert isinstance(events[1], AttackResolved)
 
 
-def test_defend_consumption():
+def test_defend_consumption(monkeypatch):
+    rolls = iter([1, 100, 1, 100])
+    monkeypatch.setattr(
+        "dungeoncrawler.core.combat.random.randint", lambda a, b: next(rolls)
+    )
     player = Entity("Hero", {"health": 20, "attack": 8})
     enemy = make_enemy("Guard Beetle")
     events = resolve_enemy_turn(enemy, player)

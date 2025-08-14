@@ -8,7 +8,8 @@ from dungeoncrawler.core.events import AttackResolved, IntentTelegraphed, Status
 from dungeoncrawler.core.map import GameMap
 
 
-def test_attack_returns_event():
+def test_attack_returns_event(monkeypatch):
+    monkeypatch.setattr("dungeoncrawler.core.combat.random.randint", lambda a, b: 1)
     attacker = Entity("A", {"health": 10, "attack": 5})
     defender = Entity("D", {"health": 8, "defense": 1})
     event = resolve_attack(attacker, defender)
@@ -35,7 +36,11 @@ def test_use_potion_event():
     assert events[0].value == 5
 
 
-def test_enemy_turn_returns_attack_event():
+def test_enemy_turn_returns_attack_event(monkeypatch):
+    rolls = iter([1, 100])
+    monkeypatch.setattr(
+        "dungeoncrawler.core.combat.random.randint", lambda a, b: next(rolls)
+    )
     player = Entity("Hero", {"health": 10})
     enemy = Entity("Gob", {"health": 5, "attack": 3})
     events = resolve_enemy_turn(enemy, player)
