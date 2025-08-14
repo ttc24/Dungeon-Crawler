@@ -16,5 +16,10 @@
     "Enchantment": 2,
     "Sanctuary": 2,
     "Blacksmith": 1
-  }
+  },
+  "signature": [
+    "ShrineGauntletEvent",
+    "PuzzleChamberEvent",
+    "EscortMissionEvent"
+  ]
 }

@@ -18,6 +18,9 @@ from .events import (
     PuzzleEvent,
     ShrineEvent,
     TrapEvent,
+    ShrineGauntletEvent,
+    PuzzleChamberEvent,
+    EscortMissionEvent,
 )
 from .items import Armor, Item, Trinket, Weapon
 
@@ -35,6 +38,9 @@ EVENT_CLASS_MAP = {
         ShrineEvent,
         MiniQuestHookEvent,
         HazardEvent,
+        ShrineGauntletEvent,
+        PuzzleChamberEvent,
+        EscortMissionEvent,
     ]
 }
 
@@ -92,8 +98,8 @@ def load_companions() -> List[Companion]:
 
 
 @lru_cache(maxsize=None)
-def load_event_defs() -> Tuple[List[type], List[float], Dict[str, int]]:
-    """Load random event classes/weights and dungeon event placement counts."""
+def load_event_defs() -> Tuple[List[type], List[float], Dict[str, int], List[type]]:
+    """Load event definitions including signature encounters."""
     path = DATA_DIR / "events_extended.json"
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
@@ -106,5 +112,11 @@ def load_event_defs() -> Tuple[List[type], List[float], Dict[str, int]]:
             events.append(cls)
             weights.append(weight)
 
+    signature: List[type] = []
+    for name in data.get("signature", []):
+        cls = EVENT_CLASS_MAP.get(name)
+        if cls:
+            signature.append(cls)
+
     dungeon_events: Dict[str, int] = data.get("dungeon", {})
-    return events, weights, dungeon_events
+    return events, weights, dungeon_events, signature

@@ -23,18 +23,6 @@ from .constants import (
 )
 from .data import load_items
 from .entities import SKILL_DEFS, Companion, Enemy, Player
-from .events import (
-    CacheEvent,
-    FountainEvent,
-    HazardEvent,
-    LoreNoteEvent,
-    MiniQuestHookEvent,
-    ShrineEvent,
-    TrapEvent,
-    ShrineGauntletEvent,
-    PuzzleChamberEvent,
-    EscortMissionEvent,
-)
 from .items import Armor, Item, Trinket, Weapon
 from .plugins import apply_enemy_plugins, apply_item_plugins
 from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
@@ -294,6 +282,7 @@ class DungeonBase:
             self.random_events,
             self.random_event_weights,
             self.default_place_counts,
+            self.signature_events,
         ) = data.load_event_defs()
         self.riddles = RIDDLES
         self.enemy_stats = ENEMY_STATS
@@ -1186,6 +1175,13 @@ class DungeonBase:
             event = event_cls()
             event.trigger(self)
 
+    def trigger_signature_event(self) -> None:
+        """Select and trigger one signature event from the curated pool."""
+        if not self.signature_events:
+            return
+        event_cls = random.choice(self.signature_events)
+        event_cls().trigger(self)
+
     # Floor-specific events keep gameplay varied without hardcoding logic in
     # play_game. Additional floors can be added here easily.
     def trigger_floor_event(self, floor):
@@ -1217,64 +1213,48 @@ class DungeonBase:
     def _floor_one_event(self):
         print(_("The crowd roars as you step into the arena for the first time."))
         self.offer_class()
-        event_cls = random.choice([FountainEvent, CacheEvent])
-        event_cls().trigger(self)
+        self.trigger_signature_event()
 
     def _floor_two_event(self):
         self.offer_guild()
-        options = [CacheEvent, TrapEvent, LoreNoteEvent]
-        for __ in range(random.randint(1, 2)):
-            random.choice(options)().trigger(self)
+        self.trigger_signature_event()
 
     def _floor_three_event(self):
         self.offer_race()
-        options = [ShrineEvent, MiniQuestHookEvent, HazardEvent]
-        for __ in range(2):
-            random.choice(options)().trigger(self)
+        self.trigger_signature_event()
 
     def _floor_four_event(self):
-        print(_("A sealed chamber of puzzles blocks your advance."))
-        PuzzleChamberEvent().trigger(self)
+        self.trigger_signature_event()
 
     def _floor_five_event(self):
-        print(_("A mysterious merchant sets up shop, selling exotic wares."))
+        self.trigger_signature_event()
 
     def _floor_six_event(self):
-        print(_("You enter a corridor lined with shrines."))
-        ShrineGauntletEvent().trigger(self)
+        self.trigger_signature_event()
 
     def _floor_seven_event(self):
-        print(_("A timid figure begs to be escorted to safety."))
-        EscortMissionEvent().trigger(self)
+        self.trigger_signature_event()
 
     def _floor_eight_event(self):
-        print(_("You stumble upon a radiant shrine, filling you with determination."))
-        self.grant_inspiration()
+        self.trigger_signature_event()
 
     def _floor_nine_event(self):
-        print(_("Arcane puzzles hum in the air around you."))
-        PuzzleChamberEvent().trigger(self)
+        self.trigger_signature_event()
 
     def _floor_ten_event(self):
-        print(_("Shrines test your resolve at every turn."))
-        ShrineGauntletEvent().trigger(self)
+        self.trigger_signature_event()
 
     def _floor_eleven_event(self):
-        print(_("A desperate prisoner seeks an escort."))
-        EscortMissionEvent().trigger(self)
+        self.trigger_signature_event()
 
     def _floor_twelve_event(self):
-        print(_("You wander into a hall of bewildering puzzles."))
-        PuzzleChamberEvent().trigger(self)
+        self.trigger_signature_event()
 
     def _floor_thirteen_event(self):
-        print(_("The shrine gauntlet returns, more daunting than before."))
-        ShrineGauntletEvent().trigger(self)
+        self.trigger_signature_event()
 
     def _floor_fourteen_event(self):
-        print(_("A wounded scout pleads for an escort."))
-        EscortMissionEvent().trigger(self)
+        self.trigger_signature_event()
 
     def _floor_fifteen_event(self):
-        print(_("A robed sage blocks your path, offering a riddle challenge."))
-        self.riddle_challenge()
+        self.trigger_signature_event()
