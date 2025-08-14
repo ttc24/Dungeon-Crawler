@@ -1,6 +1,6 @@
 import random
 
-from dungeoncrawler.entities import Player, Enemy
+from dungeoncrawler.entities import Enemy, Player
 
 
 def test_novice_luck_hit_bonus(monkeypatch):

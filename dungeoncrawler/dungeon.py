@@ -936,16 +936,12 @@ class DungeonBase:
         try:
             runs = int(parts[2])
         except ValueError:
-            self.renderer.show_message(
-                self.queue_message(_("Invalid run count"), output_func=None)
-            )
+            self.renderer.show_message(self.queue_message(_("Invalid run count"), output_func=None))
             return
         from .sim import simulate_battles
 
         stats = simulate_battles(enemy_name, runs, seed=42)
-        msg = _(
-            f"Winrate: {stats['winrate']:.2%} | Avg TTK: {stats['avg_turns']:.2f}"
-        )
+        msg = _(f"Winrate: {stats['winrate']:.2%} | Avg TTK: {stats['avg_turns']:.2f}")
         self.renderer.show_message(self.queue_message(msg, output_func=None))
 
     def show_codex(self, output_func=print):
