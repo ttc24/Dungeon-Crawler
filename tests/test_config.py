@@ -81,6 +81,16 @@ def test_unknown_keys_preserved(tmp_path):
     assert cfg.extras["future_option"] == 42
 
 
+def test_non_dict_config_returns_defaults(tmp_path):
+    cfg_file = tmp_path / "config.json"
+    # A valid JSON file that does not contain a dictionary should not raise
+    # an exception and should fall back to default configuration values.
+    cfg_file.write_text("[]")
+    cfg = load_config(cfg_file)
+    assert cfg.max_floors == 18
+    assert cfg.extras == {}
+
+
 def test_key_repeat_delay_validation(tmp_path):
     cfg_file = tmp_path / "config.json"
     cfg_file.write_text(json.dumps({"key_repeat_delay": -1}))
