@@ -123,3 +123,99 @@ ARCHETYPES = {
     "Beetle": {"aggressive": 1, "defensive": 3, "unpredictable": 1},
     "Acolyte": {"aggressive": 2, "defensive": 1, "unpredictable": 2},
 }
+
+# Telegraphs for bosses to foreshadow their unique mechanics
+IntentAI.TELEGRAPHS.update(
+    {
+        "Bone Tyrant": {
+            "aggressive": "Bone Tyrant hefts its club for a crushing blow.",
+            "defensive": "Bone Tyrant knits stray bones into a shield.",
+            "unpredictable": "Bone Tyrant rattles erratically, bones spiraling.",
+        },
+        "Inferno Golem": {
+            "aggressive": "Inferno Golem's core flares for a magma punch.",
+            "defensive": "Inferno Golem's lava skin hardens into rock.",
+            "unpredictable": "Flames dance wildly around the Inferno Golem.",
+        },
+        "Shadow Reaver": {
+            "aggressive": "Shadow Reaver fades then lunges from the darkness.",
+            "defensive": "Shadow Reaver cloaks itself in shadow.",
+            "unpredictable": "Shadow Reaver flickers unpredictably.",
+        },
+        "Void Serpent": {
+            "aggressive": "Void Serpent coils, void energy crackling.",
+            "defensive": "Void Serpent slips into an ethereal stance.",
+            "unpredictable": "Void Serpent warps space erratically.",
+        },
+        "Grave Monarch": {
+            "aggressive": "Grave Monarch raises its scythe for a soul-cleaving arc.",
+            "defensive": "Grave Monarch summons tombstone shields.",
+            "unpredictable": "Grave Monarch mutters necrotic rites unpredictably.",
+        },
+        "Frost Warden": {
+            "aggressive": "Frost Warden gathers icy winds for a chilling strike.",
+            "defensive": "Frost Warden encases itself in ice.",
+            "unpredictable": "Frost Warden's blizzard swirls unpredictably.",
+        },
+        "Ember Lord": {
+            "aggressive": "Ember Lord ignites embers for a blazing lash.",
+            "defensive": "Ember Lord surrounds itself with a ring of fire.",
+            "unpredictable": "Sparks whirl erratically around the Ember Lord.",
+        },
+        "Glacier Fiend": {
+            "aggressive": "Glacier Fiend raises frozen claws for a heavy swing.",
+            "defensive": "Glacier Fiend reinforces its icy hide.",
+            "unpredictable": "Glacier Fiend crackles, ice shards darting.",
+        },
+        "Storm Reaper": {
+            "aggressive": "Storm Reaper crackles with lightning, ready to cleave.",
+            "defensive": "Storm Reaper channels static into a barrier.",
+            "unpredictable": "Storm Reaper's aura flickers with erratic sparks.",
+        },
+        "Doom Bringer": {
+            "aggressive": "Doom Bringer roars, axe poised for devastation.",
+            "defensive": "Doom Bringer braces behind its massive axe.",
+            "unpredictable": "Doom Bringer's stance shifts unpredictably.",
+        },
+        "Arcane Sentinel": {
+            "aggressive": "Arcane Sentinel charges a beam of raw energy.",
+            "defensive": "Arcane Sentinel conjures a shimmering ward.",
+            "unpredictable": "Arcane Sentinel's runes flare unpredictably.",
+        },
+        "Blight Matron": {
+            "aggressive": "Blight Matron readies a venomous lash.",
+            "defensive": "Blight Matron oozes toxins as a protective veil.",
+            "unpredictable": "Blight Matron's spores drift unpredictably.",
+        },
+        "Chaos Djinn": {
+            "aggressive": "Chaos Djinn whirls up a storm of blades.",
+            "defensive": "Chaos Djinn twists into a protective whirlwind.",
+            "unpredictable": "Chaos Djinn's form distorts unpredictably.",
+        },
+        "Dread Colossus": {
+            "aggressive": "Dread Colossus raises its hammer for a quake.",
+            "defensive": "Dread Colossus plants its feet, stone skin thickening.",
+            "unpredictable": "Dread Colossus lurches in unpredictable stomps.",
+        },
+        "Ethereal Harvester": {
+            "aggressive": "Ethereal Harvester sweeps its scythe in a ghostly arc.",
+            "defensive": "Ethereal Harvester fades partially out of phase.",
+            "unpredictable": "Ethereal Harvester flickers between realms.",
+        },
+        "Feral Juggernaut": {
+            "aggressive": "Feral Juggernaut snarls, muscles bulging for a charge.",
+            "defensive": "Feral Juggernaut hunkers down, hide toughening.",
+            "unpredictable": "Feral Juggernaut paces erratically.",
+        },
+        "Gloom Shade": {
+            "aggressive": "Gloom Shade reaches out with grasping darkness.",
+            "defensive": "Gloom Shade melds with surrounding shadows.",
+            "unpredictable": "Gloom Shade's silhouette warps unpredictably.",
+        },
+        "Hex King": {
+            "aggressive": "Hex King chants a ruinous spell.",
+            "defensive": "Hex King weaves a lattice of cursed sigils.",
+            "unpredictable": "Hex King's curses spiral unpredictably.",
+        },
+    }
+)

@@ -34,8 +34,7 @@
       "Bandit"
     ],
     "bosses": [
-      "Inferno Golem",
-      "Frost Warden"
+      "Inferno Golem"
     ],
     "places": {
       "Trap": 3,
@@ -57,8 +56,7 @@
       "Werewolf"
     ],
     "bosses": [
-      "Shadow Reaver",
-      "Doom Bringer"
+      "Shadow Reaver"
     ],
     "places": {
       "Trap": 3,
@@ -80,9 +78,7 @@
       "Lich"
     ],
     "bosses": [
-      "Void Serpent",
-      "Ember Lord",
-      "Glacier Fiend"
+      "Void Serpent"
     ],
     "places": {
       "Trap": 4,
@@ -104,8 +100,7 @@
       "Beholder"
     ],
     "bosses": [
-      "Grave Monarch",
-      "Storm Reaper"
+      "Grave Monarch"
     ],
     "places": {
       "Trap": 4,
@@ -127,8 +122,7 @@
       "Shade"
     ],
     "bosses": [
-      "Bone Tyrant",
-      "Inferno Golem"
+      "Frost Warden"
     ],
     "places": {
       "Trap": 5,
@@ -150,8 +144,7 @@
       "Gargoyle"
     ],
     "bosses": [
-      "Frost Warden",
-      "Shadow Reaver"
+      "Ember Lord"
     ],
     "places": {
       "Trap": 5,
@@ -173,8 +166,7 @@
       "Werewolf"
     ],
     "bosses": [
-      "Doom Bringer",
-      "Void Serpent"
+      "Glacier Fiend"
     ],
     "places": {
       "Trap": 5,
@@ -196,8 +188,7 @@
       "Warlock"
     ],
     "bosses": [
-      "Ember Lord",
-      "Glacier Fiend"
+      "Storm Reaper"
     ],
     "places": {
       "Trap": 6,
@@ -219,8 +210,7 @@
       "Minotaur"
     ],
     "bosses": [
-      "Grave Monarch",
-      "Storm Reaper"
+      "Doom Bringer"
     ],
     "places": {
       "Trap": 6,
@@ -242,9 +232,7 @@
       "Shade"
     ],
     "bosses": [
-      "Bone Tyrant",
-      "Inferno Golem",
-      "Frost Warden"
+      "Arcane Sentinel"
     ],
     "places": {
       "Trap": 7,
@@ -266,9 +254,7 @@
       "Warlock"
     ],
     "bosses": [
-      "Shadow Reaver",
-      "Doom Bringer",
-      "Void Serpent"
+      "Blight Matron"
     ],
     "places": {
       "Trap": 7,
@@ -290,9 +276,7 @@
       "Lich"
     ],
     "bosses": [
-      "Ember Lord",
-      "Glacier Fiend",
-      "Grave Monarch"
+      "Chaos Djinn"
     ],
     "places": {
       "Trap": 8,
@@ -314,7 +298,7 @@
       "Dark Knight"
     ],
     "bosses": [
-      "Storm Reaper"
+      "Dread Colossus"
     ],
     "places": {
       "Trap": 8,
@@ -336,8 +320,7 @@
       "Minotaur"
     ],
     "bosses": [
-      "Doom Bringer",
-      "Void Serpent"
+      "Ethereal Harvester"
     ],
     "places": {
       "Trap": 9,
@@ -359,8 +342,7 @@
       "Giant Spider"
     ],
     "bosses": [
-      "Ember Lord",
-      "Glacier Fiend"
+      "Feral Juggernaut"
     ],
     "places": {
       "Trap": 9,
@@ -382,8 +364,7 @@
       "Warlock"
     ],
     "bosses": [
-      "Grave Monarch",
-      "Storm Reaper"
+      "Gloom Shade"
     ],
     "places": {
       "Trap": 9,
@@ -405,9 +386,7 @@
       "Dark Knight"
     ],
     "bosses": [
-      "Bone Tyrant",
-      "Doom Bringer",
-      "Void Serpent"
+      "Hex King"
     ],
     "places": {
       "Trap": 10,

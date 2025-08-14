@@ -26,11 +26,10 @@ and the *Infernal resistance* trait, whereas Dragonborn receive +2 health,
 
 Boss Encounters
 ---------------
-Each floor culminates in a boss battle. Every boss showcases a distinctive
-mechanic—such as a channelled nuke that must be interrupted, a summoner that
-spawns adds, or a teleporting assassin—to keep encounters fresh. Defeating a
-boss always grants a guaranteed reward like rare loot, a permanent stat boost,
-or a choice of upgrades.
+Each floor culminates in a boss battle against a foe unique to that level.
+Bosses telegraph their intentions so observant players can react to heavy
+attacks or defensive postures. Defeating a boss now awards the entire loot
+table associated with that encounter, guaranteeing meaningful rewards.
 
 Special Events
 --------------
