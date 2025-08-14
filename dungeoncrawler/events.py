@@ -8,6 +8,7 @@ from functools import lru_cache
 from gettext import gettext as _
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypedDict
+from abc import ABC, abstractmethod
 
 from .items import Item
 from .quests import EscortNPC, EscortQuest
@@ -37,14 +38,14 @@ def load_event_config() -> dict[str, Any]:
 EVENT_CONFIG = load_event_config()
 
 
-class BaseEvent:
+class BaseEvent(ABC):
     """Abstract base class for all events."""
 
+    @abstractmethod
     def trigger(
         self, game: "DungeonBase", input_func=input, output_func=print
     ) -> None:  # pragma: no cover - interface
         """Execute the event."""
-        raise NotImplementedError
 
 
 class MerchantEvent(BaseEvent):
