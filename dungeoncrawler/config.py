@@ -162,6 +162,16 @@ def settings_menu(
         except ValueError:
             output_func(f"Invalid value for {key!r}; keeping {current}.")
             continue
+        valid = True
+        if key in {"screen_width", "screen_height"}:
+            valid = isinstance(value, int) and value > 0
+        elif key == "trap_chance":
+            valid = isinstance(value, (int, float)) and 0 <= float(value) <= 1
+        elif key in {"enemy_hp_mult", "enemy_dmg_mult", "loot_mult"}:
+            valid = isinstance(value, (int, float)) and float(value) > 0
+        if not valid:
+            output_func(f"Invalid value for {key!r}; keeping {current}.")
+            continue
         setattr(cfg, key, value)
 
     save_config(cfg, path)
