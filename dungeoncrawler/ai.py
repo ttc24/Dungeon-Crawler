@@ -25,7 +25,10 @@ class IntentAI:
     Each enemy configured with this AI chooses between Aggressive,
     Defensive and Unpredictable intents every turn according to the
     provided weights.  The chosen intent is *telegraphed* to the player in
-    advance so they can react during their turn.
+    advance so they can react during their turn. Aggressive intents may
+    unleash a ``heavy_attack`` for increased damage, while Unpredictable
+    intents can result in a ``wild_attack`` that trades accuracy for a
+    powerful blow.
 
     Parameters
     ----------
