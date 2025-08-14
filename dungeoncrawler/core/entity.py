@@ -84,7 +84,8 @@ ARCHETYPES: Dict[str, ArchetypeData] = _load_archetypes()
 def make_enemy(archetype: str) -> Entity:
     """Create an :class:`Entity` for the given enemy archetype."""
 
-    data = ARCHETYPES[archetype]
-    stats = dict(data["stats"])
+    data: ArchetypeData = ARCHETYPES[archetype]
+    stats: Dict[str, int] = dict(data["stats"])
     intent_gen = data["intent"]()
-    return Entity(archetype, stats, intent=intent_gen, rarity=data["rarity"])
+    rarity: str = data["rarity"]
+    return Entity(archetype, stats, intent=intent_gen, rarity=rarity)

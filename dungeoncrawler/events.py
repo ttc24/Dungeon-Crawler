@@ -7,11 +7,13 @@ import random
 from functools import lru_cache
 from gettext import gettext as _
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, TypedDict
 
 from .items import Item
 from .quests import EscortNPC, EscortQuest
 from .status_effects import add_status_effect
+
+# pylint: disable=too-few-public-methods
 
 if TYPE_CHECKING:  # pragma: no cover - for type checkers only
     from .dungeon import DungeonBase
@@ -21,12 +23,12 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 
 @lru_cache(maxsize=None)
-def load_event_config():
+def load_event_config() -> dict[str, Any]:
     """Load event configuration from the JSON file in :data:`DATA_DIR`."""
 
     path = DATA_DIR / "events.json"
     try:
-        with open(path, encoding="utf-8") as f:
+        with path.open(encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
         return {}
@@ -41,20 +43,25 @@ class BaseEvent:
     def trigger(
         self, game: "DungeonBase", input_func=input, output_func=print
     ) -> None:  # pragma: no cover - interface
+        """Execute the event."""
         raise NotImplementedError
 
 
 class MerchantEvent(BaseEvent):
     """Open the in-game shop."""
 
-    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+    def trigger(
+        self, game: "DungeonBase", input_func=input, output_func=print
+    ) -> None:
         game.shop(input_func=input_func, output_func=output_func)
 
 
 class PuzzleEvent(BaseEvent):
     """Present a riddle that rewards gold when solved."""
 
-    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+    def trigger(
+        self, game: "DungeonBase", input_func=input, output_func=print
+    ) -> None:
         riddle, answer = random.choice(game.riddles)
         output_func(_("A sage presents a riddle:\n") + riddle)
         response = input_func(_("Answer: ")).strip().lower()
@@ -71,12 +78,15 @@ class TrapEvent(BaseEvent):
     """Hidden hazard that can be spotted and avoided."""
 
     def __init__(self) -> None:
+        """Set up trap properties from configuration."""
         cfg = EVENT_CONFIG.get("trap", {})
         self.detect_base = cfg.get("detect_base", 0.30)
         self.disarm_cost = cfg.get("disarm_cost", 15)
         self.bleed_chance = cfg.get("bleed_chance", 0.3)
 
-    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+    def trigger(
+        self, game: "DungeonBase", input_func=input, output_func=print
+    ) -> None:
         intros = [
             _("A chill runs down your spine."),
             _("The corridor ahead feels oddly dangerous."),
@@ -93,7 +103,9 @@ class TrapEvent(BaseEvent):
             if input_func is input:
                 action = "n"
             else:
-                prompt = _(f"Disarm (d) [{self.disarm_cost} STA] or step around (s)? ")
+                prompt = _(
+                    f"Disarm (d) [{self.disarm_cost} STA] or step around (s)? "
+                )
                 action = input_func(prompt).strip().lower()
             if action == "d" and game.player.stamina >= self.disarm_cost:
                 game.player.stamina -= self.disarm_cost
@@ -117,12 +129,15 @@ class FountainEvent(BaseEvent):
     """Cracked fountain that can heal or provide a potion."""
 
     def __init__(self) -> None:
+        """Initialise fountain configuration values."""
         cfg = EVENT_CONFIG.get("fountain", {})
         self.remaining_uses = cfg.get("uses", 2)
         self.bless_chance = cfg.get("bless_chance", 0.3)
         self.curse_chance = cfg.get("curse_chance", 0.1)
 
-    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+    def trigger(
+        self, game: "DungeonBase", input_func=input, output_func=print
+    ) -> None:
         if self.remaining_uses <= 0:
             output_func(_("The fountain is dry."))
             return
@@ -138,8 +153,12 @@ class FountainEvent(BaseEvent):
             choice = input_func(_("Choice: ")).strip().lower()
             if choice == "d":
                 heal = random.randint(6, 10)
-                game.player.health = min(game.player.max_health, game.player.health + heal)
-                output_func(_(f"You feel refreshed and recover {heal} health."))
+                game.player.health = min(
+                    game.player.max_health, game.player.health + heal
+                )
+                output_func(
+                    _(f"You feel refreshed and recover {heal} health.")
+                )
                 game.stats_logger.record_reward()
                 roll = random.random()
                 if roll < self.bless_chance:
@@ -147,7 +166,9 @@ class FountainEvent(BaseEvent):
                 elif roll < self.bless_chance + self.curse_chance:
                     add_status_effect(game.player, "cursed", 30)
             elif choice == "b":
-                game.player.inventory.append(Item("Fountain Water", "Restores 4-6 health"))
+                game.player.inventory.append(
+                    Item("Fountain Water", "Restores 4-6 health")
+                )
                 output_func(_("You bottle the shimmering water for later."))
                 game.stats_logger.record_reward()
             else:
@@ -161,7 +182,9 @@ class FountainEvent(BaseEvent):
 class CacheEvent(BaseEvent):
     """Hidden cache that rewards gold."""
 
-    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+    def trigger(
+        self, game: "DungeonBase", input_func=input, output_func=print
+    ) -> None:
         intros = [
             _("A loose stone reveals a hidden cache."),
             _("Behind a crumbled wall lies a secret stash."),
@@ -174,11 +197,20 @@ class CacheEvent(BaseEvent):
         game.stats_logger.record_reward()
 
 
+class LoreNote(TypedDict, total=False):
+    """Lore note entry loaded from configuration."""
+
+    text: str
+    effect: tuple[str, int]
+
+
 class LoreNoteEvent(BaseEvent):
     """Reveal a snippet of lore."""
 
-    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
-        notes: list[dict[str, Any]] = [
+    def trigger(
+        self, game: "DungeonBase", input_func=input, output_func=print
+    ) -> None:
+        notes: list[LoreNote] = [
             {"text": _("The walls whisper of an ancient battle.")},
             {"text": _("Scrawled handwriting reads: 'Beware the shadows.'")},
             {"text": _("A faded map hints at deeper treasures.")},
@@ -196,19 +228,22 @@ class LoreNoteEvent(BaseEvent):
         player = game.player
         if player and note["text"] not in player.codex:
             player.codex.append(note["text"])
-        if player and "effect" in note:
-            effect, duration = note["effect"]
-            add_status_effect(player, effect, duration)
+        effect = note.get("effect")
+        if player and effect is not None:
+            add_status_effect(player, effect[0], effect[1])
 
 
 class ShrineEvent(BaseEvent):
     """Offer blessings or curses at a shrine."""
 
     def __init__(self) -> None:
+        """Initialise shrine configuration values."""
         cfg = EVENT_CONFIG.get("shrine", {})
         self.prayer_boon = cfg.get("prayer_boon_chance", 0.6)
 
-    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+    def trigger(
+        self, game: "DungeonBase", input_func=input, output_func=print
+    ) -> None:
         output_func(_("You discover a tranquil shrine with two altars."))
         output_func(_("[V] Altar of Valor (+1 STR until next floor)"))
         output_func(_("[W] Altar of Wisdom (+1 INT until next floor)"))
@@ -228,7 +263,9 @@ class ShrineEvent(BaseEvent):
             output_func("     /\\")
             if random.random() < self.prayer_boon:
                 heal = random.randint(8, 12)
-                game.player.health = min(game.player.max_health, game.player.health + heal)
+                game.player.health = min(
+                    game.player.max_health, game.player.health + heal
+                )
                 output_func(_(f"A warm light restores {heal} health."))
                 game.stats_logger.record_reward()
             else:
@@ -241,7 +278,9 @@ class ShrineEvent(BaseEvent):
 class MiniQuestHookEvent(BaseEvent):
     """Placeholder for mini-quest hooks."""
 
-    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+    def trigger(
+        self, game: "DungeonBase", input_func=input, output_func=print
+    ) -> None:
         quest = getattr(game, "active_quest", None)
         if quest:
             if quest.is_complete(game):
@@ -255,7 +294,9 @@ class MiniQuestHookEvent(BaseEvent):
             return
 
         npc = EscortNPC(_("Lost Villager"))
-        quest = EscortQuest(npc, reward=50, flavor=_("Escort the villager to the exit."))
+        quest = EscortQuest(
+            npc, reward=50, flavor=_("Escort the villager to the exit.")
+        )
         game.active_quest = quest
         output_func(_("A lost villager begs for escort."))
 
@@ -263,7 +304,9 @@ class MiniQuestHookEvent(BaseEvent):
 class HazardEvent(BaseEvent):
     """Minor environmental hazard dealing damage."""
 
-    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+    def trigger(
+        self, game: "DungeonBase", input_func=input, output_func=print
+    ) -> None:
         damage = random.randint(3, 8)
         game.player.take_damage(damage, source="Environmental Hazard")
         output_func(_(f"Falling debris hits you for {damage} damage."))
@@ -272,29 +315,41 @@ class HazardEvent(BaseEvent):
 class ShrineGauntletEvent(BaseEvent):
     """Confront a sequence of shrines one after another."""
 
-    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+    def trigger(
+        self, game: "DungeonBase", input_func=input, output_func=print
+    ) -> None:
         output_func(_("You step into a gauntlet of ancient shrines."))
         for __ in range(3):
-            ShrineEvent().trigger(game, input_func=input_func, output_func=output_func)
+            ShrineEvent().trigger(
+                game, input_func=input_func, output_func=output_func
+            )
 
 
 class PuzzleChamberEvent(BaseEvent):
     """Face multiple riddles in a single chamber."""
 
-    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+    def trigger(
+        self, game: "DungeonBase", input_func=input, output_func=print
+    ) -> None:
         output_func(_("Runes glow as puzzles surround you."))
         for __ in range(2):
-            PuzzleEvent().trigger(game, input_func=input_func, output_func=output_func)
+            PuzzleEvent().trigger(
+                game, input_func=input_func, output_func=output_func
+            )
 
 
 class EscortMissionEvent(BaseEvent):
     """Start a quest to escort a fragile NPC to safety."""
 
-    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+    def trigger(
+        self, game: "DungeonBase", input_func=input, output_func=print
+    ) -> None:
         if getattr(game, "active_quest", None):
             output_func(game.active_quest.flavor)
             return
         npc = EscortNPC(_("Wayward Acolyte"))
-        quest = EscortQuest(npc, reward=100, flavor=_("Guide the acolyte to the exit."))
+        quest = EscortQuest(
+            npc, reward=100, flavor=_("Guide the acolyte to the exit.")
+        )
         game.active_quest = quest
         output_func(_("A fearful acolyte asks for your protection."))
