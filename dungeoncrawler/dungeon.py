@@ -707,6 +707,7 @@ class DungeonBase:
                 atk_max + floor * 2,
                 defense + floor // 2,
                 random.randint(30, 60),
+                traits=self.enemy_traits.get(name),
             )
             enemy.xp = max(5, (enemy.health + enemy.attack_power + enemy.defense) // 15)
             loc = empty[0]
