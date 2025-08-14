@@ -39,6 +39,8 @@ def enemy_turn(enemy: "Enemy", player: "Player", renderer: Renderer | None = Non
                     "speed": getattr(enemy, "speed", 0),
                 },
             )
+            # Use the preselected intent so the telegraphed action is executed.
+            enemy_entity.intent = (item for item in [(enemy.next_action, enemy.intent_message)])
             player_entity = CoreEntity(
                 player.name,
                 {"health": player.health, "defense": 0, "speed": getattr(player, "speed", 0)},
@@ -48,14 +50,6 @@ def enemy_turn(enemy: "Enemy", player: "Player", renderer: Renderer | None = Non
             player.health = player_entity.stats["health"]
             for event in events:
                 renderer.handle_event(event)
-        if enemy.ai and hasattr(enemy.ai, "choose_intent"):
-            enemy.next_action, enemy.intent, enemy.intent_message = enemy.ai.choose_intent(
-                enemy, player
-            )
-        else:
-            enemy.next_action = None
-            enemy.intent = None
-            enemy.intent_message = ""
         if enemy.heavy_cd > 0:
             enemy.heavy_cd -= 1
 
@@ -81,10 +75,6 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
             f"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability else ''} Boss incoming!"
         )
     )
-    if enemy.ai and hasattr(enemy.ai, "choose_intent"):
-        enemy.next_action, enemy.intent, enemy.intent_message = enemy.ai.choose_intent(
-            enemy, player
-        )
     game.announce(f"{player.name} engages {enemy.name}!")
     while player.is_alive() and enemy.is_alive():
         skip_player = player.apply_status_effects()
@@ -92,6 +82,14 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
             companion.assist(player, enemy)
         if not enemy.is_alive():
             break
+        if enemy.ai and hasattr(enemy.ai, "choose_intent"):
+            enemy.next_action, enemy.intent, enemy.intent_message = enemy.ai.choose_intent(
+                enemy, player
+            )
+        else:
+            enemy.next_action = None
+            enemy.intent = None
+            enemy.intent_message = ""
         if skip_player:
             before = player.health
             enemy_turn(enemy, player, renderer)
