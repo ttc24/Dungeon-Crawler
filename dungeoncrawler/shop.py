@@ -27,7 +27,7 @@ def shop(
             base_price = item.price
         else:
             base_price = 10
-        price = int(base_price * config.loot_multiplier)
+        price = int(base_price * config.loot_mult)
         output_func(_(f"{i}. {item.name} - {price} Gold"))
     sell_option = len(game.shop_items) + 1
     exit_option = sell_option + 1
@@ -43,7 +43,7 @@ def shop(
                 base_price = item.price
             else:
                 base_price = 10
-            price = int(base_price * config.loot_multiplier)
+            price = int(base_price * config.loot_mult)
             if game.player.gold >= price:
                 game.player.collect_item(item)
                 game.player.gold -= price

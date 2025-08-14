@@ -64,7 +64,9 @@ def test_new_keys_default(tmp_path):
     cfg_file.write_text("{}")
     cfg = load_config(cfg_file)
     assert cfg.trap_chance == 0.1
-    assert cfg.loot_multiplier == 1.0
+    assert cfg.loot_mult == 1.0
+    assert cfg.enemy_hp_mult == 1.0
+    assert cfg.enemy_dmg_mult == 1.0
     assert cfg.verbose_combat is False
     assert cfg.slow_messages is False
     assert cfg.key_repeat_delay == 0.5
@@ -95,5 +97,18 @@ def test_bool_toggle_validation(tmp_path):
     with pytest.raises(ValueError):
         load_config(cfg_file)
     cfg_file.write_text(json.dumps({"colorblind_mode": "no"}))
+    with pytest.raises(ValueError):
+        load_config(cfg_file)
+
+
+def test_multiplier_validation(tmp_path):
+    cfg_file = tmp_path / "config.json"
+    cfg_file.write_text(json.dumps({"enemy_hp_mult": 0}))
+    with pytest.raises(ValueError):
+        load_config(cfg_file)
+    cfg_file.write_text(json.dumps({"enemy_dmg_mult": -1}))
+    with pytest.raises(ValueError):
+        load_config(cfg_file)
+    cfg_file.write_text(json.dumps({"loot_mult": 0}))
     with pytest.raises(ValueError):
         load_config(cfg_file)
