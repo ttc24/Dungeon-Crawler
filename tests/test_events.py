@@ -42,6 +42,21 @@ def test_puzzle_event_rewards_on_correct_answer():
         assert game.player.gold == gold_before + 50
 
 
+def test_puzzle_event_handles_no_riddles():
+    """Ensure the puzzle event gracefully handles an empty riddle list."""
+    game = setup_game()
+    game.riddles.clear()
+    event = PuzzleEvent()
+    # ``random.choice`` would raise IndexError if called; patch to track usage.
+    with patch("dungeoncrawler.events.random.choice") as mock_choice:
+        event.trigger(
+            game,
+            input_func=lambda _: "anything",
+            output_func=lambda _msg: None,
+        )
+    # The event should exit early without attempting to select a riddle.
+    mock_choice.assert_not_called()
+
 def test_trap_event_deals_damage():
     game = setup_game()
     event = TrapEvent()
