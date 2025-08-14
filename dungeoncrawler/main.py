@@ -177,18 +177,17 @@ def main(argv=None, input_func=input, output_func=print, cfg: Config | None = No
             output_func(_("Resuming on Floor {floor}.").format(floor=floor))
         except Exception:
             pass
-        # Fallback if the save didn't actually produce a player
         if getattr(game, "player", None) is None:
             output_func(_("No valid save found. Starting a new game…"))
             game.player = build_character(input_func=input_func, output_func=output_func)
-            if not args.skip_tutorial and not game.tutorial_complete:
-                tutorial.run(game)
     else:
         game.player = build_character(input_func=input_func, output_func=output_func)
-        if args.skip_tutorial:
-            game.tutorial_complete = True
-        elif not game.tutorial_complete:
-            tutorial.run(game)
+
+    if args.skip_tutorial:
+        game.tutorial_complete = True
+    elif not game.tutorial_complete:
+        tutorial.run(game)
+
     game.play_game()
 
 
