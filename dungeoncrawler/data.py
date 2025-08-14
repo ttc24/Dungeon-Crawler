@@ -10,17 +10,17 @@ from typing import Dict, List, Tuple
 from .entities import Companion
 from .events import (
     CacheEvent,
+    EscortMissionEvent,
     FountainEvent,
     HazardEvent,
     LoreNoteEvent,
     MerchantEvent,
     MiniQuestHookEvent,
+    PuzzleChamberEvent,
     PuzzleEvent,
     ShrineEvent,
-    TrapEvent,
     ShrineGauntletEvent,
-    PuzzleChamberEvent,
-    EscortMissionEvent,
+    TrapEvent,
 )
 from .items import Armor, Item, Trinket, Weapon
 

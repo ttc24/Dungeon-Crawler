@@ -1,4 +1,5 @@
 import json
+
 from dungeoncrawler.ai import IntentAI
 
 
@@ -12,11 +13,11 @@ class DummyEnemy:
 
 
 def test_floor_enemies_have_custom_telegraphs():
-    with open('data/floors.json') as f:
+    with open("data/floors.json") as f:
         floors = json.load(f)
     enemies = set()
     for cfg in floors.values():
-        enemies.update(cfg['enemies'])
+        enemies.update(cfg["enemies"])
 
     ai = IntentAI(aggressive=1, defensive=0, unpredictable=0)
     for name in enemies:
@@ -35,4 +36,3 @@ def test_bosses_have_custom_telegraphs():
         _action, msg = ai.choose_intent(dummy, dummy)
         default = f"The {name} winds up for a heavy strike…"
         assert msg and msg != default
-

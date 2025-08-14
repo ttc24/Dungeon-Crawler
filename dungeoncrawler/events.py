@@ -10,8 +10,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from .items import Item
-from .status_effects import add_status_effect
 from .quests import EscortNPC, EscortQuest
+from .status_effects import add_status_effect
 
 if TYPE_CHECKING:  # pragma: no cover - for type checkers only
     from .dungeon import DungeonBase

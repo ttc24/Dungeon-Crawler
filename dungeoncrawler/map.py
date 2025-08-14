@@ -154,9 +154,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
             break
         name = random.choice(boss_pool)
         hp, atk, dfs, gold, ability = game.boss_stats[name]
-        game.queue_message(
-            _(f"A powerful boss guards this floor! The {name} lurks nearby...")
-        )
+        game.queue_message(_(f"A powerful boss guards this floor! The {name} lurks nearby..."))
         boss_weights = game.boss_ai.get(name)
         boss_ai = IntentAI(**boss_weights) if boss_weights else None
         boss = Enemy(

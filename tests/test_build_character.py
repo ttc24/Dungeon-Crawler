@@ -13,14 +13,14 @@ def test_build_character(tmp_path, monkeypatch):
     run_file = tmp_path / "run.json"
     monkeypatch.setattr("dungeoncrawler.constants.RUN_FILE", run_file)
     monkeypatch.setattr("dungeoncrawler.main.RUN_FILE", run_file)
-    inputs = iter([
-        "",
-        "Alice",  # name (invalid then valid)
-    ])
-
-    player = build_character(
-        input_func=lambda _: next(inputs), output_func=lambda _msg: None
+    inputs = iter(
+        [
+            "",
+            "Alice",  # name (invalid then valid)
+        ]
     )
+
+    player = build_character(input_func=lambda _: next(inputs), output_func=lambda _msg: None)
     assert isinstance(player, Player)
     assert player.name == "Alice"
     assert player.class_type == "Novice"

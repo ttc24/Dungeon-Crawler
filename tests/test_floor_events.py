@@ -4,10 +4,11 @@ from unittest.mock import patch
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+import json
+
 from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.entities import Player
 from dungeoncrawler.main import build_character
-import json
 
 
 def setup_dungeon():
@@ -127,9 +128,7 @@ def test_unlocks_persist_between_runs(tmp_path, monkeypatch):
     assert data["unlocks"] == {"class": True, "guild": True, "race": True}
 
     inputs = iter(["Bob", "1", "1", "2"])  # name, class, guild, race
-    player = build_character(
-        input_func=lambda _: next(inputs), output_func=lambda _msg: None
-    )
+    player = build_character(input_func=lambda _: next(inputs), output_func=lambda _msg: None)
     assert player.class_type == "Warrior"
     assert player.guild == "Warriors' Guild"
     assert player.race == "Elf"

@@ -40,6 +40,7 @@ def test_offer_race_screen(capsys):
     assert "power strike" in out
     assert dungeon.player.race == "Elf"
 
+
 def test_offer_class_lists_new_classes(capsys):
     dungeon = _setup()
     inputs = iter(["13"])
