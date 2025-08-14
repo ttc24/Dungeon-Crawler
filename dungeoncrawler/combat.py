@@ -49,9 +49,10 @@ def enemy_turn(enemy: "Enemy", player: "Player", renderer: Renderer | None = Non
             for event in events:
                 renderer.handle_event(event)
         if enemy.ai and hasattr(enemy.ai, "choose_intent"):
-            enemy.next_action, enemy.intent_message = enemy.ai.choose_intent(enemy, player)
+            enemy.next_action, enemy.intent, enemy.intent_message = enemy.ai.choose_intent(enemy, player)
         else:
             enemy.next_action = None
+            enemy.intent = None
             enemy.intent_message = ""
         if enemy.heavy_cd > 0:
             enemy.heavy_cd -= 1
@@ -79,7 +80,7 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
         )
     )
     if enemy.ai and hasattr(enemy.ai, "choose_intent"):
-        enemy.next_action, enemy.intent_message = enemy.ai.choose_intent(enemy, player)
+        enemy.next_action, enemy.intent, enemy.intent_message = enemy.ai.choose_intent(enemy, player)
     game.announce(f"{player.name} engages {enemy.name}!")
     while player.is_alive() and enemy.is_alive():
         skip_player = player.apply_status_effects()
@@ -100,6 +101,8 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
         renderer.show_message(
             _(f"Enemy Health: {enemy.health} {format_status_tags(enemy.status_effects)}")
         )
+        if enemy.intent:
+            renderer.show_message(_(f"Intent: {enemy.intent}"))
         if enemy.intent_message:
             renderer.show_message(_(enemy.intent_message))
         renderer.show_message(_(f"Stamina: {player.stamina}/{player.max_stamina}"))

@@ -686,6 +686,7 @@ class Enemy(Entity):
         self.traits = traits or []
         # Intent planning and cooldowns
         self.next_action = None
+        self.intent = None
         self.intent_message = ""
         self.heavy_cd = 0
 
@@ -721,6 +722,7 @@ class Enemy(Entity):
     def take_turn(self, player):
         action = self.next_action
         self.next_action = None
+        self.intent = None
         if action is None:
             if self.ai:
                 action = self.ai.choose_action(self, player)
