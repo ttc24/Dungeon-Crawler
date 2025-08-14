@@ -5,9 +5,9 @@ from __future__ import annotations
 import random
 from typing import Dict
 
-from .dungeon import ENEMY_STATS
+from .core.combat import resolve_enemy_turn, resolve_player_action
 from .core.entity import Entity
-from .core.combat import resolve_player_action, resolve_enemy_turn
+from .dungeon import ENEMY_STATS
 
 
 def simulate_battles(enemy_name: str, runs: int, seed: int | None = None) -> Dict[str, float]:
