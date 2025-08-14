@@ -316,14 +316,21 @@ class DungeonBase:
         # Tracking for leaderboard entries
         self.run_start = None
         self.seed = None
-        # Persistent run statistics used for "Novice's Luck"
-        self.total_runs = 0
+        # Persistent run statistics including unlocked character options
+        self.run_stats = {
+            "total_runs": 0,
+            "unlocks": {"class": False, "guild": False, "race": False},
+        }
         if RUN_FILE.exists():
             try:
                 with open(RUN_FILE) as f:
-                    self.total_runs = json.load(f).get("total_runs", 0)
+                    self.run_stats.update(json.load(f))
             except (IOError, json.JSONDecodeError):
-                self.total_runs = 0
+                pass
+        self.total_runs = self.run_stats.get("total_runs", 0)
+        self.unlocks = self.run_stats.get(
+            "unlocks", {"class": False, "guild": False, "race": False}
+        )
         self.novice_luck_announced = False
         self.stairs_prompt_shown = False
         self.active_quest = None
@@ -504,15 +511,22 @@ class DungeonBase:
             return data.get("floor", 1)
         return 1
 
+    def save_run_stats(self):
+        """Persist total run count and unlocked character options."""
+
+        self.run_stats["total_runs"] = self.total_runs
+        self.run_stats["unlocks"] = self.unlocks
+        try:
+            with open(RUN_FILE, "w") as f:
+                json.dump(self.run_stats, f)
+        except IOError:
+            pass
+
     def record_score(self, floor):
         """Persist the current run to the leaderboard file and display it."""
         # Update total run count used for first-run bonuses
         self.total_runs += 1
-        try:
-            with open(RUN_FILE, "w") as f:
-                json.dump({"total_runs": self.total_runs}, f)
-        except IOError:
-            pass
+        self.save_run_stats()
 
         records = []
         if os.path.exists(SCORE_FILE):
@@ -597,6 +611,9 @@ class DungeonBase:
         currently available stamina-based skills are shown.
         """
 
+        if not self.unlocks.get("class"):
+            self.unlocks["class"] = True
+            self.save_run_stats()
         if self.player.class_type != "Novice":
             return
 
@@ -643,6 +660,9 @@ class DungeonBase:
             break
 
     def offer_guild(self, input_func=None):
+        if not self.unlocks.get("guild"):
+            self.unlocks["guild"] = True
+            self.save_run_stats()
         if self.player.guild:
             return
         if input_func is None:
@@ -665,6 +685,9 @@ class DungeonBase:
             self.player.join_guild(guilds[choice][0])
 
     def offer_race(self, input_func=None):
+        if not self.unlocks.get("race"):
+            self.unlocks["race"] = True
+            self.save_run_stats()
         if self.player.race:
             return
         if input_func is None:

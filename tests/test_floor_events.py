@@ -6,11 +6,14 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.entities import Player
+from dungeoncrawler.main import build_character
+import json
 
 
 def setup_dungeon():
     dungeon = DungeonBase(5, 5)
     dungeon.player = Player("hero")
+    dungeon.next_shop_floor = 99
     dungeon.next_shop_floor = 99
     return dungeon
 
@@ -87,6 +90,43 @@ def test_floor_progression_unlocks_features():
     assert dungeon.player.guild == "Warriors' Guild"
     assert dungeon.player.race == "Elf"
     assert called == {"class": True, "guild": True, "race": True}
+
+
+def test_unlocks_persist_between_runs(tmp_path, monkeypatch):
+    run_file = tmp_path / "run.json"
+    monkeypatch.setattr("dungeoncrawler.constants.RUN_FILE", run_file)
+    monkeypatch.setattr("dungeoncrawler.dungeon.RUN_FILE", run_file)
+    monkeypatch.setattr("dungeoncrawler.main.RUN_FILE", run_file)
+
+    dungeon = DungeonBase(5, 5)
+    dungeon.player = Player("hero")
+
+    class DummyEvent:
+        def trigger(self, game, input_func=None, output_func=None):
+            return
+
+    inputs = iter(["1", "1", "2"])  # class, guild, race choices
+    with (
+        patch("builtins.input", lambda _: next(inputs)),
+        patch("dungeoncrawler.dungeon.random.choice", return_value=DummyEvent),
+        patch("dungeoncrawler.dungeon.random.randint", return_value=1),
+        patch.object(DungeonBase, "shop", lambda self, *a, **k: None),
+    ):
+        dungeon.trigger_floor_event(1)
+        dungeon.trigger_floor_event(2)
+        dungeon.trigger_floor_event(3)
+
+    with open(run_file) as f:
+        data = json.load(f)
+    assert data["unlocks"] == {"class": True, "guild": True, "race": True}
+
+    inputs = iter(["Bob", "1", "1", "2"])  # name, class, guild, race
+    player = build_character(
+        input_func=lambda _: next(inputs), output_func=lambda _msg: None
+    )
+    assert player.class_type == "Warrior"
+    assert player.guild == "Warriors' Guild"
+    assert player.race == "Elf"
 
 
 def test_trigger_floor_event_calls_expected_handler():

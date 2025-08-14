@@ -12,6 +12,10 @@ from dungeoncrawler.main import main
 def test_tutorial_runs_once_per_save(tmp_path, monkeypatch):
     save_path = tmp_path / "save.json"
     monkeypatch.setattr(dungeon_module, "SAVE_FILE", str(save_path))
+    run_file = tmp_path / "run.json"
+    monkeypatch.setattr("dungeoncrawler.constants.RUN_FILE", run_file)
+    monkeypatch.setattr("dungeoncrawler.dungeon.RUN_FILE", run_file)
+    monkeypatch.setattr("dungeoncrawler.main.RUN_FILE", run_file)
 
     calls = []
 
