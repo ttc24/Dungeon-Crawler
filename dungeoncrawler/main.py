@@ -26,7 +26,7 @@ def _load_unlocks():
     unlocks = {"class": False, "guild": False, "race": False}
     if RUN_FILE.exists():
         try:
-            with open(RUN_FILE, encoding="utf-8") as f:
+            with RUN_FILE.open(encoding="utf-8") as f:
                 unlocks.update(json.load(f).get("unlocks", {}))
         except (IOError, json.JSONDecodeError):
             logger.exception("Failed to load unlocks from %s", RUN_FILE)

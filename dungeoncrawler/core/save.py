@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict, is_dataclass
-from typing import Any, Dict, Mapping, Optional
+from typing import Any, Dict, Mapping, Optional, cast
 
 from ..constants import SAVE_FILE
 
@@ -19,10 +19,10 @@ def save_game(state: Mapping[str, Any] | object) -> None:
     """
 
     SAVE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    if is_dataclass(state) and not isinstance(state, type):
-        payload: Dict[str, Any] = asdict(state)
-    elif isinstance(state, Mapping):
+    if isinstance(state, Mapping):
         payload = dict(state)
+    elif is_dataclass(state) and not isinstance(state, type):
+        payload = cast(Dict[str, Any], asdict(state))
     else:
         raise TypeError("state must be a dataclass instance or mapping")
 
