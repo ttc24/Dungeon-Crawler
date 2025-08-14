@@ -49,3 +49,27 @@ def test_render_map_symbols_after_show_map():
     assert "." in rendered
     assert "#" in rendered
     assert rendered.count("@") == 1
+
+
+def test_map_legend_toggle():
+    random.seed(0)
+    load_floor_configs()
+    game = DungeonBase(1, 1)
+    game.player = Player("Tester")
+    dungeon_map.generate_dungeon(game, floor=1)
+
+    inputs = iter(["?", "?", "x"])
+    game.view_map(input_func=lambda _: next(inputs))
+
+    legend_entries = [
+        "Legend:",
+        " @ - You",
+        " E - Exit",
+        " . - Floor",
+        " · - Discovered",
+        " # - Unexplored",
+    ]
+    for entry in legend_entries:
+        assert entry in game.renderer.lines
+    assert game.renderer.lines.count("Legend:") == 1
+    assert not game.renderer.legend_visible
