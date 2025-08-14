@@ -7,7 +7,7 @@ import random
 from functools import lru_cache
 from gettext import gettext as _
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from .items import Item
 from .quests import EscortNPC, EscortQuest
@@ -176,7 +176,7 @@ class LoreNoteEvent(BaseEvent):
     """Reveal a snippet of lore."""
 
     def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
-        notes = [
+        notes: list[dict[str, Any]] = [
             {"text": _("The walls whisper of an ancient battle.")},
             {"text": _("Scrawled handwriting reads: 'Beware the shadows.'")},
             {"text": _("A faded map hints at deeper treasures.")},

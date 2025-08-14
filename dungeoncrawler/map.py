@@ -50,8 +50,8 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     ]
     game.discovered = [[False for __ in range(game.width)] for __ in range(game.height)]
     game.visible = [[False for __ in range(game.width)] for __ in range(game.height)]
-    visited = set()
-    path = []
+    visited: set[tuple[int, int]] = set()
+    path: list[tuple[int, int]] = []
     x, y = game.width // 2, game.height // 2
     start = (x, y)
     visited.add(start)
@@ -76,23 +76,25 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     game.visited_rooms.add(start)
 
     visited.remove(start)
-    visited = list(visited)
-    random.shuffle(visited)
+    available: list[tuple[int, int]] = list(visited)
+    random.shuffle(available)
 
     def place(obj):
-        if visited:
-            px, py = visited.pop()
+        if available:
+            px, py = available.pop()
             game.rooms[py][px] = obj
             return (px, py)
 
     def place_near_start(obj, max_dist):
         candidates = [
-            pos for pos in visited if abs(pos[0] - start[0]) + abs(pos[1] - start[1]) <= max_dist
+            pos
+            for pos in available
+            if abs(pos[0] - start[0]) + abs(pos[1] - start[1]) <= max_dist
         ]
         random.shuffle(candidates)
         if candidates:
             px, py = candidates.pop()
-            visited.remove((px, py))
+            available.remove((px, py))
             game.rooms[py][px] = obj
             return (px, py)
         return place(obj)

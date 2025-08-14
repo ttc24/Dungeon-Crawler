@@ -223,7 +223,7 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
             events = resolve_player_action(p_entity, e_entity, "flee")
             for event in events:
                 renderer.handle_event(event)
-            if events[-1].data.get("success"):
+            if getattr(events[-1], "value", 0):
                 game.announce(f"{player.name} flees from {enemy.name}!")
                 game.stats_logger.record_turn()
                 break
