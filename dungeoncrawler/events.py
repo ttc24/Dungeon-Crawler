@@ -131,7 +131,7 @@ class FountainEvent(BaseEvent):
         while self.remaining_uses > 0:
             output_func(_("Drink (D) / Bottle (B) / Leave (any other key)"))
             choice = input_func(_("Choice: ")).strip().lower()
-            if choice in ("d", "q"):
+            if choice == "d":
                 heal = random.randint(6, 10)
                 game.player.health = min(game.player.max_health, game.player.health + heal)
                 output_func(_(f"You feel refreshed and recover {heal} health."))
