@@ -34,27 +34,19 @@ SKILL_DEFS = load_skills()
 CLASS_DEFS = {
     "Warrior": {
         "stats": {"max_health": 100, "attack_power": 10},
-        "abilities": {
-            "Shield Slam": {"cost": 25, "description": "Briefly stun a foe."}
-        },
+        "abilities": {"Shield Slam": {"cost": 25, "description": "Briefly stun a foe."}},
     },
     "Mage": {
         "stats": {"max_health": 80, "attack_power": 14},
-        "abilities": {
-            "Arcane Bolt": {"cost": 30, "description": "Ranged magical attack."}
-        },
+        "abilities": {"Arcane Bolt": {"cost": 30, "description": "Ranged magical attack."}},
     },
     "Rogue": {
         "stats": {"max_health": 90, "attack_power": 12},
-        "abilities": {
-            "Backstab": {"cost": 20, "description": "High damage from stealth."}
-        },
+        "abilities": {"Backstab": {"cost": 20, "description": "High damage from stealth."}},
     },
     "Cleric": {
         "stats": {"max_health": 110, "attack_power": 9},
-        "abilities": {
-            "Heal": {"cost": 25, "description": "Restore a small amount of HP."}
-        },
+        "abilities": {"Heal": {"cost": 25, "description": "Restore a small amount of HP."}},
     },
     "Barbarian": {
         "stats": {"max_health": 130, "attack_power": 12},
@@ -68,9 +60,7 @@ CLASS_DEFS = {
     },
     "Ranger": {
         "stats": {"max_health": 105, "attack_power": 11},
-        "abilities": {
-            "Snipe": {"cost": 20, "description": "Long-range shot."}
-        },
+        "abilities": {"Snipe": {"cost": 20, "description": "Long-range shot."}},
     },
     "Druid": {
         "stats": {"max_health": 100, "attack_power": 11},
@@ -87,21 +77,15 @@ CLASS_DEFS = {
     },
     "Sorcerer": {
         "stats": {"max_health": 75, "attack_power": 15},
-        "abilities": {
-            "Chain Lightning": {"cost": 35, "description": "Hit multiple foes."}
-        },
+        "abilities": {"Chain Lightning": {"cost": 35, "description": "Hit multiple foes."}},
     },
     "Monk": {
         "stats": {"max_health": 95, "attack_power": 13},
-        "abilities": {
-            "Flurry": {"cost": 25, "description": "Series of rapid strikes."}
-        },
+        "abilities": {"Flurry": {"cost": 25, "description": "Series of rapid strikes."}},
     },
     "Warlock": {
         "stats": {"max_health": 85, "attack_power": 14},
-        "abilities": {
-            "Eldritch Blast": {"cost": 30, "description": "Beam of dark power."}
-        },
+        "abilities": {"Eldritch Blast": {"cost": 30, "description": "Beam of dark power."}},
     },
     "Necromancer": {
         "stats": {"max_health": 90, "attack_power": 13},
@@ -114,15 +98,11 @@ CLASS_DEFS = {
     },
     "Shaman": {
         "stats": {"max_health": 110, "attack_power": 10},
-        "abilities": {
-            "Spirit Call": {"cost": 30, "description": "Invoke ancestral aid."}
-        },
+        "abilities": {"Spirit Call": {"cost": 30, "description": "Invoke ancestral aid."}},
     },
     "Alchemist": {
         "stats": {"max_health": 90, "attack_power": 12},
-        "abilities": {
-            "Acid Flask": {"cost": 25, "description": "Splash corrosive acid."}
-        },
+        "abilities": {"Acid Flask": {"cost": 25, "description": "Splash corrosive acid."}},
     },
 }
 
@@ -167,6 +147,7 @@ RACE_DEFS = {
     },
     "Goblin": {"attack_power": 1, "traits": ["Sneaky"]},
 }
+
 
 class Entity:
     def __init__(self, name, description):

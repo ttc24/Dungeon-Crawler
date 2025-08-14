@@ -14,7 +14,7 @@ from . import tutorial
 from .config import Config, load_config
 from .constants import RUN_FILE
 from .dungeon import DungeonBase
-from .entities import Player, SKILL_DEFS
+from .entities import SKILL_DEFS, Player
 from .i18n import set_language
 
 
