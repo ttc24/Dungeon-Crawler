@@ -11,6 +11,7 @@ from dungeoncrawler.entities import Player
 def setup_dungeon():
     dungeon = DungeonBase(5, 5)
     dungeon.player = Player("hero")
+    dungeon.next_shop_floor = 99
     return dungeon
 
 
@@ -20,11 +21,22 @@ def test_floor_eight_event_grants_buff():
     assert "inspire" in dungeon.player.status_effects
 
 
-def test_floor_twelve_event_calls_shop():
+def test_shops_spawn_every_few_floors():
     dungeon = setup_dungeon()
-    with patch.object(DungeonBase, "shop") as mock_shop:
-        dungeon.trigger_floor_event(12)
-        assert mock_shop.called
+    dungeon.next_shop_floor = 2
+    with (
+        patch.object(DungeonBase, "shop") as mock_shop,
+        patch("dungeoncrawler.dungeon.random.randint", return_value=2),
+        patch.object(DungeonBase, "offer_guild", return_value=None),
+        patch.object(DungeonBase, "offer_race", return_value=None),
+    ):
+        dungeon.trigger_floor_event(2)
+        assert mock_shop.call_count == 1
+        assert dungeon.next_shop_floor == 4
+        dungeon.trigger_floor_event(3)
+        assert mock_shop.call_count == 1
+        dungeon.trigger_floor_event(4)
+        assert mock_shop.call_count == 2
 
 
 def test_floor_fifteen_event_riddle_rewards_gold():

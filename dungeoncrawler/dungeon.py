@@ -32,7 +32,7 @@ from .events import (
     ShrineEvent,
     TrapEvent,
 )
-from .items import Item, Weapon
+from .items import Armor, Item, Trinket, Weapon
 from .plugins import apply_enemy_plugins, apply_item_plugins
 from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
 from .rendering import Renderer, render_map_string
@@ -292,6 +292,8 @@ class DungeonBase:
         self.stats_logger = StatsLogger()
         self.messages: list[str] = []
         self.renderer = Renderer()
+        # Schedule the first shop to appear on floor 2
+        self.next_shop_floor = 2
 
     def queue_message(self, text: str, output_func=print):
         """Store ``text`` for later rendering and optionally display it."""
@@ -308,7 +310,11 @@ class DungeonBase:
         def serialize_item(item):
             if item is None:
                 return None
-            data = {"name": item.name, "description": item.description}
+            data = {
+                "name": item.name,
+                "description": item.description,
+                "rarity": getattr(item, "rarity", "common"),
+            }
             if isinstance(item, Weapon):
                 data.update(
                     {
@@ -318,6 +324,16 @@ class DungeonBase:
                         "effect": item.effect,
                     }
                 )
+            elif isinstance(item, Armor):
+                data.update(
+                    {
+                        "defense": item.defense,
+                        "price": item.price,
+                        "effect": item.effect,
+                    }
+                )
+            elif isinstance(item, Trinket):
+                data.update({"price": item.price, "effect": item.effect})
             return data
 
         data = {
@@ -340,6 +356,8 @@ class DungeonBase:
                 "race": self.player.race,
                 "inventory": [serialize_item(it) for it in self.player.inventory],
                 "weapon": serialize_item(self.player.weapon),
+                "armor": serialize_item(self.player.armor),
+                "trinket": serialize_item(self.player.trinket),
                 "companions": [
                     {"name": c.name, "effect": c.effect} for c in self.player.companions
                 ],
@@ -385,23 +403,60 @@ class DungeonBase:
                         item_data["min_damage"],
                         item_data["max_damage"],
                         item_data.get("price", 50),
+                        item_data.get("rarity", "common"),
+                        item_data.get("effect"),
                     )
-                    item.effect = item_data.get("effect")
+                elif "defense" in item_data:
+                    item = Armor(
+                        item_data["name"],
+                        item_data["description"],
+                        item_data["defense"],
+                        item_data.get("price", 40),
+                        item_data.get("rarity", "common"),
+                        item_data.get("effect"),
+                    )
+                elif "effect" in item_data and item_data.get("price") is not None:
+                    item = Trinket(
+                        item_data["name"],
+                        item_data["description"],
+                        item_data.get("effect"),
+                        item_data.get("price", 30),
+                        item_data.get("rarity", "common"),
+                    )
                 else:
                     item = Item(item_data["name"], item_data["description"])
                 self.player.inventory.append(item)
 
             weapon_data = p.get("weapon")
             if weapon_data:
-                weapon = Weapon(
+                self.player.weapon = Weapon(
                     weapon_data["name"],
                     weapon_data["description"],
                     weapon_data["min_damage"],
                     weapon_data["max_damage"],
                     weapon_data.get("price", 50),
+                    weapon_data.get("rarity", "common"),
+                    weapon_data.get("effect"),
                 )
-                weapon.effect = weapon_data.get("effect")
-                self.player.weapon = weapon
+            armor_data = p.get("armor")
+            if armor_data:
+                self.player.armor = Armor(
+                    armor_data["name"],
+                    armor_data["description"],
+                    armor_data["defense"],
+                    armor_data.get("price", 40),
+                    armor_data.get("rarity", "common"),
+                    armor_data.get("effect"),
+                )
+            trinket_data = p.get("trinket")
+            if trinket_data:
+                self.player.trinket = Trinket(
+                    trinket_data["name"],
+                    trinket_data["description"],
+                    trinket_data.get("effect"),
+                    trinket_data.get("price", 30),
+                    trinket_data.get("rarity", "common"),
+                )
 
             for comp_data in p.get("companions", []):
                 self.player.companions.append(Companion(comp_data["name"], comp_data["effect"]))
@@ -1020,13 +1075,17 @@ class DungeonBase:
     # Floor-specific events keep gameplay varied without hardcoding logic in
     # play_game. Additional floors can be added here easily.
     def trigger_floor_event(self, floor):
+        if floor >= self.next_shop_floor:
+            print(_("A traveling merchant sets up shop."))
+            self.shop()
+            self.next_shop_floor = floor + random.randint(2, 3)
+
         events = {
             1: self._floor_one_event,
             2: self._floor_two_event,
             3: self._floor_three_event,
             5: self._floor_five_event,
             8: self._floor_eight_event,
-            12: self._floor_twelve_event,
             15: self._floor_fifteen_event,
         }
         if floor in events:
@@ -1056,10 +1115,6 @@ class DungeonBase:
     def _floor_eight_event(self):
         print(_("You stumble upon a radiant shrine, filling you with determination."))
         self.grant_inspiration()
-
-    def _floor_twelve_event(self):
-        print(_("An elusive merchant appears, offering rare goods."))
-        self.shop()
 
     def _floor_fifteen_event(self):
         print(_("A robed sage blocks your path, offering a riddle challenge."))

@@ -10,7 +10,7 @@ from pathlib import Path
 
 from .config import config
 from .constants import ANNOUNCER_LINES
-from .items import Item, Weapon
+from .items import Armor, Item, Trinket, Weapon, RARITY_MODIFIERS
 from .status_effects import add_status_effect
 from .status_effects import apply_status_effects as apply_effects
 
@@ -33,6 +33,12 @@ class Entity:
         self.description = description
         # Track ongoing status effects shared by all entities
         self.status_effects = {}
+        # Equipment slots
+        self.weapon: Weapon | None = None
+        self.armor: Armor | None = None
+        self.trinket: Trinket | None = None
+        # Rarity influences damage and effects
+        self.rarity = "common"
 
 
 class Player(Entity):
@@ -51,7 +57,6 @@ class Player(Entity):
         self.xp = 0
         self.gold = 0
         self.inventory = []
-        self.weapon = None
         self.companions = []
         self.guild = None
         self.race = None
@@ -230,13 +235,19 @@ class Player(Entity):
     def calculate_damage(self) -> int:
         """Return the damage dealt by the player's current attack."""
         if self.weapon:
-            return random.randint(self.weapon.min_damage, self.weapon.max_damage)
-        return random.randint(self.attack_power // 2, self.attack_power)
+            base = random.randint(self.weapon.min_damage, self.weapon.max_damage)
+            return int(base * RARITY_MODIFIERS.get(self.weapon.rarity, 1.0))
+        base = random.randint(self.attack_power // 2, self.attack_power)
+        return int(base * RARITY_MODIFIERS.get(self.rarity, 1.0))
 
     def apply_weapon_effect(self, enemy: Enemy) -> None:
-        """Apply the equipped weapon's status effect to ``enemy`` if present."""
+        """Apply equipped item effects to ``enemy`` if present."""
         if self.weapon and getattr(self.weapon, "effect", None):
-            add_status_effect(enemy, self.weapon.effect, 3)
+            duration = int(3 * RARITY_MODIFIERS.get(self.weapon.rarity, 1.0))
+            add_status_effect(enemy, self.weapon.effect, duration)
+        if self.trinket and getattr(self.trinket, "effect", None):
+            duration = int(2 * RARITY_MODIFIERS.get(self.trinket.rarity, 1.0))
+            add_status_effect(enemy, self.trinket.effect, duration)
 
     def process_enemy_defeat(self, enemy: Enemy) -> None:
         """Handle rewards for defeating ``enemy`` such as XP and gold."""
@@ -266,6 +277,12 @@ class Player(Entity):
         if "shield" in self.status_effects:
             damage = max(0, damage - 5)
             print(_("Your shield absorbs 5 damage!"))
+        if self.armor:
+            damage = max(0, damage - self.armor.defense)
+            damage = int(damage / RARITY_MODIFIERS.get(self.armor.rarity, 1.0))
+            if getattr(self.armor, "effect", None):
+                duration = int(2 * RARITY_MODIFIERS.get(self.armor.rarity, 1.0))
+                add_status_effect(self, self.armor.effect, duration)
         if getattr(self, "novice_luck_active", False):
             damage = max(0, damage - 1)
         self.health = max(0, self.health - damage)
@@ -537,6 +554,28 @@ class Player(Entity):
         else:
             print(_("You don't have a valid weapon to equip."))
 
+    def equip_armor(self, armor):
+        if armor in self.inventory and isinstance(armor, Armor):
+            if self.armor:
+                self.inventory.append(self.armor)
+                print(_(f"You unequipped the {self.armor.name}"))
+            self.armor = armor
+            self.inventory.remove(armor)
+            print(_(f"You equipped the {armor.name}"))
+        else:
+            print(_("You don't have valid armor to equip."))
+
+    def equip_trinket(self, trinket):
+        if trinket in self.inventory and isinstance(trinket, Trinket):
+            if self.trinket:
+                self.inventory.append(self.trinket)
+                print(_(f"You removed the {self.trinket.name}"))
+            self.trinket = trinket
+            self.inventory.remove(trinket)
+            print(_(f"You equipped the {trinket.name}"))
+        else:
+            print(_("You don't have a valid trinket to equip."))
+
     def get_score(self):
         return self.level * 100 + len(self.inventory) * 10 + self.gold
 
@@ -631,6 +670,7 @@ class Enemy(Entity):
             hit_chance -= 5
         roll = random.randint(1, 100)
         damage = random.randint(self.attack_power // 2, self.attack_power)
+        damage = int(damage * RARITY_MODIFIERS.get(self.rarity, 1.0))
         if self.status_effects.pop("heavy", 0):
             damage = int(damage * 1.5)
         if roll <= hit_chance:
@@ -641,15 +681,20 @@ class Enemy(Entity):
                 self.health += damage // 3
                 print(_(f"The {self.name} drains life and heals for {damage // 3}!"))
             elif self.ability == "poison":
-                add_status_effect(player, "poison", 3)
+                dur = int(3 * RARITY_MODIFIERS.get(self.rarity, 1.0))
+                add_status_effect(player, "poison", dur)
             elif self.ability == "burn":
-                add_status_effect(player, "burn", 3)
+                dur = int(3 * RARITY_MODIFIERS.get(self.rarity, 1.0))
+                add_status_effect(player, "burn", dur)
             elif self.ability == "stun":
-                add_status_effect(player, "stun", 1)
+                dur = int(1 * RARITY_MODIFIERS.get(self.rarity, 1.0))
+                add_status_effect(player, "stun", dur)
             elif self.ability == "bleed":
-                add_status_effect(player, "bleed", 3)
+                dur = int(3 * RARITY_MODIFIERS.get(self.rarity, 1.0))
+                add_status_effect(player, "bleed", dur)
             elif self.ability == "freeze":
-                add_status_effect(player, "freeze", 1)
+                dur = int(1 * RARITY_MODIFIERS.get(self.rarity, 1.0))
+                add_status_effect(player, "freeze", dur)
             elif self.ability == "double_strike" and random.random() < 0.25:
                 print(_(f"The {self.name} strikes twice!"))
                 player.take_damage(damage, source=self.name)

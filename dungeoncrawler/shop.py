@@ -6,7 +6,8 @@ from gettext import gettext as _
 from typing import TYPE_CHECKING
 
 from .constants import INVALID_KEY_MSG
-from .items import Item, Weapon
+from .config import config
+from .items import Armor, Item, Trinket, Weapon
 
 if TYPE_CHECKING:  # pragma: no cover - only for type hints
     from .dungeon import DungeonBase
@@ -22,7 +23,11 @@ def shop(
     output_func(_("Welcome to the Shop!"))
     output_func(_(f"Gold: {game.player.gold}"))
     for i, item in enumerate(game.shop_items, 1):
-        price = item.price if isinstance(item, Weapon) else 10
+        if hasattr(item, "price"):
+            base_price = item.price
+        else:
+            base_price = 10
+        price = int(base_price * config.loot_multiplier)
         output_func(_(f"{i}. {item.name} - {price} Gold"))
     sell_option = len(game.shop_items) + 1
     exit_option = sell_option + 1
@@ -34,7 +39,11 @@ def shop(
         choice = int(choice)
         if 1 <= choice <= len(game.shop_items):
             item = game.shop_items[choice - 1]
-            price = item.price if isinstance(item, Weapon) else 10
+            if hasattr(item, "price"):
+                base_price = item.price
+            else:
+                base_price = 10
+            price = int(base_price * config.loot_multiplier)
             if game.player.gold >= price:
                 game.player.collect_item(item)
                 game.player.gold -= price
@@ -54,7 +63,7 @@ def shop(
 def get_sale_price(item):
     """Return the sale price for ``item`` or ``None`` if unsellable."""
 
-    if isinstance(item, Weapon):
+    if isinstance(item, (Weapon, Armor, Trinket)):
         price = getattr(item, "price", 0)
         if price > 0:
             return price // 2
@@ -119,7 +128,9 @@ def show_inventory(
 
     output_func(_("Your Inventory:"))
     for i, item in enumerate(game.player.inventory, 1):
-        equipped = " (Equipped)" if item == game.player.weapon else ""
+        equipped = ""
+        if item == game.player.weapon or item == game.player.armor or item == game.player.trinket:
+            equipped = " (Equipped)"
         output_func(_(f"{i}. {item.name}{equipped} - {item.description}"))
 
     choice = input_func(_("Enter item number to equip weapon, or press Enter to go back: "))
@@ -129,7 +140,11 @@ def show_inventory(
             item = game.player.inventory[idx]
             if isinstance(item, Weapon):
                 game.player.equip_weapon(item)
+            elif isinstance(item, Armor):
+                game.player.equip_armor(item)
+            elif isinstance(item, Trinket):
+                game.player.equip_trinket(item)
             else:
-                output_func(_("You can only equip weapons."))
+                output_func(_("You can only equip gear."))
         else:
             output_func(_(INVALID_KEY_MSG))

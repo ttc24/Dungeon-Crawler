@@ -7,7 +7,9 @@
     {"type": "Weapon", "name": "Warhammer", "description": "Crushes armor and bone", "min_damage": 14, "max_damage": 22, "price": 85},
     {"type": "Weapon", "name": "Rapier", "description": "A slender, piercing blade", "min_damage": 9, "max_damage": 17, "price": 50},
     {"type": "Weapon", "name": "Flame Blade", "description": "Glows with searing heat", "min_damage": 13, "max_damage": 20, "price": 95},
-    {"type": "Weapon", "name": "Crossbow", "description": "Ranged attack with bolts", "min_damage": 11, "max_damage": 19, "price": 60}
+    {"type": "Weapon", "name": "Crossbow", "description": "Ranged attack with bolts", "min_damage": 11, "max_damage": 19, "price": 60},
+    {"type": "Armor", "name": "Leather Armor", "description": "Basic protection", "defense": 2, "price": 30},
+    {"type": "Trinket", "name": "Lucky Charm", "description": "A charm that brings luck", "effect": "blessed", "price": 25, "rarity": "rare"}
   ],
   "rare": [
     {"type": "Weapon", "name": "Elven Longbow", "description": "Bow of unmatched accuracy.", "min_damage": 15, "max_damage": 25, "price": 0},
