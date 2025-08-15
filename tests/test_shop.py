@@ -1,4 +1,5 @@
 import os
+import random
 import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -52,3 +53,15 @@ def test_sell_unsellable():
     shop_module.sell_items(dungeon, input_func=lambda _: "1", output_func=lambda _msg: None)
     assert dungeon.player.gold == 0
     assert rare_weapon in dungeon.player.inventory
+
+
+def test_shop_inventory_deterministic():
+    random.seed(0)
+    dungeon = DungeonBase(1, 1)
+    random.seed(0)
+    dungeon.restock_shop()
+    first = [item.name for item in dungeon.shop_inventory]
+    random.seed(0)
+    dungeon.restock_shop()
+    second = [item.name for item in dungeon.shop_inventory]
+    assert first == second

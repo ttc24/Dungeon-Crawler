@@ -20,16 +20,18 @@ def shop(
 ) -> None:
     """Interact with the shop allowing the player to buy or sell items."""
 
+    if not getattr(game, "shop_inventory", []):
+        game.restock_shop()
     output_func(_("Welcome to the Shop!"))
     output_func(_(f"Gold: {game.player.gold}"))
-    for i, item in enumerate(game.shop_items, 1):
+    for i, item in enumerate(game.shop_inventory, 1):
         if hasattr(item, "price"):
             base_price = item.price
         else:
             base_price = 10
         price = int(base_price * config.loot_mult)
         output_func(_(f"{i}. {item.name} - {price} Gold"))
-    sell_option = len(game.shop_items) + 1
+    sell_option = len(game.shop_inventory) + 1
     exit_option = sell_option + 1
     output_func(_(f"{sell_option}. Sell Items"))
     output_func(_(f"{exit_option}. Exit"))
@@ -37,8 +39,8 @@ def shop(
     choice = input_func(_("Choose an option:"))
     if choice.isdigit():
         choice = int(choice)
-        if 1 <= choice <= len(game.shop_items):
-            item = game.shop_items[choice - 1]
+        if 1 <= choice <= len(game.shop_inventory):
+            item = game.shop_inventory[choice - 1]
             if hasattr(item, "price"):
                 base_price = item.price
             else:
