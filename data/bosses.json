@@ -1,4 +1,25 @@
-[
+[ 
+  {
+    "name": "Rat King",
+    "stats": [
+      150,
+      20,
+      8,
+      50
+    ],
+    "ai": {"aggressive": 2, "defensive": 1},
+    "traits": [],
+    "ability": "poison",
+    "loot": [
+      {
+        "name": "Royal Rat Spear",
+        "description": "A spear fashioned from gnawed bones.",
+        "min_damage": 10,
+        "max_damage": 14,
+        "price": 0
+      }
+    ]
+  },
   {
     "name": "Bone Tyrant",
     "stats": [
