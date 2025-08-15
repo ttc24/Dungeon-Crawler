@@ -57,6 +57,7 @@ def test_puzzle_event_handles_no_riddles():
     # The event should exit early without attempting to select a riddle.
     mock_choice.assert_not_called()
 
+
 def test_trap_event_deals_damage():
     game = setup_game()
     event = TrapEvent()
