@@ -104,6 +104,11 @@
         "map_overlay": {"type": "boolean"}
       },
       "additionalProperties": false
+    },
+    "hooks": {
+      "description": "List of module paths providing floor hooks.",
+      "type": "array",
+      "items": {"type": "string"}
     }
   },
   "additionalProperties": false

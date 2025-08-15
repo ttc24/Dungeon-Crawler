@@ -5,6 +5,7 @@ import os
 import random
 import sys
 import time
+import importlib
 from functools import lru_cache
 from gettext import gettext as _
 from pathlib import Path
@@ -30,6 +31,9 @@ from .plugins import apply_enemy_plugins, apply_item_plugins
 from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
 from .rendering import Renderer, render_map_string
 from .stats_logger import StatsLogger
+from .core import GameState
+from .core.map import GameMap
+from .data import FloorDefinition
 
 logger = logging.getLogger(__name__)
 
@@ -166,6 +170,42 @@ def load_bosses():
 ENEMY_STATS, ENEMY_ABILITIES, ENEMY_AI, ENEMY_TRAITS = load_enemies()
 BOSS_STATS, BOSS_LOOT, BOSS_AI, BOSS_TRAITS = load_bosses()
 apply_enemy_plugins(ENEMY_STATS, ENEMY_ABILITIES, ENEMY_AI, ENEMY_TRAITS)
+
+
+class FloorHooks:
+    """Interface for floor specific hooks.
+
+    Each method receives the current :class:`GameState` and associated
+    :class:`~dungeoncrawler.data.FloorDefinition`.
+    """
+
+    def on_floor_start(self, state: GameState, floor: FloorDefinition) -> None:
+        """Called when a new floor is entered."""
+
+    def on_turn(self, state: GameState, floor: FloorDefinition) -> None:
+        """Invoked each turn of the main game loop."""
+
+    def on_objective_check(self, state: GameState, floor: FloorDefinition) -> bool:
+        """Return ``True`` if the floor objective has been met."""
+        return False
+
+    def on_floor_end(self, state: GameState, floor: FloorDefinition) -> None:
+        """Called when leaving a floor."""
+
+
+def load_hook_modules(paths: list[str]) -> list[FloorHooks]:
+    """Import hook modules and instantiate their ``Hooks`` class if present."""
+
+    hooks: list[FloorHooks] = []
+    for path in paths:
+        try:
+            module = importlib.import_module(path)
+            hook_cls = getattr(module, "Hooks", None)
+            if hook_cls:
+                hooks.append(hook_cls())
+        except Exception:  # pragma: no cover - defensive
+            logger.exception("Failed to import hook module %s", path)
+    return hooks or [FloorHooks()]
 
 
 def floor_size(floor: int) -> tuple[int, int]:
@@ -341,6 +381,8 @@ class DungeonBase:
         self.renderer = Renderer()
         # Schedule the first shop to appear on floor 2
         self.next_shop_floor = 2
+        self.floor_hooks: list[FloorHooks] = [FloorHooks()]
+        self.floor_def: FloorDefinition | None = None
 
     def queue_message(self, text: str, output_func=print):
         """Store ``text`` for later rendering and optionally display it."""
@@ -352,6 +394,20 @@ class DungeonBase:
 
     def announce(self, msg):
         self.queue_message(_(f"[Announcer] {random.choice(ANNOUNCER_LINES)} {msg}"))
+
+    def _make_state(self, floor: int) -> GameState:
+        """Construct a :class:`GameState` snapshot for hooks."""
+
+        gm = GameMap(self.rooms)
+        gm.discovered = self.discovered
+        gm.visible = self.visible
+        return GameState(
+            seed=self.seed or 0,
+            current_floor=floor,
+            player=self.player,
+            game_map=gm,
+            log=list(self.messages),
+        )
 
     def save_game(self, floor):
         def serialize_item(item):
@@ -885,6 +941,14 @@ class DungeonBase:
                 self._foreshadow(floor)
             self.trigger_floor_event(floor)
 
+            self.floor_def = data.get_floor(floor)
+            self.floor_hooks = load_hook_modules(
+                self.floor_def.hooks if self.floor_def else []
+            )
+            state = self._make_state(floor)
+            for hook in self.floor_hooks:
+                hook.on_floor_start(state, self.floor_def)
+
             while self.player.is_alive():
                 self.renderer.show_message(
                     _(
@@ -915,6 +979,9 @@ class DungeonBase:
                     self.stats_logger.finalize(self, self.player.cause_of_death or "Quit")
                     return
                 if not continue_floor:
+                    end_state = self._make_state(floor - 1)
+                    for hook in self.floor_hooks:
+                        hook.on_floor_end(end_state, self.floor_def)
                     self.stats_logger.end_floor(self)
                     break
 
@@ -1056,6 +1123,10 @@ class DungeonBase:
         and ``None`` if the player chose to exit the game.
         """
 
+        state = self._make_state(floor)
+        for hook in self.floor_hooks:
+            hook.on_turn(state, self.floor_def)
+
         if self.player.level >= 5 and self.player.health < self.player.max_health:
             self.player.health += 1
 
@@ -1076,6 +1147,16 @@ class DungeonBase:
 
         Returns ``(new_floor, status)`` similar to :meth:`process_turn`.
         """
+
+        state = self._make_state(floor)
+        for hook in self.floor_hooks:
+            if hook.on_objective_check(state, self.floor_def):
+                floor += 1
+                self.player.temp_strength = 0
+                self.player.temp_intelligence = 0
+                self.save_game(floor)
+                self._foreshadow(floor)
+                return floor, False
 
         if (
             self.player.x == self.exit_coords[0]
