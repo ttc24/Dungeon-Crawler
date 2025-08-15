@@ -187,6 +187,19 @@ class CacheEvent(BaseEvent):
         game.stats_logger.record_reward()
 
 
+class TrialEvent(BaseEvent):
+    """Guild trial that records completion as an event."""
+
+    def __init__(self, name: str) -> None:
+        self.name = name
+
+    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+        trials = getattr(game, "completed_trials", set())
+        trials.add(self.name)
+        game.completed_trials = trials
+        output_func(_(f"You complete the {self.name} trial."))
+
+
 class LoreNote(TypedDict, total=False):
     """Lore note entry loaded from configuration."""
 
