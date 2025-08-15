@@ -17,6 +17,13 @@ EFFECT_INFO = {
     "beetle_bane": "+5% hit chance vs beetles.",
 }
 
+# Multipliers applied to status effect durations based on enemy rarity.
+# Higher rarity foes resist negative conditions for fewer turns.
+RARITY_STATUS_RESISTANCE = {
+    "rare": 0.8,
+    "elite": 0.5,
+}
+
 
 def add_status_effect(entity, effect: str, duration: int) -> None:
     """Apply ``effect`` to ``entity`` and announce it."""
@@ -30,6 +37,9 @@ def add_status_effect(entity, effect: str, duration: int) -> None:
     if effects is None:
         effects = {}
         setattr(entity, "status_effects", effects)
+    rarity = getattr(entity, "rarity", "common")
+    modifier = RARITY_STATUS_RESISTANCE.get(rarity, 1.0)
+    duration = max(1, int(duration * modifier))
     effects[effect] = duration
     is_player = entity.__class__.__name__ == "Player"
     desc = EFFECT_INFO.get(effect, "")

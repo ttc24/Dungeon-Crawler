@@ -390,6 +390,8 @@ class DungeonBase:
         self.floor_hooks: list[FloorHooks] = [FloorHooks()]
         self.floor_def: FloorDefinition | None = None
         self.current_floor = 0
+        # Track whether late-game scaling has been applied to avoid stacking
+        self._tier_two_scaled = False
 
     def queue_message(self, text: str, output_func=print):
         """Store ``text`` for later rendering and optionally display it."""
@@ -837,6 +839,15 @@ class DungeonBase:
         how the interactive game behaves and ensures the tests have access to a
         freshly saved state whenever a new floor is created.
         """
+
+        # Apply difficulty scaling when the player reaches the second tier of
+        # the dungeon.  This boosts enemy health and damage to keep later
+        # floors challenging.  Tests can disable this behaviour by enabling
+        # the ``debug`` flag in the configuration.
+        if floor >= 10 and not self._tier_two_scaled and not config.enable_debug:
+            config.enemy_hp_mult += 0.15
+            config.enemy_dmg_mult += 0.10
+            self._tier_two_scaled = True
 
         map_module.generate_dungeon(self, floor)
         self.generate_quest(floor)
