@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
@@ -137,6 +137,7 @@ class FloorDefinition:
     objective: Dict[str, Any]
     spawns: List[Dict[str, Any]]
     ui: Dict[str, Any]
+    hooks: List[str] = field(default_factory=list)
 
 
 @lru_cache(maxsize=None)
@@ -160,6 +161,7 @@ def load_floor_definitions() -> Dict[str, FloorDefinition]:
             objective=cfg.get("objective", {}),
             spawns=cfg.get("spawns", []),
             ui=cfg.get("ui", {}),
+            hooks=cfg.get("hooks", []),
         )
         floors[floor.id] = floor
     return floors
