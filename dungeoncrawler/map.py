@@ -59,9 +59,10 @@ def update_visibility(game) -> List[TileDiscovered]:
 
     game.visible = [[False for _ in range(game.width)] for _ in range(game.height)]
     floor = getattr(game, "current_floor", 1)
-    if floor >= 12:
-        radius = 3
-    elif floor >= 10:
+    if floor >= 10:
+        # High floors are shrouded in a persistent sandstorm. Rather than
+        # darkening further after floor 12, vision remains capped at four
+        # tiles for the remainder of the run.
         radius = 4
     else:
         radius = 6 if floor == 1 else 3 + floor // 2

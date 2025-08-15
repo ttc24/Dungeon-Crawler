@@ -855,9 +855,11 @@ class DungeonBase:
         if floor >= 11:
             config.trap_chance += 0.2
         self.player.heal_multiplier = 0.5 if floor >= 10 else 1.0
-        if floor >= 12:
-            self.player.vision = 3
-        elif floor >= 10:
+        if floor >= 10:
+            # A sandstorm blankets the high floors, limiting sight to four tiles.
+            # Previous logic imposed an additional visibility penalty from
+            # floor 12 onward, but the new design keeps vision consistent
+            # across all later floors.
             self.player.vision = 4
         else:
             self.player.vision = 6 if floor == 1 else 3 + floor // 2

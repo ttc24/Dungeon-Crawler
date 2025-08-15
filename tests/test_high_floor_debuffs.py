@@ -55,7 +55,7 @@ def test_floor_10_visibility_reduced():
     assert max_dist == 4
 
 
-def test_floor_12_darkness_limits_visibility():
+def test_floor_12_uses_sandstorm_visibility():
     game = _open_game(12)
     update_visibility(game)
     px, py = game.player.x, game.player.y
@@ -65,4 +65,5 @@ def test_floor_12_darkness_limits_visibility():
         for x in range(game.width)
         if game.visible[y][x]
     )
-    assert max_dist == 3
+    # Floor 12 retains the same sandstorm limits introduced on floor 10.
+    assert max_dist == 4
