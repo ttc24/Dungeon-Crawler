@@ -333,6 +333,30 @@ class Player(Entity):
         else:
             print(_("You don't have a Health Potion to use."))
 
+    def use_item(self, name: str):
+        item = None
+        for obj in self.inventory:
+            if isinstance(obj, Item) and obj.name == name:
+                item = obj
+                break
+        if not item:
+            print(_(f"You don't have a {name} to use."))
+            return False
+        if name == "Scent-mask Spray" or name == "Absorbent Gel":
+            self.status_effects.pop("blood_torrent", None)
+            self.status_effects.pop("blood_scent", None)
+            print(_("Your scent is masked."))
+        elif name == "Anti-Nausea Draught":
+            if "compression_sickness" in self.status_effects:
+                del self.status_effects["compression_sickness"]
+                self.speed = getattr(self, "_compression_prev_speed", self.speed)
+                setattr(self, "_compression_sickness_applied", False)
+            print(_("You steady your stomach."))
+        else:
+            print(_("Nothing happens."))
+        self.inventory.remove(item)
+        return True
+
     def flee(self, enemy: "Enemy") -> bool:
         """Attempt to flee from ``enemy``.
 
@@ -500,7 +524,11 @@ class Player(Entity):
             print(_("Feint misses."))
 
     def _skill_bandage(self, _enemy):
-        if "bleed" in self.status_effects:
+        if "blood_torrent" in self.status_effects:
+            del self.status_effects["blood_torrent"]
+            self.status_effects["blood_scent"] = 3
+            print(_("You stem the flow but a scent lingers."))
+        elif "bleed" in self.status_effects:
             del self.status_effects["bleed"]
             print(_("Bleeding stopped."))
         healed = self.heal(3)
@@ -608,6 +636,10 @@ class Player(Entity):
 
     def wait(self):
         self.regen_stamina(10)
+        if "compression_sickness" in self.status_effects:
+            self.status_effects["compression_sickness"] = max(
+                1, (self.status_effects["compression_sickness"] + 1) // 2
+            )
         print(_("You wait and catch your breath."))
 
     def use_skill(self, enemy, choice=None):
