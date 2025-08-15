@@ -45,4 +45,6 @@ def test_loot_multiplier_scales_treasure(monkeypatch):
         assert treasure_count == 2
     finally:
         config.loot_mult = base_loot
+
+
 # End of file

@@ -19,7 +19,7 @@ jobs:
           pip install black isort flake8
       - name: Run linters
         run: |
-          isort --check-only .
+          isort --profile black --check-only .
           black --check .
           flake8 .
 

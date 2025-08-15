@@ -1,10 +1,9 @@
 from types import SimpleNamespace
 
 from dungeoncrawler.entities import Player
+from dungeoncrawler.hooks import floor12
 from dungeoncrawler.items import Item
 from dungeoncrawler.status_effects import apply_status_effects
-
-from dungeoncrawler.hooks import floor12
 
 
 def test_blood_torrent_stacks_and_vision_bonus():
