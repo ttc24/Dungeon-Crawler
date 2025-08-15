@@ -99,7 +99,7 @@ class Fountain:
 
         action = action.lower()
         if action == "drink":
-            heal = random.randint(6, 10)
+            heal = int(random.randint(6, 10) * player.stats.get("heal_multiplier", 1))
             hp = player.stats.get("health", 0)
             max_hp = player.stats.get("max_health", hp)
             player.stats["health"] = min(max_hp, hp + heal)

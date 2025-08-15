@@ -253,6 +253,7 @@ class Player(Entity):
         self.novice_luck_active = False
         self.speed = 10
         self.vision = 5
+        self.heal_multiplier = 1.0
         # Temporary combat modifiers for the defend action
         self.guard_damage = False
         self.guard_attack = False
@@ -304,6 +305,15 @@ class Player(Entity):
     def has_item(self, name):
         return any(item.name == name for item in self.inventory)
 
+    def heal(self, amount: int) -> int:
+        """Restore ``amount`` health adjusted by ``heal_multiplier``."""
+
+        amount = int(amount * getattr(self, "heal_multiplier", 1))
+        healed = min(amount, self.max_health - self.health)
+        if healed > 0:
+            self.health += healed
+        return healed
+
     def use_health_potion(self):
         potion = None
         heal = 0
@@ -318,8 +328,7 @@ class Player(Entity):
                 break
         if potion:
             self.inventory.remove(potion)
-            healed_amount = min(heal, self.max_health - self.health)
-            self.health += healed_amount
+            healed_amount = self.heal(heal)
             print(_(f"You used a {potion.name} and gained {healed_amount} health."))
         else:
             print(_("You don't have a Health Potion to use."))
@@ -494,10 +503,9 @@ class Player(Entity):
         if "bleed" in self.status_effects:
             del self.status_effects["bleed"]
             print(_("Bleeding stopped."))
-        heal = min(3, self.max_health - self.health)
-        if heal > 0:
-            self.health += heal
-            print(_(f"You bandage your wounds and heal {heal} HP."))
+        healed = self.heal(3)
+        if healed > 0:
+            print(_(f"You bandage your wounds and heal {healed} HP."))
         else:
             print(_("You are already at full health."))
 
@@ -525,18 +533,16 @@ class Player(Entity):
         enemy.take_damage(damage)
 
     def _skill_cleric(self, enemy):
-        heal = min(20, self.max_health - self.health)
-        self.health += heal
-        print(_(f"You invoke Healing Light and recover {heal} health!"))
+        healed = self.heal(20)
+        print(_(f"You invoke Healing Light and recover {healed} health!"))
 
     def _skill_paladin(self, enemy):
         damage = self.attack_power + random.randint(5, 12)
         print(_(f"You smite the {enemy.name} for {damage} holy damage!"))
         enemy.take_damage(damage)
-        heal = min(10, self.max_health - self.health)
-        if heal:
-            self.health += heal
-            print(_(f"Divine power heals you for {heal} HP!"))
+        healed = self.heal(10)
+        if healed:
+            print(_(f"Divine power heals you for {healed} HP!"))
 
     def _skill_bard(self, enemy):
         print(_("You play an inspiring tune, bolstering your spirit!"))
@@ -545,17 +551,15 @@ class Player(Entity):
     def _skill_barbarian(self, enemy):
         damage = self.attack_power + random.randint(8, 12)
         enemy.take_damage(damage)
-        heal = min(10, self.max_health - self.health)
-        self.health += heal
-        print(_(f"You enter a rage, dealing {damage} damage and healing {heal}!"))
+        healed = self.heal(10)
+        print(_(f"You enter a rage, dealing {damage} damage and healing {healed}!"))
 
     def _skill_druid(self, enemy):
         damage = self.attack_power + random.randint(5, 10)
         enemy.take_damage(damage)
         add_status_effect(enemy, "freeze", 1)
-        heal = min(5, self.max_health - self.health)
-        self.health += heal
-        print(_(f"Nature's wrath deals {damage} damage and restores {heal} health!"))
+        healed = self.heal(5)
+        print(_(f"Nature's wrath deals {damage} damage and restores {healed} health!"))
 
     def _skill_ranger(self, enemy):
         damage = self.attack_power + random.randint(6, 12)
@@ -578,23 +582,20 @@ class Player(Entity):
     def _skill_warlock(self, enemy):
         damage = self.attack_power + random.randint(8, 12)
         enemy.take_damage(damage)
-        heal = min(damage // 2, self.max_health - self.health)
-        self.health += heal
-        print(_(f"Eldritch energy deals {damage} damage and heals you for {heal}!"))
+        healed = self.heal(damage // 2)
+        print(_(f"Eldritch energy deals {damage} damage and heals you for {healed}!"))
 
     def _skill_necromancer(self, enemy):
         damage = self.attack_power + random.randint(5, 10)
         enemy.take_damage(damage)
-        heal = min(damage // 2, self.max_health - self.health)
-        self.health += heal
-        print(_(f"You siphon the enemy's soul for {damage} damage and {heal} health!"))
+        healed = self.heal(damage // 2)
+        print(_(f"You siphon the enemy's soul for {damage} damage and {healed} health!"))
 
     def _skill_shaman(self, enemy):
-        heal = min(15, self.max_health - self.health)
-        self.health += heal
+        healed = self.heal(15)
         damage = self.attack_power + random.randint(4, 8)
         enemy.take_damage(damage)
-        print(_(f"Spirits mend you for {heal} and shock the foe for {damage} damage!"))
+        print(_(f"Spirits mend you for {healed} and shock the foe for {damage} damage!"))
 
     def _skill_alchemist(self, enemy):
         damage = self.attack_power + random.randint(8, 12)
@@ -952,7 +953,6 @@ class Companion(Entity):
             enemy.take_damage(dmg)
             print(_(f"{self.name} strikes {enemy.name} for {dmg} damage!"))
         if self.heal_amount and player.is_alive():
-            heal = min(self.heal_amount, player.max_health - player.health)
-            if heal > 0:
-                player.health += heal
-                print(_(f"{self.name} heals {player.name} for {heal} HP!"))
+            healed = player.heal(self.heal_amount)
+            if healed > 0:
+                print(_(f"{self.name} heals {player.name} for {healed} HP!"))

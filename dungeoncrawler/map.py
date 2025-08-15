@@ -58,7 +58,13 @@ def update_visibility(game) -> List[TileDiscovered]:
     """
 
     game.visible = [[False for _ in range(game.width)] for _ in range(game.height)]
-    radius = 6 if getattr(game, "current_floor", 1) == 1 else 3 + game.current_floor // 2
+    floor = getattr(game, "current_floor", 1)
+    if floor >= 12:
+        radius = 3
+    elif floor >= 10:
+        radius = 4
+    else:
+        radius = 6 if floor == 1 else 3 + floor // 2
     events: List[TileDiscovered] = []
     for x, y in compute_visibility(game.rooms, game.player.x, game.player.y, radius):
         game.visible[y][x] = True

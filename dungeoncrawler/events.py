@@ -152,8 +152,8 @@ class FountainEvent(BaseEvent):
             choice = input_func(_("Choice: ")).strip().lower()
             if choice == "d":
                 heal = random.randint(6, 10)
-                game.player.health = min(game.player.max_health, game.player.health + heal)
-                output_func(_(f"You feel refreshed and recover {heal} health."))
+                healed = game.player.heal(heal)
+                output_func(_(f"You feel refreshed and recover {healed} health."))
                 game.stats_logger.record_reward()
                 roll = random.random()
                 if roll < self.bless_chance:
@@ -263,8 +263,8 @@ class ShrineEvent(BaseEvent):
             output_func("     /\\")
             if random.random() < self.prayer_boon:
                 heal = random.randint(8, 12)
-                game.player.health = min(game.player.max_health, game.player.health + heal)
-                output_func(_(f"A warm light restores {heal} health."))
+                healed = game.player.heal(heal)
+                output_func(_(f"A warm light restores {healed} health."))
                 game.stats_logger.record_reward()
             else:
                 add_status_effect(game.player, "cursed", 30)
