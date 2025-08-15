@@ -5,13 +5,14 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from dungeoncrawler import map as dungeon_map
-from dungeoncrawler.dungeon import DungeonBase, load_floor_configs
+from dungeoncrawler.dungeon import DungeonBase
+from dungeoncrawler.data import load_floor_definitions
 from dungeoncrawler.entities import Player
 
 
 def test_render_map_snapshot():
     random.seed(0)
-    load_floor_configs()
+    load_floor_definitions()
     game = DungeonBase(1, 1)
     game.player = Player("Tester")
     dungeon_map.generate_dungeon(game, floor=1)
@@ -35,7 +36,7 @@ def test_render_map_snapshot():
 
 def test_render_map_symbols_after_show_map():
     random.seed(0)
-    load_floor_configs()
+    load_floor_definitions()
     game = DungeonBase(1, 1)
     game.player = Player("Tester")
     dungeon_map.generate_dungeon(game, floor=1)
@@ -53,7 +54,7 @@ def test_render_map_symbols_after_show_map():
 
 def test_map_legend_toggle():
     random.seed(0)
-    load_floor_configs()
+    load_floor_definitions()
     game = DungeonBase(1, 1)
     game.player = Player("Tester")
     dungeon_map.generate_dungeon(game, floor=1)

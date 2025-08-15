@@ -9,8 +9,8 @@ from dungeoncrawler.dungeon import (
     BOSS_LOOT,
     BOSS_TRAITS,
     DungeonBase,
-    load_floor_configs,
 )
+from dungeoncrawler.data import load_floor_definitions
 from dungeoncrawler.entities import Enemy, Player
 
 
@@ -29,7 +29,7 @@ def test_boss_drops_loot(monkeypatch):
 
 
 def test_stat_boost_when_no_loot(monkeypatch):
-    load_floor_configs()
+    load_floor_definitions()
     game = DungeonBase(1, 1)
     game.player = Player("Hero")
     monkeypatch.setitem(game.boss_loot, "Bone Tyrant", [])

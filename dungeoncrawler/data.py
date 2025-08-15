@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from .entities import Companion
 from .events import (
@@ -123,3 +124,50 @@ def load_event_defs() -> (
 
     dungeon_events: Dict[str, int] = data.get("dungeon", {})
     return events, weights, dungeon_events, signature
+
+
+@dataclass
+class FloorDefinition:
+    """Representation of a dungeon floor loaded from JSON."""
+
+    id: str
+    name: str
+    map: List[List[str]]
+    rule_mods: Dict[str, Any]
+    objective: Dict[str, Any]
+    spawns: List[Dict[str, Any]]
+    ui: Dict[str, Any]
+
+
+@lru_cache(maxsize=None)
+def load_floor_definitions() -> Dict[str, FloorDefinition]:
+    """Parse all floor definition files from ``data/floors``.
+
+    Returns a mapping of floor ID to :class:`FloorDefinition` objects.
+    Results are cached to avoid repeated JSON parsing.
+    """
+
+    floors: Dict[str, FloorDefinition] = {}
+    directory = DATA_DIR / "floors"
+    for path in sorted(directory.glob("*.json")):
+        with open(path, encoding="utf-8") as f:
+            cfg = json.load(f)
+        floor = FloorDefinition(
+            id=str(cfg.get("id")),
+            name=cfg.get("name", ""),
+            map=cfg.get("map", []),
+            rule_mods=cfg.get("rule_mods", {}),
+            objective=cfg.get("objective", {}),
+            spawns=cfg.get("spawns", []),
+            ui=cfg.get("ui", {}),
+        )
+        floors[floor.id] = floor
+    return floors
+
+
+def get_floor(floor_id: int | str) -> FloorDefinition | None:
+    """Return the :class:`FloorDefinition` for ``floor_id`` if available."""
+
+    floors = load_floor_definitions()
+    key = str(floor_id).zfill(2)
+    return floors.get(key)
