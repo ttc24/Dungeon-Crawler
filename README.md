@@ -1,6 +1,7 @@
 # Dungeon Crawler
 
 [![CI](https://github.com/ttc24/Dungeon-Crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/ttc24/Dungeon-Crawler/actions/workflows/ci.yml)
+[![Lint and Test](https://github.com/ttc24/Dungeon-Crawler/actions/workflows/tests.yml/badge.svg)](https://github.com/ttc24/Dungeon-Crawler/actions/workflows/tests.yml)
 ![Coverage](coverage.svg)
 [![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://ttc24.github.io/Dungeon-Crawler/)
 
