@@ -1,7 +1,7 @@
-from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler import map as dungeon_map
-from dungeoncrawler.entities import Player
 from dungeoncrawler.config import config
+from dungeoncrawler.dungeon import DungeonBase
+from dungeoncrawler.entities import Player
 
 
 def test_floor10_scaling_applies(monkeypatch):
