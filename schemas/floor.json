@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Dungeon Crawler Floor",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "map",
+    "rule_mods",
+    "objective",
+    "spawns",
+    "ui"
+  ],
+  "properties": {
+    "id": {
+      "description": "Unique identifier for the floor.",
+      "type": ["integer", "string"]
+    },
+    "name": {
+      "description": "Display name of the floor.",
+      "type": "string"
+    },
+    "map": {
+      "description": "Layout definition for the floor.",
+      "type": "array"
+    },
+    "rule_mods": {
+      "description": "Rule modifications applied on this floor.",
+      "type": "object"
+    },
+    "objective": {
+      "description": "Objective required to clear the floor.",
+      "type": "object"
+    },
+    "spawns": {
+      "description": "Enemy and event spawn configuration.",
+      "type": "array"
+    },
+    "ui": {
+      "description": "UI metadata for presenting the floor.",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}
