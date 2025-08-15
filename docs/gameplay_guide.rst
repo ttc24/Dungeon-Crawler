@@ -69,9 +69,53 @@ retaining all previous debuffs.
   vision.
 * **Floor 11** – trap density rises and enemies adopt a Disarm Stance capable
   of riposting, on top of all Floor 10 effects.
-* **Floor 12** – the corridors fall into darkness with line of sight limited to
-  three tiles. Explorers must seek out light-source items and sanctuary circles
-  while contending with the hazards from Floors 10 and 11.
-* **Floors 13–18** – additional debuffs continue to stack, compounding the
-  dangers present in the lower depths.
+* **Floor 12 – “Hunted”**
+  - *Blood Torrent* – Minor DoT that persists through healing; enemies gain
+    increased vision and aggro radius while active. Stacks to three, each
+    intensifying the trail and damage. Counter with scent-mask spray or
+    absorbent gel; bandaging ends the DoT but leaves a faint trail for three
+    turns.
+  - *Compression Sickness* – After teleportation, blinking or using launch pads
+    suffer −10% speed, −10% accuracy and increased fumble chance for five
+    turns. Waiting a turn halves the remaining duration; anti-nausea draught
+    removes it.
+* **Floor 13 – “Anti-Magic”**
+  - *Mana Lock* – Spells cost 50% more resources and cleanse or dispel effects
+    have a 25% chance to fail. Mundane kits and consumables are unaffected, and
+    ring suppression mitigates the effect at the risk of overheating.
+  - *Hex of Dull Wards* – Shields and blocks are 30% less effective and critical
+    hits cannot pierce them. Purifying or resetting wards, or opting for
+    offense, counters it.
+* **Floor 14 – “Entropy”**
+  - *Entropic Debt* – Each action adds a stack dealing 1% of max HP per turn, up
+    to 10 stacks. Skipping or bracing consumes two stacks. Venting or draining
+    the debt into a nearby totem clears stacks but may spawn an add.
+  - *Spiteful Reflection* – 20% chance to bounce any new debuff back to its
+    applier, including the player. Use proxies, pets or throwables to avoid
+    self-infliction.
+* **Floor 15 – “Pestilence”**
+  - *Brood Bloom* – Timered infection that spawns a Broodling on expiry and
+    reapplies a weaker stack. Cleansing only delays the spawn; fire dispatches
+    Broodlings quickly.
+  - *Miasma Carrier* – Entering a room applies a one-turn −50% healing received
+    aura to nearby allies and enemies. Masks or filters mitigate it; ring
+    suppression protects the wearer only.
+* **Floor 16 – “Time Weirdness”**
+  - *Temporal Lag* – 15% chance your last action repeats on the next turn with a
+    new target, refunding resources but wasting the turn. Taking short,
+    deliberate turns or using an Anchor consumable counters it.
+  - *Haste Dysphoria* – Speed buffs invert into a penalty if total haste exceeds
+    25%. Cap haste or purge to avoid the slowdown.
+* **Floor 17 – “Oaths & Curses”**
+  - *Fester Mark* – Healing beyond 50% overheal converts to a DoT dealing 5% of
+    the overheal each turn for five turns. Small, frequent heals or cleansing
+    mitigate it.
+  - *Soul Tax* – Each kill while taxed reduces your primary stat by one for 10
+    turns but increases loot chance. Donate at an altar to remove stacks.
+* **Floor 18 – “Broadcast Finale”**
+  - *Spotlight* – Entering a room pings your location on the floor map; elites
+    home in with +10% damage. A jammer or brief stealth breaks the ping.
+  - *Audience Fatigue* – Using the same ability three or more times in five
+    turns applies −10% damage/healing for three turns, stacking to −40%. Rotate
+    skills or use a Rewrite consumable to clear it.
 
