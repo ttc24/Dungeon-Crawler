@@ -11,6 +11,7 @@ from dungeoncrawler.events import (
     MerchantEvent,
     PuzzleEvent,
     TrapEvent,
+    RaceUnlockEvent,
 )
 from dungeoncrawler.data import load_floor_definitions
 
@@ -141,3 +142,14 @@ def test_random_event_selection_from_floor_config():
     ):
         game.trigger_random_event(1)
         assert mock_shop.called
+
+
+def test_race_unlock_event_modifies_stats_and_unlocks():
+    game = setup_game()
+    event = RaceUnlockEvent(race="Seer", vision=7, speed_mod=-1)
+    speed_before = game.player.speed
+    event.trigger(game, output_func=lambda _msg: None)
+    assert game.unlocks["race"] is True
+    assert game.player.race == "Seer"
+    assert game.player.vision == 7
+    assert game.player.speed == speed_before - 1

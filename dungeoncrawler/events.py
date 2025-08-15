@@ -332,3 +332,23 @@ class EscortMissionEvent(BaseEvent):
         quest = EscortQuest(npc, reward=100, flavor=_("Guide the acolyte to the exit."))
         game.active_quest = quest
         output_func(_("A fearful acolyte asks for your protection."))
+
+
+class RaceUnlockEvent(BaseEvent):
+    """Unlock a special race with vision and speed adjustments."""
+
+    def __init__(self, race="Night Elf", vision=8, speed_mod=-2) -> None:
+        self.race = race
+        self.vision = vision
+        self.speed_mod = speed_mod
+
+    def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+        """Apply race unlock and modify player attributes."""
+
+        game.unlocks["race"] = True
+        player = game.player
+        if player:
+            player.race = self.race
+            player.vision = self.vision
+            player.speed += self.speed_mod
+        output_func(_(f"Your heritage awakens as a {self.race}!"))
