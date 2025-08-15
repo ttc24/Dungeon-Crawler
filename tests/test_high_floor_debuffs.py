@@ -1,9 +1,9 @@
+from dungeoncrawler.config import config
+from dungeoncrawler.data import load_floor_definitions
 from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.entities import Player
 from dungeoncrawler.items import Item
 from dungeoncrawler.map import update_visibility
-from dungeoncrawler.data import load_floor_definitions
-from dungeoncrawler.config import config
 
 
 def _open_game(floor: int) -> DungeonBase:
