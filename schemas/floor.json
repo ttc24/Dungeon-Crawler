@@ -21,24 +21,89 @@
       "type": "string"
     },
     "map": {
-      "description": "Layout definition for the floor.",
-      "type": "array"
+      "description": "Two dimensional layout definition for the floor.",
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1
+        }
+      }
     },
     "rule_mods": {
       "description": "Rule modifications applied on this floor.",
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "trap_chance": {"type": "number", "minimum": 0, "maximum": 1},
+        "enemy_hp_mult": {"type": "number", "minimum": 0},
+        "enemy_dmg_mult": {"type": "number", "minimum": 0},
+        "loot_mult": {"type": "number", "minimum": 0},
+        "place_counts": {
+          "description": "Overrides for special room counts.",
+          "type": "object",
+          "additionalProperties": {"type": "integer", "minimum": 0}
+        }
+      },
+      "additionalProperties": false
     },
     "objective": {
       "description": "Objective required to clear the floor.",
-      "type": "object"
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {"type": "string"},
+        "target": {"type": ["string", "integer"]},
+        "quantity": {"type": ["integer", "string"]},
+        "description": {"type": "string"},
+        "rewards": {
+          "description": "Rewards granted upon completion.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "type": {"type": "string"},
+              "id": {"type": "string"},
+              "amount": {"type": ["integer", "number"], "minimum": 0}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "spawns": {
       "description": "Enemy and event spawn configuration.",
-      "type": "array"
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "id"],
+        "properties": {
+          "type": {"type": "string", "enum": ["enemy", "event", "item", "npc"]},
+          "id": {"type": "string"},
+          "count": {"type": "integer", "minimum": 1},
+          "level": {"type": "integer", "minimum": 1},
+          "probability": {"type": "number", "minimum": 0, "maximum": 1},
+          "x": {"type": "integer", "minimum": 0},
+          "y": {"type": "integer", "minimum": 0},
+          "properties": {"type": "object"}
+        },
+        "additionalProperties": false
+      }
     },
     "ui": {
       "description": "UI metadata for presenting the floor.",
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "background": {"type": "string"},
+        "music": {"type": "string"},
+        "theme": {"type": "string"},
+        "description": {"type": "string"},
+        "map_overlay": {"type": "boolean"}
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false
