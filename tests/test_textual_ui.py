@@ -1,10 +1,9 @@
 import pytest
 
-pytest.importorskip("textual")
-
-from textual.app import App
-
 from dungeoncrawler.ui import DungeonApp
+
+textual = pytest.importorskip("textual")
+App = textual.app.App
 
 
 def test_dungeon_app_instantiation() -> None:

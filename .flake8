@@ -1,4 +1,6 @@
 [flake8]
-max-line-length = 88
+# Match the project's Black configuration without over-permissive limits
+max-line-length = 100
+# Ignore errors that conflict with Black formatting
 extend-ignore = E203, W503
 exclude = .git,__pycache__,build,dist,docs/_build

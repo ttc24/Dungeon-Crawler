@@ -295,7 +295,8 @@ class Player(Entity):
         if len(self.inventory) >= self.inventory_limit:
             print(
                 _(
-                    f"Backpack full ({self.inventory_limit}/{self.inventory_limit}). Drop something with [D]."
+                    f"Backpack full ({self.inventory_limit}/{self.inventory_limit}). "
+                    "Drop something with [D]."
                 )
             )
             return False
@@ -408,7 +409,8 @@ class Player(Entity):
             if config.verbose_combat:
                 print(
                     _(
-                        f"You swing ({hit_chance}% to hit): roll {roll} → HIT. Damage {damage} ({base} base +{str_bonus} STR)."
+                        f"You swing ({hit_chance}% to hit): roll {roll} → HIT. "
+                        f"Damage {damage} ({base} base +{str_bonus} STR)."
                     )
                 )
             else:

@@ -84,7 +84,8 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
     game.stats_logger.battle_start(enemy.name)
     renderer = getattr(game, "renderer", Renderer())
     encounter_msg = _(
-        f"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability else ''} Boss incoming!"
+        f"You encountered a {enemy.name}! "
+        f"{enemy.ability.capitalize() if enemy.ability else ''} Boss incoming!"
     )
     renderer.show_message(encounter_msg)
     game.combat_log.log(encounter_msg)

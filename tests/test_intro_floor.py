@@ -1,8 +1,4 @@
-import os
 import random
-import sys
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from dungeoncrawler import map as dungeon_map
 from dungeoncrawler.data import get_floor, load_floor_definitions
