@@ -32,7 +32,7 @@ def render_map_string(game) -> str:
             elif game.discovered[y][x]:
                 row += "·"
             else:
-                row += "#"
+                row += " "
         rows.append(row)
     return "\n".join(rows)
 

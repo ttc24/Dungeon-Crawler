@@ -18,18 +18,18 @@ def test_render_map_snapshot():
     dungeon_map.generate_dungeon(game, floor=1)
     rendered = dungeon_map.render_map_string(game)
     expected = (
-        "####################\n"
-        "#########.##########\n"
-        "########...#########\n"
-        "#########...########\n"
-        "#########....#######\n"
-        "#########.##..######\n"
-        "#########.@#...#####\n"
-        "#########.......####\n"
-        "#######........#####\n"
-        "#########.....######\n"
-        "##########...#######\n"
-        "##########..########"
+        "                    \n"
+        "         .          \n"
+        "        ...         \n"
+        "         ...        \n"
+        "         ....       \n"
+        "         .  ..      \n"
+        "         .@ ...     \n"
+        "         .......    \n"
+        "       ........     \n"
+        "         .....      \n"
+        "          ...       \n"
+        "          ..        "
     )
     assert rendered == expected
 
@@ -48,7 +48,7 @@ def test_render_map_symbols_after_show_map():
 
     assert "@" in rendered
     assert "." in rendered
-    assert "#" in rendered
+    assert " " in rendered
     assert rendered.count("@") == 1
 
 
@@ -68,7 +68,7 @@ def test_map_legend_toggle():
         " E - Exit",
         " . - Floor",
         " · - Discovered",
-        " # - Unexplored",
+        "   - Unexplored",
     ]
     for entry in legend_entries:
         assert entry in game.renderer.lines

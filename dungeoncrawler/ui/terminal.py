@@ -180,7 +180,7 @@ class Renderer:
                 _(" E - Exit"),
                 _(" . - Floor"),
                 _(" · - Discovered"),
-                _(" # - Unexplored"),
+                _("   - Unexplored"),
             ]
             for entry in legend:
                 self.show_message(entry)
