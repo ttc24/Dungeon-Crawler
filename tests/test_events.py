@@ -35,13 +35,13 @@ def test_puzzle_event_rewards_on_correct_answer():
     game = setup_game()
     event = PuzzleEvent()
     with patch("dungeoncrawler.events.random.choice", return_value=("riddle", "answer")):
-        gold_before = game.player.gold
+        credits_before = game.player.credits
         event.trigger(
             game,
             input_func=lambda _: "answer",
             output_func=lambda _msg: None,
         )
-        assert game.player.gold == gold_before + 50
+        assert game.player.credits == credits_before + 50
 
 
 def test_puzzle_event_handles_no_riddles():

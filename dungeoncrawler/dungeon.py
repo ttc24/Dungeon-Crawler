@@ -64,7 +64,7 @@ LEADERBOARD_SORT_KEYS = {
 # [
 #   {
 #     "name": str,
-#     "stats": [hp, atk, defense, gold],
+#     "stats": [hp, atk, defense, credits],
 #     "ability": "optional",
 #     "loot": [
 #       {
@@ -156,8 +156,8 @@ def load_bosses():
     traits = {}
     for cfg in data:
         name = cfg["name"]
-        hp, atk, dfs, gold = cfg["stats"]
-        stats[name] = (hp, atk, dfs, gold, cfg.get("ability"))
+        hp, atk, dfs, credits = cfg["stats"]
+        stats[name] = (hp, atk, dfs, credits, cfg.get("ability"))
         if "loot" in cfg:
             loot[name] = [Weapon(**item) for item in cfg["loot"]]
         if cfg.get("ai"):
@@ -459,7 +459,7 @@ class DungeonBase:
                 "max_health": self.player.max_health,
                 "attack_power": self.player.attack_power,
                 "xp": self.player.xp,
-                "gold": self.player.gold,
+                "credits": self.player.credits,
                 "class": self.player.class_type,
                 "stamina": self.player.stamina,
                 "temp_strength": getattr(self.player, "temp_strength", 0),
@@ -499,7 +499,7 @@ class DungeonBase:
             self.player.max_health = p["max_health"]
             self.player.attack_power = p["attack_power"]
             self.player.xp = p["xp"]
-            self.player.gold = p["gold"]
+            self.player.credits = p["credits"]
             self.player.stamina = p.get("stamina", self.player.max_stamina)
             self.player.temp_strength = p.get("temp_strength", 0)
             self.player.temp_intelligence = p.get("temp_intelligence", 0)
@@ -615,7 +615,7 @@ class DungeonBase:
         self.renderer.show_message(_("Score Breakdown:"))
         self.renderer.show_message(_(f"  Level: {breakdown['level']}"))
         self.renderer.show_message(_(f"  Inventory: {breakdown['inventory']}"))
-        self.renderer.show_message(_(f"  Gold: {breakdown['gold']}"))
+        self.renderer.show_message(_(f"  Credits: {breakdown['credits']}"))
         for name, bonus in breakdown["style"].items():
             label = name.replace("_", " ").title()
             self.renderer.show_message(_(f"  {label}: {bonus}"))
@@ -917,12 +917,12 @@ class DungeonBase:
                     quest.hint_given = True
             if quest.is_complete(self):
                 print(_("Quest complete!"))
-                self.player.gold += quest.reward
+                self.player.credits += quest.reward
                 self.active_quest = None
         elif isinstance(quest, HuntQuest):
             if quest.is_complete(self):
                 print(_("Quest complete!"))
-                self.player.gold += quest.reward
+                self.player.credits += quest.reward
                 self.active_quest = None
         elif isinstance(quest, EscortQuest):
             npc = quest.npc
@@ -942,7 +942,7 @@ class DungeonBase:
                 npc.x, npc.y = self.player.x, self.player.y
             if quest.is_complete(self):
                 print(_("Quest complete!"))
-                self.player.gold += quest.reward
+                self.player.credits += quest.reward
                 self.active_quest = None
 
     def play_game(self) -> None:
@@ -1304,8 +1304,8 @@ class DungeonBase:
         response = input(_("Answer: ")).strip().lower()
         if response == answer:
             reward = 50
-            print(_(f"Correct! You receive {reward} gold."))
-            self.player.gold += reward
+            print(_(f"Correct! You receive {reward} credits."))
+            self.player.credits += reward
         else:
             print(_("Incorrect! The sage vanishes in disappointment."))
 

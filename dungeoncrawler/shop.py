@@ -23,14 +23,14 @@ def shop(
     if not getattr(game, "shop_inventory", []):
         game.restock_shop()
     output_func(_("Welcome to the Shop!"))
-    output_func(_(f"Gold: {game.player.gold}"))
+    output_func(_(f"Credits: {game.player.credits}"))
     for i, item in enumerate(game.shop_inventory, 1):
         if hasattr(item, "price"):
             base_price = item.price
         else:
             base_price = 10
         price = int(base_price * config.loot_mult)
-        output_func(_(f"{i}. {item.name} - {price} Gold"))
+        output_func(_(f"{i}. {item.name} - {price} Credits"))
     sell_option = len(game.shop_inventory) + 1
     exit_option = sell_option + 1
     output_func(_(f"{sell_option}. Sell Items"))
@@ -46,12 +46,12 @@ def shop(
             else:
                 base_price = 10
             price = int(base_price * config.loot_mult)
-            if game.player.gold >= price:
+            if game.player.credits >= price:
                 game.player.collect_item(item)
-                game.player.gold -= price
+                game.player.credits -= price
                 output_func(_(f"You bought {item.name}."))
             else:
-                output_func(_("Not enough gold."))
+                output_func(_("Not enough credits."))
         elif choice == sell_option:
             sell_items(game, input_func=input_func, output_func=output_func)
         elif choice == exit_option:
@@ -92,7 +92,7 @@ def sell_items(
         if sale_price is None:
             output_func(_(f"{i}. {item.name} - Cannot sell"))
         else:
-            output_func(_(f"{i}. {item.name} - {sale_price} Gold"))
+            output_func(_(f"{i}. {item.name} - {sale_price} Credits"))
     output_func(_(f"{len(game.player.inventory)+1}. Back"))
 
     choice = input_func(_("Sell what?"))
@@ -104,10 +104,10 @@ def sell_items(
             if sale_price is None:
                 output_func(_("You can't sell that item."))
                 return
-            confirm = input_func(_(f"Sell {item.name} for {sale_price} gold? (y/n) "))
+            confirm = input_func(_(f"Sell {item.name} for {sale_price} credits? (y/n) "))
             if confirm.lower() == "y":
                 game.player.inventory.pop(choice - 1)
-                game.player.gold += sale_price
+                game.player.credits += sale_price
                 output_func(_(f"You sold {item.name}."))
         elif choice == len(game.player.inventory) + 1:
             return

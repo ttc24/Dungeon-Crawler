@@ -30,7 +30,7 @@ def test_god_set(monkeypatch, game):
     monkeypatch.setattr(config, "enable_debug", True)
     messages = []
     monkeypatch.setattr(game.renderer, "show_message", messages.append)
-    game.player.gold = 1
-    game.handle_input(":god set gold 99")
-    assert game.player.gold == 99
-    assert any("Set gold to 99" in m for m in messages)
+    game.player.credits = 1
+    game.handle_input(":god set credits 99")
+    assert game.player.credits == 99
+    assert any("Set credits to 99" in m for m in messages)

@@ -42,8 +42,8 @@ def test_boss_regenerates_trait():
     game = DungeonBase(1, 1)
     game.player = Player("Hero")
     name = "Glacier Fiend"
-    hp, atk, dfs, gold, ability = game.boss_stats[name]
-    enemy = Enemy(name, hp, atk, dfs, gold, ability, traits=BOSS_TRAITS[name])
+    hp, atk, dfs, credits, ability = game.boss_stats[name]
+    enemy = Enemy(name, hp, atk, dfs, credits, ability, traits=BOSS_TRAITS[name])
     enemy.health -= 10
     before = enemy.health
     enemy.apply_status_effects()

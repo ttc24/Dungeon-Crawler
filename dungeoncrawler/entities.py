@@ -222,7 +222,7 @@ class Player(Entity):
         super().__init__(name, "The player")
         self.level = 1
         self.xp = 0
-        self.gold = 0
+        self.credits = 0
         self.inventory = []
         self.companions = []
         self.guild = None
@@ -344,7 +344,7 @@ class Player(Entity):
     def attack(self, enemy: Enemy) -> None:
         """Attack ``enemy`` using the equipped weapon or base attack power.
 
-        Applies any weapon effects and awards experience and gold if the enemy
+        Applies any weapon effects and awards experience and credits if the enemy
         is defeated.
         """
         hit_chance = 85
@@ -411,14 +411,14 @@ class Player(Entity):
                 add_status_effect(enemy, effect, duration)
 
     def process_enemy_defeat(self, enemy: Enemy) -> None:
-        """Handle rewards for defeating ``enemy`` such as XP and gold."""
+        """Handle rewards for defeating ``enemy`` such as XP and credits."""
         self.xp += enemy.xp
-        gold_dropped = enemy.drop_gold()
+        credits_dropped = enemy.drop_credits()
         if self.level >= 3:
-            gold_dropped += 5
-        self.gold += gold_dropped
+            credits_dropped += 5
+        self.credits += credits_dropped
         print(_(f"You defeated the {enemy.name}!"))
-        print(_(f"You gained {enemy.xp} XP and {gold_dropped} gold."))
+        print(_(f"You gained {enemy.xp} XP and {credits_dropped} credits."))
         while self.xp >= self.level * 20:
             self.xp -= self.level * 20
             self.level_up()
@@ -639,7 +639,7 @@ class Player(Entity):
         print(_(f"Attack Power increased to {self.attack_power}"))
         print(random.choice(ANNOUNCER_LINES))
         if self.level == 3:
-            print(_("You've unlocked Gold Finder: +5 gold after each kill."))
+            print(_("You've unlocked Credit Finder: +5 credits after each kill."))
         if self.level == 5:
             print(_("You've unlocked Passive Regen: Heal 1 HP per move."))
 
@@ -726,24 +726,24 @@ class Player(Entity):
         """Return a detailed score breakdown.
 
         The base score is computed from the player's level, inventory size and
-        gold.  Style bonuses reward particular achievements such as completing a
-        run without taking damage or leaving the dungeon wealthy.  The result is
+        credits. Style bonuses reward particular achievements such as completing a
+        run without taking damage or leaving the dungeon wealthy. The result is
         returned as a dictionary detailing each component and the grand total.
         """
 
         breakdown = {
             "level": self.level * 100,
             "inventory": len(self.inventory) * 10,
-            "gold": self.gold,
+            "credits": self.credits,
             "style": {},
         }
 
         if self.health == self.max_health:
             breakdown["style"]["no_damage"] = 50
-        if self.gold >= 100:
+        if self.credits >= 100:
             breakdown["style"]["rich"] = 50
 
-        total = breakdown["level"] + breakdown["inventory"] + breakdown["gold"]
+        total = breakdown["level"] + breakdown["inventory"] + breakdown["credits"]
         total += sum(breakdown["style"].values())
         breakdown["total"] = total
         return breakdown
@@ -766,7 +766,7 @@ class Enemy(Entity):
         health,
         attack_power,
         defense,
-        gold,
+        credits,
         ability=None,
         ai=None,
         speed=10,
@@ -777,7 +777,7 @@ class Enemy(Entity):
         self.max_health = health
         self.attack_power = attack_power
         self.defense = defense
-        self.gold = gold
+        self.credits = credits
         self.ability = ability
         self.ai = ai
         self.xp = 10
@@ -801,8 +801,8 @@ class Enemy(Entity):
             print(_(f"The {self.name}'s armor softens the blow!"))
         self.health = max(0, self.health - damage)
 
-    def drop_gold(self):
-        return self.gold
+    def drop_credits(self):
+        return self.credits
 
     def apply_status_effects(self):
         """Delegate to the shared status effect helper and traits."""

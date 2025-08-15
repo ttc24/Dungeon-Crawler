@@ -30,7 +30,7 @@ def test_player_attack_defeats_enemy(player, enemy):
     player.attack(enemy)
     assert enemy.health == 0
     assert player.xp == 5
-    assert player.gold == 10
+    assert player.credits == 10
 
 
 def test_enemy_attack_applies_status(player):

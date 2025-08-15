@@ -18,7 +18,7 @@ def test_round_trip_save_load(tmp_path, monkeypatch):
 
     dungeon = DungeonBase(1, 1)
     dungeon.player = Player("Hero")
-    dungeon.player.gold = 99
+    dungeon.player.credits = 99
     dungeon.save_game(floor=2)
 
     with open(save_path) as f:

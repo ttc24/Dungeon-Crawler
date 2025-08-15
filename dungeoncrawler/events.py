@@ -57,7 +57,7 @@ class MerchantEvent(BaseEvent):
 
 
 class PuzzleEvent(BaseEvent):
-    """Present a riddle that rewards gold when solved."""
+    """Present a riddle that rewards credits when solved."""
 
     def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
         # ``random.choice`` raises ``IndexError`` when ``game.riddles`` is empty.
@@ -72,8 +72,8 @@ class PuzzleEvent(BaseEvent):
         response = input_func(_("Answer: ")).strip().lower()
         if response == answer:
             reward = 50
-            output_func(_(f"Correct! You receive {reward} gold."))
-            game.player.gold += reward
+            output_func(_(f"Correct! You receive {reward} credits."))
+            game.player.credits += reward
             game.stats_logger.record_reward()
         else:
             output_func(_("Incorrect! The sage vanishes in disappointment."))
@@ -173,7 +173,7 @@ class FountainEvent(BaseEvent):
 
 
 class CacheEvent(BaseEvent):
-    """Hidden cache that rewards gold."""
+    """Hidden cache that rewards credits."""
 
     def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
         intros = [
@@ -182,9 +182,9 @@ class CacheEvent(BaseEvent):
             _("You notice a small cache tucked away."),
         ]
         output_func(random.choice(intros))
-        gold = random.randint(15, 30)
-        game.player.gold += gold
-        output_func(_(f"You discover a hidden cache containing {gold} gold."))
+        credits = random.randint(15, 30)
+        game.player.credits += credits
+        output_func(_(f"You discover a hidden cache containing {credits} credits."))
         game.stats_logger.record_reward()
 
 
@@ -281,7 +281,7 @@ class MiniQuestHookEvent(BaseEvent):
         if quest:
             if quest.is_complete(game):
                 output_func(_("Quest complete!"))
-                game.player.gold += quest.reward
+                game.player.credits += quest.reward
                 if getattr(game, "stats_logger", None):
                     game.stats_logger.record_reward()
                 game.active_quest = None
