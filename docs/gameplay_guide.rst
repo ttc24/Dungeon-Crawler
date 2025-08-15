@@ -72,12 +72,12 @@ retaining all previous debuffs.
 * **Floor 12 – “Hunted”**
   - *Blood Torrent* – Minor DoT that persists through healing; enemies gain
     increased vision and aggro radius while active. Stacks to three, each
-    intensifying the trail and damage. Counter with scent-mask spray or
-    absorbent gel; bandaging ends the DoT but leaves a faint trail for three
+    intensifying the trail and damage. Counter with Scent-mask Spray or
+    Absorbent Gel; bandaging ends the DoT but leaves a faint trail for three
     turns.
   - *Compression Sickness* – After teleportation, blinking or using launch pads
     suffer −10% speed, −10% accuracy and increased fumble chance for five
-    turns. Waiting a turn halves the remaining duration; anti-nausea draught
+    turns. Waiting a turn halves the remaining duration; an Anti-Nausea Draught
     removes it.
 * **Floor 13 – “Anti-Magic”**
   - *Mana Lock* – Spells cost 50% more resources and cleanse or dispel effects

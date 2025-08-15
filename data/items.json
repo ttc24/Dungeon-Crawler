@@ -9,7 +9,10 @@
     {"type": "Weapon", "name": "Flame Blade", "description": "Glows with searing heat", "min_damage": 13, "max_damage": 20, "price": 95, "rarity": "rare"},
     {"type": "Weapon", "name": "Crossbow", "description": "Ranged attack with bolts", "min_damage": 11, "max_damage": 19, "price": 60, "rarity": "uncommon"},
     {"type": "Armor", "name": "Leather Armor", "description": "Basic protection", "defense": 2, "price": 30, "rarity": "common"},
-    {"type": "Trinket", "name": "Lucky Charm", "description": "A charm that brings luck", "effect": "blessed", "price": 25, "rarity": "rare"}
+    {"type": "Trinket", "name": "Lucky Charm", "description": "A charm that brings luck", "effect": "blessed", "price": 25, "rarity": "rare"},
+    {"type": "Item", "name": "Scent-mask Spray", "description": "Masks blood scent, clearing Blood Torrent", "price": 15, "rarity": "common"},
+    {"type": "Item", "name": "Absorbent Gel", "description": "Soaks and removes Blood Torrent", "price": 20, "rarity": "uncommon"},
+    {"type": "Item", "name": "Anti-Nausea Draught", "description": "Removes Compression Sickness", "price": 15, "rarity": "common"}
   ],
   "rare": [
     {"type": "Weapon", "name": "Elven Longbow", "description": "Bow of unmatched accuracy.", "min_damage": 15, "max_damage": 25, "price": 0, "rarity": "epic"},

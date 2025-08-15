@@ -15,6 +15,9 @@ EFFECT_INFO = {
     "blessed": "+10% hit chance.",
     "cursed": "-5% hit chance.",
     "beetle_bane": "+5% hit chance vs beetles.",
+    "blood_torrent": "Lose 1 HP per stack each turn.",
+    "blood_scent": "Enemies can track you.",
+    "compression_sickness": "Speed and accuracy reduced.",
 }
 
 # Multipliers applied to status effect durations based on enemy rarity.
@@ -243,6 +246,48 @@ def _handle_beetle_bane(entity, effects, is_player, name):
     return False
 
 
+def _handle_blood_torrent(entity, effects, is_player, name):
+    stacks = effects.get("blood_torrent", 0)
+    if stacks > 0:
+        entity.health -= stacks
+        msg = _(f"Blood Torrent -{stacks} HP.")
+        if is_player:
+            print(msg)
+        else:
+            print(_(f"The {name} {msg.lower()}"))
+    return False
+
+
+def _handle_blood_scent(entity, effects, is_player, name):
+    effects["blood_scent"] -= 1
+    if effects["blood_scent"] <= 0:
+        del effects["blood_scent"]
+    return False
+
+
+def _handle_compression_sickness(entity, effects, is_player, name):
+    if not getattr(entity, "_compression_sickness_applied", False):
+        entity._compression_sickness_applied = True
+        entity._compression_prev_speed = getattr(entity, "speed", 0)
+        entity.speed = int(entity.speed * 0.9)
+    effects["compression_sickness"] -= 1
+    remaining = effects.get("compression_sickness", 0)
+    if remaining > 0:
+        if is_player:
+            print(_(f"Compression Sickness ({remaining} turns left)."))
+        else:
+            print(_(f"The {name} reels ({remaining} turns left)."))
+    if effects.get("compression_sickness", 0) <= 0:
+        entity.speed = getattr(entity, "_compression_prev_speed", entity.speed)
+        entity._compression_sickness_applied = False
+        effects.pop("compression_sickness", None)
+        if is_player:
+            print(_("Compression Sickness fades."))
+        else:
+            print(_(f"The {name} steadies."))
+    return False
+
+
 STATUS_EFFECT_HANDLERS = {
     "poison": _handle_poison,
     "burn": _handle_burn,
@@ -254,6 +299,9 @@ STATUS_EFFECT_HANDLERS = {
     "blessed": _handle_blessed,
     "cursed": _handle_cursed,
     "beetle_bane": _handle_beetle_bane,
+    "blood_torrent": _handle_blood_torrent,
+    "blood_scent": _handle_blood_scent,
+    "compression_sickness": _handle_compression_sickness,
 }
 
 

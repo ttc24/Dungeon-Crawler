@@ -1,12 +1,15 @@
 {
   "$schema": "../../schemas/floor.json",
   "id": "12",
-  "name": "Floor",
+  "name": "Hunted",
   "map": [],
   "rule_mods": {},
   "objective": {
     "type": "none"
   },
   "spawns": [],
-  "ui": {}
+  "ui": {},
+  "hooks": [
+    "dungeoncrawler.hooks.floor12"
+  ]
 }
