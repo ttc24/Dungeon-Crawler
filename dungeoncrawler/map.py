@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import random
+from collections import deque
 from gettext import gettext as _
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Optional, Set, Tuple
 
 from .ai import IntentAI
 from .combat import battle
 from .config import config
-from .core.map import compute_visibility, update_visibility
+from .core.events import TileDiscovered
 from .data import load_companions
 from .entities import Companion, Enemy
 from .events import BaseEvent, CacheEvent, FountainEvent
@@ -17,6 +18,54 @@ from .flavor import generate_room_flavor
 from .items import Item
 from .quests import EscortNPC
 from .rendering import render_map, render_map_string  # re-exported for compatibility
+
+Tile = Optional[object]
+
+
+def compute_visibility(
+    grid: List[List[Tile]], px: int, py: int, radius: int
+) -> Set[Tuple[int, int]]:
+    """Return coordinates visible from ``(px, py)`` using BFS.
+
+    ``None`` tiles are treated as walls and stop the search.  The ``radius``
+    limits how far the light extends from the starting point using Manhattan
+    distance.
+    """
+
+    height = len(grid)
+    width = len(grid[0]) if height else 0
+    visible: Set[Tuple[int, int]] = set()
+    queue: deque[Tuple[int, int, int]] = deque([(px, py, 0)])
+    while queue:
+        x, y, dist = queue.popleft()
+        if (x, y) in visible or dist > radius:
+            continue
+        visible.add((x, y))
+        if dist == radius:
+            continue
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < width and 0 <= ny < height and grid[ny][nx] is not None:
+                queue.append((nx, ny, dist + 1))
+    return visible
+
+
+def update_visibility(game) -> List[TileDiscovered]:
+    """Recompute visibility for ``game``'s current state.
+
+    Returns a list of :class:`TileDiscovered` events for any tiles newly seen by
+    the player.
+    """
+
+    game.visible = [[False for _ in range(game.width)] for _ in range(game.height)]
+    radius = 6 if getattr(game, "current_floor", 1) == 1 else 3 + game.current_floor // 2
+    events: List[TileDiscovered] = []
+    for x, y in compute_visibility(game.rooms, game.player.x, game.player.y, radius):
+        game.visible[y][x] = True
+        if not game.discovered[y][x]:
+            game.discovered[y][x] = True
+            events.append(TileDiscovered(f"Tile ({x},{y}) discovered", x, y))
+    return events
 
 __all__ = [
     "compute_visibility",
