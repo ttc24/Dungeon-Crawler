@@ -10,13 +10,19 @@ from .core.combat import resolve_enemy_turn, resolve_player_action
 from .core.entity import Entity as CoreEntity
 from .status_effects import format_status_tags
 from .ui.terminal import Renderer
+from .combat_log import CombatLog
 
 if TYPE_CHECKING:  # pragma: no cover - for type hints only
     from .dungeon import DungeonBase
     from .entities import Enemy, Player
 
 
-def enemy_turn(enemy: "Enemy", player: "Player", renderer: Renderer | None = None) -> None:
+def enemy_turn(
+    enemy: "Enemy",
+    player: "Player",
+    renderer: Renderer | None = None,
+    log: CombatLog | None = None,
+) -> None:
     """Handle the enemy's turn by applying status effects and attacking.
 
     Parameters
@@ -54,6 +60,8 @@ def enemy_turn(enemy: "Enemy", player: "Player", renderer: Renderer | None = Non
             enemy.health = enemy_entity.stats["health"]
             player.health = player_entity.stats["health"]
             for event in events:
+                if log is not None:
+                    log.handle_event(event)
                 renderer.handle_event(event)
         if enemy.heavy_cd > 0:
             enemy.heavy_cd -= 1
@@ -75,11 +83,11 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
     player = game.player
     game.stats_logger.battle_start(enemy.name)
     renderer = getattr(game, "renderer", Renderer())
-    renderer.show_message(
-        _(
-            f"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability else ''} Boss incoming!"
-        )
+    encounter_msg = _(
+        f"You encountered a {enemy.name}! {enemy.ability.capitalize() if enemy.ability else ''} Boss incoming!"
     )
+    renderer.show_message(encounter_msg)
+    game.combat_log.log(encounter_msg)
     game.announce(f"{player.name} engages {enemy.name}!")
     while player.is_alive() and enemy.is_alive():
         skip_player = player.apply_status_effects()
@@ -92,14 +100,16 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
                 enemy, player
             )
             if enemy.intent_message:
-                game.queue_message(_(enemy.intent_message), output_func=None)
+                msg = _(enemy.intent_message)
+                game.queue_message(msg, output_func=None)
+                game.combat_log.log(msg)
         else:
             enemy.next_action = None
             enemy.intent = None
             enemy.intent_message = ""
         if skip_player:
             before = player.health
-            enemy_turn(enemy, player, renderer)
+            enemy_turn(enemy, player, renderer, game.combat_log)
             game.stats_logger.record_damage(taken=before - player.health)
             game.stats_logger.record_turn()
             continue
@@ -145,11 +155,12 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
             player.health = p_entity.stats["health"]
             enemy.health = e_entity.stats["health"]
             for event in events:
+                game.combat_log.handle_event(event)
                 renderer.handle_event(event)
             game.announce(_("A fierce attack lands!"))
             game.stats_logger.record_damage(dealt=enemy_before - enemy.health)
             before = player.health
-            enemy_turn(enemy, player, renderer)
+            enemy_turn(enemy, player, renderer, game.combat_log)
             game.stats_logger.record_damage(taken=before - player.health)
             game.stats_logger.record_turn()
         elif choice == "2":
@@ -178,16 +189,17 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
             player.health = p_entity.stats["health"]
             enemy.health = e_entity.stats["health"]
             for event in events:
+                game.combat_log.handle_event(event)
                 renderer.handle_event(event)
             game.stats_logger.record_damage(dealt=enemy_before - enemy.health)
             before = player.health
-            enemy_turn(enemy, player, renderer)
+            enemy_turn(enemy, player, renderer, game.combat_log)
             game.stats_logger.record_damage(taken=before - player.health)
             game.stats_logger.record_turn()
         elif choice == "3":
             player.use_health_potion()
             before = player.health
-            enemy_turn(enemy, player, renderer)
+            enemy_turn(enemy, player, renderer, game.combat_log)
             game.stats_logger.record_damage(taken=before - player.health)
             game.stats_logger.record_turn()
         elif choice == "4":
@@ -198,7 +210,7 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
             game.announce(_("Special skill unleashed!"))
             game.stats_logger.record_damage(dealt=enemy_before - enemy.health)
             before = player.health
-            enemy_turn(enemy, player, renderer)
+            enemy_turn(enemy, player, renderer, game.combat_log)
             game.stats_logger.record_damage(taken=before - player.health)
             game.stats_logger.record_turn()
         elif choice == "5":
@@ -224,13 +236,14 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
             )
             events = resolve_player_action(p_entity, e_entity, "flee")
             for event in events:
+                game.combat_log.handle_event(event)
                 renderer.handle_event(event)
             if getattr(events[-1], "value", 0):
                 game.announce(f"{player.name} flees from {enemy.name}!")
                 game.stats_logger.record_turn()
                 break
             before = player.health
-            enemy_turn(enemy, player, renderer)
+            enemy_turn(enemy, player, renderer, game.combat_log)
             game.stats_logger.record_damage(taken=before - player.health)
             game.stats_logger.record_turn()
         else:
@@ -242,7 +255,9 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
         if enemy.name in game.boss_loot:
             for loot in game.boss_loot[enemy.name]:
                 player.collect_item(loot)
-                renderer.show_message(_(f"The {enemy.name} dropped {loot.name}!"))
+                loot_msg = _(f"The {enemy.name} dropped {loot.name}!")
+                renderer.show_message(loot_msg)
+                game.combat_log.log(loot_msg)
                 game.announce(_(f"{player.name} obtains {loot.name}!"))
     game.stats_logger.battle_end(player.is_alive(), enemy.name)
     game.check_quest_progress()
