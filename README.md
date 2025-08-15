@@ -6,14 +6,14 @@
 
 Dungeon Crawler is a small text-based adventure that borrows the core ideas of the *Dungeon Crawler Carl* where you guide your hero through procedurally generated floors filled with monsters, treasure, and meaningful character choices.
 
-Full documentation is available in [docs/README.md](docs/README.md).
+Full documentation is available in [docs/index.rst](docs/index.rst).
 
 ## Quickstart
 
 Clone the repository and start the game with Python 3:
 
 ```bash
-git clone https://github.com/ttc24/Dungeon-Crawler.git
+git clone https://github.com/ttc24/Dungeon-Crawler
 cd Dungeon-Crawler
 python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -45,8 +45,8 @@ Make sure the file is executable if you wish to launch it with `./dungeon_crawle
 
 ## Configuration
 
-Game settings are loaded from `config.json` if present. Copy the provided
-`config.example.json` and adjust values as needed:
+Game settings are loaded from `config.json` in the project root. Copy the provided
+`config.example.json` there and adjust values as needed:
 
 ```bash
 cp config.example.json config.json
