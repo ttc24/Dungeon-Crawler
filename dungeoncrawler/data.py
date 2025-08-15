@@ -20,6 +20,7 @@ from .events import (
     MiniQuestHookEvent,
     PuzzleChamberEvent,
     PuzzleEvent,
+    RaceUnlockEvent,
     ShrineEvent,
     ShrineGauntletEvent,
     TrapEvent,
@@ -43,6 +44,7 @@ EVENT_CLASS_MAP = {
         ShrineGauntletEvent,
         PuzzleChamberEvent,
         EscortMissionEvent,
+        RaceUnlockEvent,
     ]
 }
 

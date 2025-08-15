@@ -252,6 +252,7 @@ class Player(Entity):
         self.cause_of_death = ""
         self.novice_luck_active = False
         self.speed = 10
+        self.vision = 5
         # Temporary combat modifiers for the defend action
         self.guard_damage = False
         self.guard_attack = False
