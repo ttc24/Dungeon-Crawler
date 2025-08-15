@@ -1,6 +1,10 @@
 from dungeoncrawler.core.combat import calculate_hit, resolve_attack, resolve_enemy_turn
 from dungeoncrawler.core.entity import Entity, make_enemy
 from dungeoncrawler.core.events import AttackResolved, IntentTelegraphed, StatusApplied
+from dungeoncrawler.ai import IntentAI
+from dungeoncrawler.combat import enemy_turn
+from dungeoncrawler.dungeon import DungeonBase
+from dungeoncrawler.entities import Enemy as GameEnemy, Player as GamePlayer
 
 
 def test_telegraph_precedes_action(monkeypatch):
@@ -60,3 +64,23 @@ def test_wild_attack_accuracy_penalty(monkeypatch):
     assert isinstance(events[1], AttackResolved)
     assert events[1].damage == 0
     assert player.stats["health"] == 50
+
+
+def test_telegraph_enqueued_and_matches_action():
+    game = DungeonBase(3, 3)
+    game.player = GamePlayer("Hero")
+    enemy = GameEnemy("Goblin", 5, 4, 0, 0, ai=IntentAI(aggressive=1, defensive=0, unpredictable=0))
+    game.messages.clear()
+    enemy.ai.choose_intent = lambda e, p: (
+        "attack",
+        "Aggressive",
+        "Goblin prepares a strike",
+    )
+    enemy.next_action, enemy.intent, enemy.intent_message = enemy.ai.choose_intent(
+        enemy, game.player
+    )
+    game.queue_message(enemy.intent_message, output_func=None)
+    assert game.messages[-1] == "Goblin prepares a strike"
+    start_hp = game.player.health
+    enemy_turn(enemy, game.player)
+    assert game.player.health < start_hp

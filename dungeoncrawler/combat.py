@@ -91,6 +91,8 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
             enemy.next_action, enemy.intent, enemy.intent_message = enemy.ai.choose_intent(
                 enemy, player
             )
+            if enemy.intent_message:
+                game.queue_message(_(enemy.intent_message), output_func=None)
         else:
             enemy.next_action = None
             enemy.intent = None
