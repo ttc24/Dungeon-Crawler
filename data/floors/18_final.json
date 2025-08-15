@@ -4,7 +4,9 @@
   "name": "Final",
   "map": [],
   "rule_mods": {},
-  "objective": {},
+  "objective": {
+    "type": "none"
+  },
   "spawns": [],
   "ui": {}
 }
