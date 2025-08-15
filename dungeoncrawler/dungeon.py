@@ -362,6 +362,7 @@ class DungeonBase:
         self.run_stats = {
             "total_runs": 0,
             "unlocks": {"class": False, "guild": False, "race": False},
+            "max_floor": 0,
         }
         if RUN_FILE.exists():
             try:
@@ -373,6 +374,7 @@ class DungeonBase:
         self.unlocks = self.run_stats.get(
             "unlocks", {"class": False, "guild": False, "race": False}
         )
+        self.max_floor = self.run_stats.get("max_floor", 0)
         self.novice_luck_announced = False
         self.stairs_prompt_shown = False
         self.active_quest = None
@@ -387,6 +389,7 @@ class DungeonBase:
         self.next_shop_floor = 2
         self.floor_hooks: list[FloorHooks] = [FloorHooks()]
         self.floor_def: FloorDefinition | None = None
+        self.current_floor = 0
 
     def queue_message(self, text: str, output_func=print):
         """Store ``text`` for later rendering and optionally display it."""
@@ -581,6 +584,7 @@ class DungeonBase:
 
         self.run_stats["total_runs"] = self.total_runs
         self.run_stats["unlocks"] = self.unlocks
+        self.run_stats["max_floor"] = self.max_floor
         try:
             with open(RUN_FILE, "w") as f:
                 json.dump(self.run_stats, f)
@@ -682,11 +686,13 @@ class DungeonBase:
     def offer_class(self, input_func=input):
         """Allow the player to choose a class.
 
-        The choice is permanent and only offered if the player is still a
-        Novice. A short description for each option acts as a tooltip and the
-        currently available stamina-based skills are shown.
+        The choice is permanent and only offered on floor 1 while the player is
+        still a Novice. A short description for each option acts as a tooltip
+        and the currently available stamina-based skills are shown.
         """
 
+        if self.current_floor != 1:
+            return
         if not self.unlocks.get("class"):
             self.unlocks["class"] = True
             self.save_run_stats()
@@ -736,6 +742,8 @@ class DungeonBase:
             break
 
     def offer_guild(self, input_func=None):
+        if self.current_floor != 2:
+            return
         if not self.unlocks.get("guild"):
             self.unlocks["guild"] = True
             self.save_run_stats()
@@ -761,6 +769,8 @@ class DungeonBase:
             self.player.join_guild(guilds[choice][0])
 
     def offer_race(self, input_func=None):
+        if self.current_floor != 3:
+            return
         if not self.unlocks.get("race"):
             self.unlocks["race"] = True
             self.save_run_stats()
@@ -1297,6 +1307,11 @@ class DungeonBase:
     # Floor-specific events keep gameplay varied without hardcoding logic in
     # play_game. Additional floors can be added here easily.
     def trigger_floor_event(self, floor):
+        self.current_floor = floor
+        if floor > self.max_floor:
+            self.max_floor = floor
+            self.run_stats["max_floor"] = self.max_floor
+            self.save_run_stats()
         if floor >= self.next_shop_floor:
             print(_("A traveling merchant sets up shop."))
             self.shop()

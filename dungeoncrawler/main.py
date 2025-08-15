@@ -23,13 +23,16 @@ logger = logging.getLogger(__name__)
 
 def _load_unlocks():
     unlocks = {"class": False, "guild": False, "race": False}
+    max_floor = 0
     if RUN_FILE.exists():
         try:
             with RUN_FILE.open(encoding="utf-8") as f:
-                unlocks.update(json.load(f).get("unlocks", {}))
+                data = json.load(f)
+            unlocks.update(data.get("unlocks", {}))
+            max_floor = data.get("max_floor", 0)
         except (IOError, json.JSONDecodeError):
             logger.exception("Failed to load unlocks from %s", RUN_FILE)
-    return unlocks
+    return unlocks, max_floor
 
 
 def build_character(input_func=input, output_func=print):
@@ -46,7 +49,7 @@ def build_character(input_func=input, output_func=print):
             output_func(_("Name cannot be blank."))
 
     player = Player(name)
-    unlocks = _load_unlocks()
+    unlocks, max_floor = _load_unlocks()
 
     def prompt_class():
         output_func(_("It's time to choose your class! This choice is permanent."))
@@ -132,11 +135,11 @@ def build_character(input_func=input, output_func=print):
         if race:
             player.choose_race(race[0])
 
-    if unlocks.get("class"):
+    if max_floor >= 1:
         prompt_class()
-    if unlocks.get("guild"):
+    if max_floor >= 2:
         prompt_guild()
-    if unlocks.get("race"):
+    if max_floor >= 3:
         prompt_race()
 
     output_func(_("Welcome {name}! Your journey is just beginning.").format(name=player.name))
