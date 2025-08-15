@@ -44,6 +44,35 @@
           "description": "Overrides for special room counts.",
           "type": "object",
           "additionalProperties": {"type": "integer", "minimum": 0}
+        },
+        "water": {
+          "description": "Water movement penalty and breath limits.",
+          "type": "object",
+          "properties": {
+            "speed_penalty": {"type": "number", "minimum": 0},
+            "breath_turns": {"type": "integer", "minimum": 1}
+          },
+          "additionalProperties": false
+        },
+        "moving_walls": {"type": ["boolean", "object"]},
+        "merchant_hub": {"type": ["boolean", "object"]},
+        "mirror_shadows": {"type": ["boolean", "object"]},
+        "noise_meter": {
+          "type": "object",
+          "properties": {
+            "threshold": {"type": "integer", "minimum": 0}
+          },
+          "additionalProperties": false
+        },
+        "faction_choice": {
+          "type": "object",
+          "properties": {
+            "options": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

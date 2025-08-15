@@ -33,6 +33,24 @@ def register_items(shop_items):
 entries.  `register_items` is handed the list of shop items used when the game
 starts.
 
+### Floor rules
+
+Floors can define bespoke mechanics through the ``rule_mods`` mapping and
+accompanying hook modules.  Each key in ``rule_mods`` configures a rule and the
+``hooks`` list loads Python modules that implement the behaviour.  For example:
+
+```json
+{
+  "rule_mods": {
+    "water": {"speed_penalty": 0.5, "breath_turns": 3}
+  },
+  "hooks": ["dungeoncrawler.hooks.water"]
+}
+```
+
+The project ships several built-in hooks such as ``water``, ``moving_walls`` and
+``faction_choice`` that can serve as templates for custom mechanics.
+
 ## Supplying JSON data
 
 Instead of using Python hooks, mods may ship JSON files.  Place them in a
