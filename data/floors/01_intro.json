@@ -1,0 +1,10 @@
+{
+  "$schema": "../../schemas/floor.json",
+  "id": "01",
+  "name": "Intro",
+  "map": [],
+  "rule_mods": {},
+  "objective": {},
+  "spawns": [],
+  "ui": {}
+}
