@@ -3,12 +3,27 @@
   "id": "01",
   "name": "Intro",
   "map": [],
-  "rule_mods": {},
+  "rule_mods": {
+    "water": {"speed_penalty": 0.5, "breath_turns": 3},
+    "moving_walls": true,
+    "merchant_hub": true,
+    "mirror_shadows": true,
+    "noise_meter": {"threshold": 5},
+    "faction_choice": {"options": ["Guild", "Order", "League"]}
+  },
   "objective": {
     "type": "boss",
     "target": "Rat King"
   },
   "spawns": [],
   "ui": {},
-  "hooks": ["dungeoncrawler.hooks.rat_king"]
+  "hooks": [
+    "dungeoncrawler.hooks.rat_king",
+    "dungeoncrawler.hooks.water",
+    "dungeoncrawler.hooks.moving_walls",
+    "dungeoncrawler.hooks.merchant_hub",
+    "dungeoncrawler.hooks.mirror_shadows",
+    "dungeoncrawler.hooks.noise_meter",
+    "dungeoncrawler.hooks.faction_choice"
+  ]
 }
