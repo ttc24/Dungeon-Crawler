@@ -189,13 +189,13 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
             )
             * config.enemy_dmg_mult
         )
-        gold = random.randint(5 + early_game_bonus + floor, 15 + floor * 2)
+        credits = random.randint(5 + early_game_bonus + floor, 15 + floor * 2)
 
         ability = game.enemy_abilities.get(name)
         weights = game.enemy_ai.get(name)
         ai = IntentAI(**weights) if weights else None
         traits = game.enemy_traits.get(name)
-        enemy = Enemy(name, health, attack, defense, gold, ability, ai, traits=traits)
+        enemy = Enemy(name, health, attack, defense, credits, ability, ai, traits=traits)
         enemy.xp = max(5, (health + attack + defense) // 15)
 
         place(enemy)
@@ -206,7 +206,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
         if not boss_pool:
             break
         name = random.choice(boss_pool)
-        hp, atk, dfs, gold, ability = game.boss_stats[name]
+        hp, atk, dfs, credits, ability = game.boss_stats[name]
         game.queue_message(_(f"A powerful boss guards this floor! The {name} lurks nearby..."))
         boss_weights = game.boss_ai.get(name)
         boss_ai = IntentAI(**boss_weights) if boss_weights else None
@@ -215,7 +215,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
             int((hp + floor * 10) * config.enemy_hp_mult),
             int((atk + floor) * config.enemy_dmg_mult),
             dfs + floor // 2,
-            gold + floor * 5,
+            credits + floor * 5,
             ability=ability,
             ai=boss_ai,
             traits=game.boss_traits.get(name),
@@ -318,9 +318,9 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
         if room.name == "Key":
             game.room_names[y][x] = "Hidden Niche"
     elif room == "Treasure":
-        gold = random.randint(20, 50)
-        game.player.gold += gold
-        game.queue_message(_(f"You found a treasure chest with {gold} gold!"))
+        credits = random.randint(20, 50)
+        game.player.credits += credits
+        game.queue_message(_(f"You found a treasure chest with {credits} credits!"))
         if random.random() < 0.3:
             loot = random.choice(game.rare_loot)
             game.queue_message(_(f"Inside you also discover {loot.name}!"))
@@ -332,23 +332,23 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
         game.queue_message(_("You enter a glowing chamber with ancient runes etched in the stone."))
         if game.player.weapon:
             game.queue_message(_(f"Your current weapon is: {game.player.weapon.name}"))
-            game.queue_message(_("You may enchant it with a status effect for 30 gold."))
+            game.queue_message(_("You may enchant it with a status effect for 30 credits."))
             game.queue_message(_("1. Poison  2. Burn  3. Freeze  4. Cancel"))
             choice = input(_("Choose enchantment: "))
             if game.player.weapon.effect:
                 game.queue_message(
                     _("Your weapon is already enchanted! You can't add another enchantment.")
                 )
-            elif game.player.gold >= 30 and choice in ["1", "2", "3"]:
+            elif game.player.credits >= 30 and choice in ["1", "2", "3"]:
                 effect = {"1": "poison", "2": "burn", "3": "freeze"}[choice]
                 game.player.weapon.description += f" (Enchanted: {effect})"
                 game.player.weapon.effect = effect
-                game.player.gold -= 30
+                game.player.credits -= 30
                 game.queue_message(_(f"Your weapon is now enchanted with {effect}!"))
             elif choice == "4":
                 game.queue_message(_("You leave the enchantment chamber untouched."))
             else:
-                game.queue_message(_("Not enough gold or invalid choice."))
+                game.queue_message(_("Not enough credits or invalid choice."))
         else:
             game.queue_message(_("You need a weapon to enchant."))
         game.rooms[y][x] = None
@@ -362,16 +362,16 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
                 )
             )
             game.queue_message(
-                _("Would you like to upgrade your weapon for 50 gold? +3 min/max damage")
+                _("Would you like to upgrade your weapon for 50 credits? +3 min/max damage")
             )
             confirm = input(_("Upgrade? (y/n): "))
-            if confirm.lower() == "y" and game.player.gold >= 50:
+            if confirm.lower() == "y" and game.player.credits >= 50:
                 game.player.weapon.min_damage += 3
                 game.player.weapon.max_damage += 3
-                game.player.gold -= 50
+                game.player.credits -= 50
                 game.queue_message(_("Your weapon has been reforged and is stronger!"))
-            elif game.player.gold < 50:
-                game.queue_message(_("You don't have enough gold."))
+            elif game.player.credits < 50:
+                game.queue_message(_("You don't have enough credits."))
             else:
                 game.queue_message(_("Maybe next time."))
         else:

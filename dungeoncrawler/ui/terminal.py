@@ -125,7 +125,7 @@ class Renderer:
         table.add_row("Health", f"[green]{player.health}/{player.max_health}")
         table.add_row("STA", f"{player.stamina}/{player.max_stamina}")
         table.add_row("XP", str(player.xp))
-        table.add_row("Gold", str(player.gold))
+        table.add_row("Credits", str(player.credits))
         table.add_row("Level", str(player.level))
         table.add_row("Floor", str(game_state.current_floor))
 
@@ -143,7 +143,7 @@ class Renderer:
         self.console.print(table)
         status_template = _(
             "Health: {health}/{max_health} | STA: {stamina}/{max_stamina} | "
-            "XP: {xp} | Gold: {gold} | Level: {level} | Floor: {floor} | "
+            "XP: {xp} | Credits: {credits} | Level: {level} | Floor: {floor} | "
             "Quest: {quest}"
         )
         status = status_template.format(
@@ -152,7 +152,7 @@ class Renderer:
             stamina=player.stamina,
             max_stamina=player.max_stamina,
             xp=player.xp,
-            gold=player.gold,
+            credits=player.credits,
             level=player.level,
             floor=game_state.current_floor,
             quest=quest_status,

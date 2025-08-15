@@ -161,7 +161,7 @@ class LockedCache:
     style :class:`Event` message is returned to hint at its location.
     """
 
-    loot: str = EVENT_DATA.get("locked_cache", {}).get("loot", "gold")
+    loot: str = EVENT_DATA.get("locked_cache", {}).get("loot", "credits")
     key_name: str = EVENT_DATA.get("locked_cache", {}).get("key_name", "cache_key")
     opened: bool = False
     key_spawned: bool = False

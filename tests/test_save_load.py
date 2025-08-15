@@ -15,7 +15,7 @@ def test_save_and_load(tmp_path, monkeypatch):
 
     dungeon = DungeonBase(1, 1)
     dungeon.player = Player("Saver")
-    dungeon.player.gold = 42
+    dungeon.player.credits = 42
     potion = Item("Potion", "Heals")
     dungeon.player.collect_item(potion)
     sword = Weapon("Sword", "Sharp", 3, 5)
@@ -30,7 +30,7 @@ def test_save_and_load(tmp_path, monkeypatch):
     floor = new_dungeon.load_game()
     assert floor == 3
     assert new_dungeon.player.name == "Saver"
-    assert new_dungeon.player.gold == 42
+    assert new_dungeon.player.credits == 42
     assert len(new_dungeon.player.inventory) == 1
     loaded_item = new_dungeon.player.inventory[0]
     assert isinstance(loaded_item, Item)

@@ -13,9 +13,9 @@ from dungeoncrawler.items import Item, Weapon
 def test_shop_purchase():
     dungeon = DungeonBase(1, 1)
     dungeon.player = Player("Buyer")
-    dungeon.player.gold = 20
+    dungeon.player.credits = 20
     shop_module.shop(dungeon, input_func=lambda _: "1", output_func=lambda _msg: None)
-    assert dungeon.player.gold == 10
+    assert dungeon.player.credits == 10
     assert any(item.name == "Health Potion" for item in dungeon.player.inventory)
 
 
@@ -28,7 +28,7 @@ def test_sell_weapon():
     shop_module.sell_items(
         dungeon, input_func=lambda _: next(inputs), output_func=lambda _msg: None
     )
-    assert dungeon.player.gold == 20
+    assert dungeon.player.credits == 20
     assert weapon not in dungeon.player.inventory
 
 
@@ -41,7 +41,7 @@ def test_sell_item():
     shop_module.sell_items(
         dungeon, input_func=lambda _: next(inputs), output_func=lambda _msg: None
     )
-    assert dungeon.player.gold == 5
+    assert dungeon.player.credits == 5
     assert potion not in dungeon.player.inventory
 
 
@@ -51,7 +51,7 @@ def test_sell_unsellable():
     rare_weapon = Weapon("Elven Longbow", "Bow", 15, 25, 0)
     dungeon.player.collect_item(rare_weapon)
     shop_module.sell_items(dungeon, input_func=lambda _: "1", output_func=lambda _msg: None)
-    assert dungeon.player.gold == 0
+    assert dungeon.player.credits == 0
     assert rare_weapon in dungeon.player.inventory
 
 

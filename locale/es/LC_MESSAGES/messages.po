@@ -82,7 +82,7 @@ msgstr ""
 
 #: dungeoncrawler/map.py:255
 #, python-brace-format
-msgid "You found a treasure chest with {gold} gold!"
+msgid "You found a treasure chest with {credits} credits!"
 msgstr ""
 
 #: dungeoncrawler/map.py:258
@@ -105,7 +105,7 @@ msgid "Your current weapon is: {game.player.weapon.name}"
 msgstr ""
 
 #: dungeoncrawler/map.py:267
-msgid "You may enchant it with a status effect for 30 gold."
+msgid "You may enchant it with a status effect for 30 credits."
 msgstr ""
 
 #: dungeoncrawler/map.py:268
@@ -130,7 +130,7 @@ msgid "You leave the enchantment chamber untouched."
 msgstr ""
 
 #: dungeoncrawler/map.py:281
-msgid "Not enough gold or invalid choice."
+msgid "Not enough credits or invalid choice."
 msgstr ""
 
 #: dungeoncrawler/map.py:283
@@ -149,7 +149,7 @@ msgid ""
 msgstr ""
 
 #: dungeoncrawler/map.py:292
-msgid "Would you like to upgrade your weapon for 50 gold? +3 min/max damage"
+msgid "Would you like to upgrade your weapon for 50 credits? +3 min/max damage"
 msgstr ""
 
 #: dungeoncrawler/map.py:293
@@ -161,7 +161,7 @@ msgid "Your weapon has been reforged and is stronger!"
 msgstr ""
 
 #: dungeoncrawler/map.py:300
-msgid "You don't have enough gold."
+msgid "You don't have enough credits."
 msgstr ""
 
 #: dungeoncrawler/map.py:302
@@ -243,12 +243,12 @@ msgstr ""
 
 #: dungeoncrawler/shop.py:18
 #, python-brace-format
-msgid "Gold: {game.player.gold}"
+msgid "Credits: {game.player.credits}"
 msgstr ""
 
 #: dungeoncrawler/shop.py:21
 #, python-brace-format
-msgid "{i}. {item.name} - {price} Gold"
+msgid "{i}. {item.name} - {price} Credits"
 msgstr ""
 
 #: dungeoncrawler/shop.py:24
@@ -271,7 +271,7 @@ msgid "You bought {item.name}."
 msgstr ""
 
 #: dungeoncrawler/shop.py:38
-msgid "Not enough gold."
+msgid "Not enough credits."
 msgstr ""
 
 #: dungeoncrawler/shop.py:42
@@ -301,7 +301,7 @@ msgstr ""
 
 #: dungeoncrawler/shop.py:75
 #, python-brace-format
-msgid "{i}. {item.name} - {sale_price} Gold"
+msgid "{i}. {item.name} - {sale_price} Credits"
 msgstr ""
 
 #: dungeoncrawler/shop.py:76
@@ -318,7 +318,7 @@ msgstr ""
 
 #: dungeoncrawler/shop.py:87
 #, python-brace-format
-msgid "Sell {item.name} for {sale_price} gold? (y/n) "
+msgid "Sell {item.name} for {sale_price} credits? (y/n) "
 msgstr ""
 
 #: dungeoncrawler/shop.py:91
@@ -440,7 +440,7 @@ msgstr ""
 
 #: dungeoncrawler/entities.py:144
 #, python-brace-format
-msgid "You gained {enemy.xp} XP and {gold_dropped} gold."
+msgid "You gained {enemy.xp} XP and {credits_dropped} credits."
 msgstr ""
 
 #: dungeoncrawler/entities.py:152
@@ -581,7 +581,7 @@ msgid "Attack Power increased to {self.attack_power}"
 msgstr ""
 
 #: dungeoncrawler/entities.py:323
-msgid "You've unlocked Gold Finder: +5 gold after each kill."
+msgid "You've unlocked Credits Finder: +5 credits after each kill."
 msgstr ""
 
 #: dungeoncrawler/entities.py:325
@@ -808,8 +808,8 @@ msgstr ""
 #: dungeoncrawler/dungeon.py:710
 #, python-brace-format
 msgid ""
-"Health: {self.player.health} | XP: {self.player.xp} | Gold: {self.player."
-"gold} | Level: {self.player.level} | Floor: {floor} | Skill CD: {self.player."
+"Health: {self.player.health} | XP: {self.player.xp} | Credits: {self.player."
+"credits} | Level: {self.player.level} | Floor: {floor} | Skill CD: {self.player."
 "skill_cooldown}"
 msgstr ""
 
@@ -877,7 +877,7 @@ msgstr ""
 
 #: dungeoncrawler/dungeon.py:831 dungeoncrawler/events.py:36
 #, python-brace-format
-msgid "Correct! You receive {reward} gold."
+msgid "Correct! You receive {reward} credits."
 msgstr ""
 
 #: dungeoncrawler/dungeon.py:834 dungeoncrawler/events.py:39
