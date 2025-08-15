@@ -3,8 +3,8 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.data import load_floor_definitions
+from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.entities import Player
 from dungeoncrawler.events import MiniQuestHookEvent
 from dungeoncrawler.quests import EscortNPC, EscortQuest

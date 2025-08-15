@@ -14,4 +14,3 @@ class Hooks(FloorHooks):
     def on_floor_start(self, state, floor_def) -> None:  # noqa: D401
         """Capture mirror shadow settings."""
         self.enabled = bool(floor_def.rule_mods.get("mirror_shadows"))
-

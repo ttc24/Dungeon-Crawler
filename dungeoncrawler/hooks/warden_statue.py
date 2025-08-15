@@ -26,5 +26,7 @@ class Hooks(FloorHooks):
 
     def on_objective_check(self, state, floor):
         player = state.player
-        count = sum(1 for item in getattr(player, "inventory", []) if getattr(item, "name", "") == "Sigil")
+        count = sum(
+            1 for item in getattr(player, "inventory", []) if getattr(item, "name", "") == "Sigil"
+        )
         return count >= 3

@@ -5,8 +5,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.entities import Enemy, Player
-from dungeoncrawler.items import Item
 from dungeoncrawler.hooks import warden_statue
+from dungeoncrawler.items import Item
 
 
 def test_warden_statue_rotates_immunity_and_checks_sigils():

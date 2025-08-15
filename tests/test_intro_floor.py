@@ -5,10 +5,10 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from dungeoncrawler import map as dungeon_map
-from dungeoncrawler.data import load_floor_definitions, get_floor
+from dungeoncrawler.data import get_floor, load_floor_definitions
 from dungeoncrawler.dungeon import DungeonBase, load_hook_modules
-from dungeoncrawler.entities import Player, Enemy
-from dungeoncrawler.events import FountainEvent, CacheEvent
+from dungeoncrawler.entities import Enemy, Player
+from dungeoncrawler.events import CacheEvent, FountainEvent
 
 
 def test_intro_floor_has_fountain_and_cache_near_spawn():

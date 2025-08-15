@@ -67,6 +67,7 @@ def update_visibility(game) -> List[TileDiscovered]:
             events.append(TileDiscovered(f"Tile ({x},{y}) discovered", x, y))
     return events
 
+
 __all__ = [
     "compute_visibility",
     "update_visibility",

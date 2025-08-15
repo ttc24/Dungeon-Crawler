@@ -5,12 +5,12 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from dungeoncrawler import map as dungeon_map
+from dungeoncrawler.data import load_floor_definitions
 from dungeoncrawler.dungeon import (
     BOSS_LOOT,
     BOSS_TRAITS,
     DungeonBase,
 )
-from dungeoncrawler.data import load_floor_definitions
 from dungeoncrawler.entities import Enemy, Player
 
 

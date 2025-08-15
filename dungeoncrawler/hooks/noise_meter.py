@@ -15,4 +15,3 @@ class Hooks(FloorHooks):
         """Read noise meter configuration."""
         cfg = floor_def.rule_mods.get("noise_meter", {})
         self.threshold = cfg.get("threshold", 0)
-

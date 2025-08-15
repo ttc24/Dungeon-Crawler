@@ -15,4 +15,3 @@ class Hooks(FloorHooks):
         """Load available faction choices from rules."""
         cfg = floor_def.rule_mods.get("faction_choice", {})
         self.options = list(cfg.get("options", []))
-
