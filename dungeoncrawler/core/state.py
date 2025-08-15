@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, List, Optional, Any
 
 from .map import GameMap
 
@@ -34,6 +34,7 @@ class GameState:
     player: Optional["Player"]
     game_map: GameMap
     log: List[str] = field(default_factory=list)
+    game: Any | None = None
 
     def queue_message(self, message: str) -> None:
         """Append ``message`` to the log buffer."""

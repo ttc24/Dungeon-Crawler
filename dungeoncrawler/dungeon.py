@@ -411,6 +411,7 @@ class DungeonBase:
             player=self.player,
             game_map=gm,
             log=list(self.messages),
+            game=self,
         )
 
     def save_game(self, floor):

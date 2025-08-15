@@ -150,12 +150,15 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     place(Item("Key", "Opens the dungeon exit"))
     if floor == 1:
         place_near_start("Sanctuary", 10)
-
-    # Always ensure a helpful non-combat feature near the starting room
-    total = config.trap_chance + config.loot_mult
-    fountain_prob = config.trap_chance / total if total else 0.5
-    event_cls = FountainEvent if random.random() < fountain_prob else CacheEvent
-    place_near_start(event_cls(), 10)
+        # Guarantee both healing and loot opportunities near the start
+        place_near_start(FountainEvent(), 10)
+        place_near_start(CacheEvent(), 10)
+    else:
+        # Always ensure a helpful non-combat feature near the starting room
+        total = config.trap_chance + config.loot_mult
+        fountain_prob = config.trap_chance / total if total else 0.5
+        event_cls = FountainEvent if random.random() < fountain_prob else CacheEvent
+        place_near_start(event_cls(), 10)
 
     enemy_pool = cfg.get("enemy_pool", cfg.get("enemies", []))
     early_game_bonus = 5 if floor <= 3 else 0

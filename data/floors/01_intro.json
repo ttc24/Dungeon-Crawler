@@ -5,8 +5,10 @@
   "map": [],
   "rule_mods": {},
   "objective": {
-    "type": "none"
+    "type": "boss",
+    "target": "Rat King"
   },
   "spawns": [],
-  "ui": {}
+  "ui": {},
+  "hooks": ["dungeoncrawler.hooks.rat_king"]
 }

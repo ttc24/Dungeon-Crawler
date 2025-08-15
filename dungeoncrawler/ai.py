@@ -133,6 +133,11 @@ ARCHETYPES = {
 # Telegraphs for bosses to foreshadow their unique mechanics
 IntentAI.TELEGRAPHS.update(
     {
+        "Rat King": {
+            "aggressive": "Rat King lashes out amid a swarm of rats.",
+            "defensive": "Rat King commands its brood to form a living wall.",
+            "unpredictable": "Rat King scurries unpredictably between minions.",
+        },
         "Bone Tyrant": {
             "aggressive": "Bone Tyrant hefts its club for a crushing blow.",
             "defensive": "Bone Tyrant knits stray bones into a shield.",

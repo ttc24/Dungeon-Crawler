@@ -32,7 +32,7 @@ def test_stat_boost_when_no_loot(monkeypatch):
     load_floor_definitions()
     game = DungeonBase(1, 1)
     game.player = Player("Hero")
-    monkeypatch.setitem(game.boss_loot, "Bone Tyrant", [])
+    monkeypatch.setitem(game.boss_loot, "Rat King", [])
     base = game.player.attack_power
     dungeon_map.generate_dungeon(game, floor=1)
     assert game.player.attack_power == base + 1
