@@ -1,10 +1,11 @@
+from dungeoncrawler.ai import IntentAI
+from dungeoncrawler.combat import enemy_turn
 from dungeoncrawler.core.combat import calculate_hit, resolve_attack, resolve_enemy_turn
 from dungeoncrawler.core.entity import Entity, make_enemy
 from dungeoncrawler.core.events import AttackResolved, IntentTelegraphed, StatusApplied
-from dungeoncrawler.ai import IntentAI
-from dungeoncrawler.combat import enemy_turn
 from dungeoncrawler.dungeon import DungeonBase
-from dungeoncrawler.entities import Enemy as GameEnemy, Player as GamePlayer
+from dungeoncrawler.entities import Enemy as GameEnemy
+from dungeoncrawler.entities import Player as GamePlayer
 
 
 def test_telegraph_precedes_action(monkeypatch):

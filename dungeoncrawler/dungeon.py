@@ -1,11 +1,11 @@
 import copy
+import importlib
 import json
 import logging
 import os
 import random
 import sys
 import time
-import importlib
 from functools import lru_cache
 from gettext import gettext as _
 from pathlib import Path
@@ -14,6 +14,7 @@ from . import combat as combat_module
 from . import data
 from . import map as map_module
 from . import shop as shop_module
+from .combat_log import CombatLog
 from .config import config
 from .constants import (
     ANNOUNCER_LINES,
@@ -23,7 +24,9 @@ from .constants import (
     SAVE_FILE,
     SCORE_FILE,
 )
-from .data import load_items
+from .core import GameState
+from .core.map import GameMap
+from .data import FloorDefinition, load_items
 from .entities import SKILL_DEFS, Companion, Enemy, Player
 from .events import CacheEvent
 from .items import Armor, Item, Trinket, Weapon
@@ -31,10 +34,6 @@ from .plugins import apply_enemy_plugins, apply_item_plugins
 from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
 from .rendering import Renderer, render_map_string
 from .stats_logger import StatsLogger
-from .combat_log import CombatLog
-from .core import GameState
-from .core.map import GameMap
-from .data import FloorDefinition
 
 logger = logging.getLogger(__name__)
 
@@ -973,9 +972,7 @@ class DungeonBase:
             self.trigger_floor_event(floor)
 
             self.floor_def = data.get_floor(floor)
-            self.floor_hooks = load_hook_modules(
-                self.floor_def.hooks if self.floor_def else []
-            )
+            self.floor_hooks = load_hook_modules(self.floor_def.hooks if self.floor_def else [])
             state = self._make_state(floor)
             for hook in self.floor_hooks:
                 hook.on_floor_start(state, self.floor_def)

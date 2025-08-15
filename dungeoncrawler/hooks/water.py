@@ -14,4 +14,3 @@ class Hooks(FloorHooks):
     def on_floor_start(self, state, floor_def) -> None:  # noqa: D401
         """Store water configuration for later use."""
         self.config = floor_def.rule_mods.get("water", {})
-

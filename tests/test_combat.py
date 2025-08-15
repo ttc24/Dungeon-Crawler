@@ -138,9 +138,7 @@ def test_defend_consumed_after_next_hit(monkeypatch):
     enemy = Enemy("Goblin", 20, 10, 0, 0)
 
     rolls = iter([1, 10, 1, 10])
-    monkeypatch.setattr(
-        "dungeoncrawler.entities.random.randint", lambda a, b: next(rolls)
-    )
+    monkeypatch.setattr("dungeoncrawler.entities.random.randint", lambda a, b: next(rolls))
 
     player.defend()
     before = player.health

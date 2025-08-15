@@ -1,6 +1,6 @@
+from dungeoncrawler import data
 from dungeoncrawler.dungeon import DungeonBase, FloorHooks
 from dungeoncrawler.entities import Player
-from dungeoncrawler import data
 
 
 class LoggingHooks(FloorHooks):

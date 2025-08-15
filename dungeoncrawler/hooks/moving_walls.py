@@ -15,4 +15,3 @@ class Hooks(FloorHooks):
         """Initialise moving wall settings."""
         cfg = floor_def.rule_mods.get("moving_walls")
         self.enabled = bool(cfg)
-

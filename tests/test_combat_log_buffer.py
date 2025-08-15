@@ -1,6 +1,6 @@
 from dungeoncrawler.combat_log import CombatLog
-from dungeoncrawler.core.events import AttackResolved
 from dungeoncrawler.config import config
+from dungeoncrawler.core.events import AttackResolved
 
 
 def _event(message: str, dmg: int) -> AttackResolved:

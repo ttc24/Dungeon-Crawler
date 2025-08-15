@@ -5,12 +5,12 @@ from __future__ import annotations
 from gettext import gettext as _
 from typing import TYPE_CHECKING
 
+from .combat_log import CombatLog
 from .constants import INVALID_KEY_MSG
 from .core.combat import resolve_enemy_turn, resolve_player_action
 from .core.entity import Entity as CoreEntity
 from .status_effects import format_status_tags
 from .ui.terminal import Renderer
-from .combat_log import CombatLog
 
 if TYPE_CHECKING:  # pragma: no cover - for type hints only
     from .dungeon import DungeonBase
