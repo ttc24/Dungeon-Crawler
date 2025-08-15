@@ -162,6 +162,7 @@ def resolve_player_action(player: Entity, enemy: Entity, action: str) -> List[Ev
             player.inventory.remove("potion")
             potion = load_items().get("potion", {})
             heal = player.stats.get("potion_heal", potion.get("potion_heal", 20))
+            heal = int(heal * player.stats.get("heal_multiplier", 1))
             max_hp = player.stats.get("max_health", player.stats.get("health", 0))
             new_hp = min(max_hp, player.stats.get("health", 0) + heal)
             player.stats["health"] = new_hp

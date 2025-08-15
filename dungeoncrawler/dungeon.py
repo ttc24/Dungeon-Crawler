@@ -392,6 +392,7 @@ class DungeonBase:
         self.current_floor = 0
         # Track whether late-game scaling has been applied to avoid stacking
         self._tier_two_scaled = False
+        self._base_trap_chance = config.trap_chance
 
     def queue_message(self, text: str, output_func=print):
         """Store ``text`` for later rendering and optionally display it."""
@@ -848,6 +849,18 @@ class DungeonBase:
             config.enemy_hp_mult += 0.15
             config.enemy_dmg_mult += 0.10
             self._tier_two_scaled = True
+
+        # Apply high floor debuffs
+        config.trap_chance = self._base_trap_chance
+        if floor >= 11:
+            config.trap_chance += 0.2
+        self.player.heal_multiplier = 0.5 if floor >= 10 else 1.0
+        if floor >= 12:
+            self.player.vision = 3
+        elif floor >= 10:
+            self.player.vision = 4
+        else:
+            self.player.vision = 6 if floor == 1 else 3 + floor // 2
 
         map_module.generate_dungeon(self, floor)
         self.generate_quest(floor)
