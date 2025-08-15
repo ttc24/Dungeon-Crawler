@@ -107,22 +107,67 @@ CLASS_DEFS = {
 }
 
 GUILD_DEFS = {
-    "Warriors' Guild": {"max_health": 10, "perks": ["+10 max health"]},
-    "Mages' Guild": {"attack_power": 3, "perks": ["+3 attack power"]},
+    "Warriors' Guild": {
+        "max_health": 10,
+        "perks": ["+10 max health"],
+        "skill": {
+            "name": "Warrior Technique",
+            "cost": 20,
+            "base_cooldown": 4,
+            "func": "guild_skill",
+        },
+    },
+    "Mages' Guild": {
+        "attack_power": 3,
+        "perks": ["+3 attack power"],
+        "skill": {
+            "name": "Mage Technique",
+            "cost": 20,
+            "base_cooldown": 4,
+            "func": "guild_skill",
+        },
+    },
     "Rogues' Guild": {
         "cooldown_reduction": 1,
         "perks": ["-1 cooldown to all skills"],
+        "skill": {
+            "name": "Rogue Technique",
+            "cost": 20,
+            "base_cooldown": 4,
+            "func": "guild_skill",
+        },
     },
     "Healers' Circle": {
         "max_health": 8,
         "perks": ["+8 max health"],
+        "skill": {
+            "name": "Healer Technique",
+            "cost": 20,
+            "base_cooldown": 4,
+            "func": "guild_skill",
+        },
     },
     "Shadow Brotherhood": {
         "attack_power": 4,
         "skill_cost_reduction": 5,
         "perks": ["+4 attack power", "Skills cost 5 less stamina"],
+        "skill": {
+            "name": "Shadow Technique",
+            "cost": 20,
+            "base_cooldown": 4,
+            "func": "guild_skill",
+        },
     },
-    "Arcane Order": {"attack_power": 2, "perks": ["+2 attack power"]},
+    "Arcane Order": {
+        "attack_power": 2,
+        "perks": ["+2 attack power"],
+        "skill": {
+            "name": "Arcane Technique",
+            "cost": 20,
+            "base_cooldown": 4,
+            "func": "guild_skill",
+        },
+    },
 }
 
 RACE_DEFS = {
@@ -455,6 +500,12 @@ class Player(Entity):
         else:
             print(_("You are already at full health."))
 
+    def _skill_guild_skill(self, enemy):
+        damage = self.attack_power + 5
+        self.apply_weapon_effect(enemy)
+        enemy.take_damage(damage)
+        print(_(f"Your guild training strikes for {damage} damage!"))
+
     # Skill handler implementations
     def _skill_warrior(self, enemy):
         damage = self.attack_power * 2
@@ -592,6 +643,9 @@ class Player(Entity):
             print(_("You've unlocked Passive Regen: Heal 1 HP per move."))
 
     def join_guild(self, guild):
+        if self.guild:
+            print(_("You are already in a guild."))
+            return
         self.guild = guild
         perks = GUILD_DEFS.get(guild, {})
         if "max_health" in perks:
@@ -608,6 +662,18 @@ class Player(Entity):
             reduction = perks["skill_cost_reduction"]
             for skill in self.skills.values():
                 skill["cost"] = max(0, skill["cost"] - reduction)
+        skill_def = perks.get("skill")
+        if skill_def:
+            key = skill_def.get("key", "3")
+            func = getattr(self, f"_skill_{skill_def['func']}", None)
+            if func:
+                self.skills[key] = {
+                    "name": skill_def["name"],
+                    "cost": skill_def["cost"],
+                    "base_cooldown": skill_def["base_cooldown"],
+                    "cooldown": 0,
+                    "func": func,
+                }
         self.guild_perks = perks.get("perks", [])
         print(_(f"You have joined the {guild}!"))
 
@@ -812,6 +878,18 @@ class Enemy(Entity):
                 )
             else:
                 print(_(f"The {self.name}'s attack missed."))
+
+
+def create_guild_champion(player: Player) -> Enemy:
+    """Create a boss that mirrors the player's basic stats."""
+
+    return Enemy(
+        "Guild Champion",
+        player.max_health,
+        player.attack_power,
+        0,
+        0,
+    )
 
 
 class Companion(Entity):

@@ -376,6 +376,8 @@ class DungeonBase:
         self.novice_luck_announced = False
         self.stairs_prompt_shown = False
         self.active_quest = None
+        # Track guild trial completion when present
+        self.completed_trials: set[str] = set()
         # Balance metrics logger and combat message buffer
         self.stats_logger = StatsLogger()
         self.combat_log = CombatLog()
