@@ -4,7 +4,8 @@ import sys
 import pytest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from dungeoncrawler.dungeon import DungeonBase, load_floor_configs
+from dungeoncrawler.dungeon import DungeonBase
+from dungeoncrawler.data import load_floor_definitions
 from dungeoncrawler.entities import Player
 
 
@@ -18,7 +19,7 @@ def player() -> Player:
 
 @pytest.fixture
 def game(player: Player) -> DungeonBase:
-    load_floor_configs()
+    load_floor_definitions()
     game = DungeonBase(3, 3)
     game.current_floor = 1
     game.player = player

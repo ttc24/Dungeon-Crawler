@@ -5,14 +5,15 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from dungeoncrawler import map as dungeon_map
-from dungeoncrawler.dungeon import DungeonBase, load_floor_configs
+from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.entities import Enemy, Player
 from dungeoncrawler.events import CacheEvent, FountainEvent
+from dungeoncrawler.data import load_floor_definitions
 
 
 def test_generate_dungeon_size_and_population():
     random.seed(0)
-    load_floor_configs()
+    load_floor_definitions()
     dungeon = DungeonBase(1, 1)
     dungeon.player = Player("Tester")
     dungeon_map.generate_dungeon(dungeon, floor=1)
@@ -47,7 +48,7 @@ def test_generate_dungeon_size_and_population():
 
 def test_generate_dungeon_scaling_and_spawn_features_floor2():
     random.seed(0)
-    load_floor_configs()
+    load_floor_definitions()
     dungeon = DungeonBase(1, 1)
     dungeon.player = Player("Tester")
     dungeon_map.generate_dungeon(dungeon, floor=2)

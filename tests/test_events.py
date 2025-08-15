@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from dungeoncrawler.dungeon import DungeonBase, load_floor_configs
+from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.entities import Player
 from dungeoncrawler.events import (
     FountainEvent,
@@ -12,10 +12,11 @@ from dungeoncrawler.events import (
     PuzzleEvent,
     TrapEvent,
 )
+from dungeoncrawler.data import load_floor_definitions
 
 
 def setup_game():
-    load_floor_configs()
+    load_floor_definitions()
     game = DungeonBase(5, 5)
     game.player = Player("hero")
     return game
