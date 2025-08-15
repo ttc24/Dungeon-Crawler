@@ -98,14 +98,26 @@ def resolve_attack(attacker: Entity, defender: Entity) -> AttackResolved:
     if wild:
         hit = max(0, hit - 20)
     roll = random.randint(1, 100)
+    attack_val = attacker.stats.get("attack", 0)
+    defense_val = defender.stats.get("defense", 0)
     if roll > hit:
         msg = f"{attacker.name} misses {defender.name}."
-        return AttackResolved(msg, attacker.name, defender.name, 0, 0)
+        return AttackResolved(
+            msg, attacker.name, defender.name, 0, 0, attack_val, defense_val, False
+        )
 
     crit_chance = calculate_crit(attacker, defender)
     critical = random.randint(1, 100) <= crit_chance
-    base_damage = calculate_damage(attacker, defender, critical)
-    damage = base_damage
+
+    raw_damage = max(0, attack_val - defense_val)
+    damage = raw_damage
+    if critical:
+        damage *= 2
+    if "defend_damage" in defender.status:
+        damage = int(damage * 0.6)
+        defender.status.remove("defend_damage")
+    defender.stats["health"] = max(0, defender.stats.get("health", 0) - damage)
+    base_damage = damage
     if heavy:
         damage = int(damage * 1.5)
     if wild and random.randint(1, 100) >= 95:
@@ -120,7 +132,9 @@ def resolve_attack(attacker: Entity, defender: Entity) -> AttackResolved:
         msg = f"{attacker.name} hits {defender.name} for {damage} damage."
     if defeated:
         msg += f" {defender.name} is defeated."
-    return AttackResolved(msg, attacker.name, defender.name, damage, defeated)
+    return AttackResolved(
+        msg, attacker.name, defender.name, damage, defeated, attack_val, defense_val, critical
+    )
 
 
 def resolve_player_action(player: Entity, enemy: Entity, action: str) -> List[Event]:

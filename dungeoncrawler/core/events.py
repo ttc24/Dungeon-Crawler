@@ -26,6 +26,9 @@ class AttackResolved(Event):
     defender: str
     damage: int
     defeated: bool
+    attack: int = 0
+    defense: int = 0
+    critical: bool = False
 
 
 @dataclass

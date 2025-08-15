@@ -31,6 +31,7 @@ from .plugins import apply_enemy_plugins, apply_item_plugins
 from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
 from .rendering import Renderer, render_map_string
 from .stats_logger import StatsLogger
+from .combat_log import CombatLog
 from .core import GameState
 from .core.map import GameMap
 from .data import FloorDefinition
@@ -375,8 +376,9 @@ class DungeonBase:
         self.novice_luck_announced = False
         self.stairs_prompt_shown = False
         self.active_quest = None
-        # Balance metrics logger
+        # Balance metrics logger and combat message buffer
         self.stats_logger = StatsLogger()
+        self.combat_log = CombatLog()
         self.messages: list[str] = []
         self.renderer = Renderer()
         # Schedule the first shop to appear on floor 2
@@ -388,6 +390,8 @@ class DungeonBase:
         """Store ``text`` for later rendering and optionally display it."""
 
         self.messages.append(text)
+        if getattr(self, "combat_log", None) is not None:
+            self.combat_log.log(text)
         if output_func:
             output_func(text)
         return text
