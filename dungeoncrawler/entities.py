@@ -722,8 +722,35 @@ class Player(Entity):
         else:
             print(_("You don't have a valid trinket to equip."))
 
+    def get_score_breakdown(self):
+        """Return a detailed score breakdown.
+
+        The base score is computed from the player's level, inventory size and
+        gold.  Style bonuses reward particular achievements such as completing a
+        run without taking damage or leaving the dungeon wealthy.  The result is
+        returned as a dictionary detailing each component and the grand total.
+        """
+
+        breakdown = {
+            "level": self.level * 100,
+            "inventory": len(self.inventory) * 10,
+            "gold": self.gold,
+            "style": {},
+        }
+
+        if self.health == self.max_health:
+            breakdown["style"]["no_damage"] = 50
+        if self.gold >= 100:
+            breakdown["style"]["rich"] = 50
+
+        total = breakdown["level"] + breakdown["inventory"] + breakdown["gold"]
+        total += sum(breakdown["style"].values())
+        breakdown["total"] = total
+        return breakdown
+
     def get_score(self):
-        return self.level * 100 + len(self.inventory) * 10 + self.gold
+        """Compatibility wrapper returning only the total score."""
+        return self.get_score_breakdown()["total"]
 
 
 class Enemy(Entity):
