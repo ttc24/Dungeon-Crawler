@@ -606,16 +606,30 @@ class DungeonBase:
             except (IOError, json.JSONDecodeError):
                 records = []
 
-        duration = time.time() - self.run_start if self.run_start else 0
+        now = time.time()
+        duration = now - self.run_start if self.run_start else 0
         epitaph = f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'"
+        breakdown = self.player.get_score_breakdown()
+
+        self.renderer.show_message(_(f"Final Score: {breakdown['total']}"))
+        self.renderer.show_message(_("Score Breakdown:"))
+        self.renderer.show_message(_(f"  Level: {breakdown['level']}"))
+        self.renderer.show_message(_(f"  Inventory: {breakdown['inventory']}"))
+        self.renderer.show_message(_(f"  Gold: {breakdown['gold']}"))
+        for name, bonus in breakdown["style"].items():
+            label = name.replace("_", " ").title()
+            self.renderer.show_message(_(f"  {label}: {bonus}"))
+
         records.append(
             {
                 "player_name": self.player.name,
-                "score": self.player.get_score(),
+                "score": breakdown["total"],
+                "breakdown": breakdown,
                 "floor_reached": floor,
                 "run_duration": duration,
                 "seed": self.seed,
                 "epitaph": epitaph,
+                "timestamp": now,
             }
         )
         # Keep the last 100 entries to prevent the file from growing indefinitely.
@@ -1181,17 +1195,29 @@ class DungeonBase:
             and self.player.has_item("Key")
         ):
             self.renderer.show_message(_("You reach the Sealed Gate."))
-            proceed = input(_("Would you like to descend to the next floor? (y/n): ")).lower()
-            if proceed == "y":
-                floor += 1
-                # Reset temporary floor buffs
-                self.player.temp_strength = 0
-                self.player.temp_intelligence = 0
-                self.save_game(floor)
-                self._foreshadow(floor)
-                return floor, False
-            self.renderer.show_message(_("You chose to exit the dungeon."))
-            self.renderer.show_message(_(f"Final Score: {self.player.get_score()}"))
+            if floor == 9:
+                prompt = _("Descend to the final floor or retire? (d/r): ")
+                proceed = input(prompt).strip().lower()
+                if proceed.startswith("d"):
+                    floor += 1
+                    self.player.temp_strength = 0
+                    self.player.temp_intelligence = 0
+                    self.save_game(floor)
+                    self._foreshadow(floor)
+                    return floor, False
+                self.renderer.show_message(_("You retire from the dungeon."))
+            else:
+                proceed = input(_("Would you like to descend to the next floor? (y/n): ")).lower()
+                if proceed == "y":
+                    floor += 1
+                    # Reset temporary floor buffs
+                    self.player.temp_strength = 0
+                    self.player.temp_intelligence = 0
+                    self.save_game(floor)
+                    self._foreshadow(floor)
+                    return floor, False
+                self.renderer.show_message(_("You chose to exit the dungeon."))
+
             self.record_score(floor)
             if os.path.exists(SAVE_FILE):
                 try:
