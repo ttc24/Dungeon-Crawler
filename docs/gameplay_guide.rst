@@ -59,3 +59,19 @@ Aggressive telegraphs often precede a heavy attack that deals roughly
 suffer a 20% accuracy penalty but have a small chance to inflict double
 damage.
 
+High Floor Debuffs
+------------------
+Beginning on Floor 10, the dungeon introduces persistent penalties that
+accumulate with each descent. Every new floor adds its own challenges while
+retaining all previous debuffs.
+
+* **Floor 10** – healing effects are halved and a relentless sandstorm reduces
+  vision.
+* **Floor 11** – trap density rises and enemies adopt a Disarm Stance capable
+  of riposting, on top of all Floor 10 effects.
+* **Floor 12** – the corridors fall into darkness with line of sight limited to
+  three tiles. Explorers must seek out light-source items and sanctuary circles
+  while contending with the hazards from Floors 10 and 11.
+* **Floors 13–18** – additional debuffs continue to stack, compounding the
+  dangers present in the lower depths.
+
