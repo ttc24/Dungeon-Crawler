@@ -365,7 +365,8 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
         if game.player.weapon:
             game.queue_message(
                 _(
-                    f"Your weapon: {game.player.weapon.name} ({game.player.weapon.min_damage}-{game.player.weapon.max_damage})"
+                    f"Your weapon: {game.player.weapon.name} "
+                    f"({game.player.weapon.min_damage}-{game.player.weapon.max_damage})"
                 )
             )
             game.queue_message(
@@ -384,7 +385,8 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
         else:
             game.queue_message(
                 _(
-                    "The blacksmith scoffs. 'No weapon? Come back when you have something worth forging.'"
+                    "The blacksmith scoffs. 'No weapon? Come back when you have "
+                    "something worth forging.'"
                 )
             )
         game.rooms[y][x] = None

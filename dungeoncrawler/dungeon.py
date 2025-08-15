@@ -687,7 +687,8 @@ class DungeonBase:
                 print(
                     _(
                         f"{r.get('player_name', '?')}: {r.get('score', 0)} "
-                        f"(Floor {r.get('floor_reached', '?')}, {r.get('run_duration', 0):.0f}s, Seed {r.get('seed', '?')}) "
+                        f"(Floor {r.get('floor_reached', '?')}, "
+                        f"{r.get('run_duration', 0):.0f}s, Seed {r.get('seed', '?')}) "
                         f"{r.get('epitaph', '')}"
                     )
                 )
@@ -1007,7 +1008,8 @@ class DungeonBase:
             while self.player.is_alive():
                 self.renderer.show_message(
                     _(
-                        f"Position: ({self.player.x}, {self.player.y}) - {self.room_names[self.player.y][self.player.x]}"
+                        f"Position: ({self.player.x}, {self.player.y}) - "
+                        f"{self.room_names[self.player.y][self.player.x]}"
                     )
                 )
                 self.renderer.show_status(self)
@@ -1021,7 +1023,8 @@ class DungeonBase:
                     self.renderer.show_message(_("Quest: None"))
                 self.renderer.show_message(
                     _(
-                        "0. Wait 1. Move Left 2. Move Right 3. Move Up 4. Move Down 5. Visit Shop 6. Inventory 7. Quit 8. Show Map 9. View Leaderboard"
+                        "0. Wait 1. Move Left 2. Move Right 3. Move Up 4. Move Down "
+                        "5. Visit Shop 6. Inventory 7. Quit 8. Show Map 9. View Leaderboard"
                     )
                 )
                 choice = input(_("Action: "))
