@@ -189,7 +189,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
             )
             * config.enemy_dmg_mult
         )
-        gold = random.randint(15 + early_game_bonus + floor, 30 + floor * 2)
+        gold = random.randint(5 + early_game_bonus + floor, 15 + floor * 2)
 
         ability = game.enemy_abilities.get(name)
         weights = game.enemy_ai.get(name)

@@ -12,5 +12,8 @@ class Hooks(FloorHooks):
         self.enabled = False
 
     def on_floor_start(self, state, floor_def) -> None:  # noqa: D401
-        """Read merchant hub configuration."""
+        """Read merchant hub configuration and trigger the shop."""
         self.enabled = bool(floor_def.rule_mods.get("merchant_hub"))
+        if self.enabled:
+            state.game.restock_shop()
+            state.game.shop()

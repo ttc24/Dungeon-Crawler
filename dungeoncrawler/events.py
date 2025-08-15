@@ -52,6 +52,7 @@ class MerchantEvent(BaseEvent):
     """Open the in-game shop."""
 
     def trigger(self, game: "DungeonBase", input_func=input, output_func=print) -> None:
+        game.restock_shop()
         game.shop(input_func=input_func, output_func=output_func)
 
 

@@ -330,6 +330,7 @@ class DungeonBase:
                 Item("Elixir of Insight", "Reveals hidden paths"),
             ]
         )
+        self.shop_inventory: list[Item] = []
         (
             self.random_events,
             self.random_event_weights,
@@ -1276,6 +1277,17 @@ class DungeonBase:
     def shop(self, input_func=input, output_func=print):
         shop_module.shop(self, input_func=input_func, output_func=output_func)
 
+    def restock_shop(self, count: int = 4) -> None:
+        """Refresh the available shop inventory."""
+
+        if not self.shop_items:
+            self.shop_inventory = []
+            return
+        base = self.shop_items[:1]
+        pool = self.shop_items[1:]
+        k = min(max(0, count - len(base)), len(pool))
+        self.shop_inventory = base + random.sample(pool, k)
+
     def get_sale_price(self, item):
         return shop_module.get_sale_price(item)
 
@@ -1337,6 +1349,7 @@ class DungeonBase:
             self.save_run_stats()
         if floor >= self.next_shop_floor:
             print(_("A traveling merchant sets up shop."))
+            self.restock_shop()
             self.shop()
             self.next_shop_floor = floor + random.randint(2, 3)
 
