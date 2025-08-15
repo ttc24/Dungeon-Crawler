@@ -66,7 +66,7 @@ accumulate with each descent. Every new floor adds its own challenges while
 retaining all previous debuffs.
 
 * **Floor 10** – healing effects are halved and a relentless sandstorm reduces
-  vision.
+  vision to four tiles, persisting on later floors.
 * **Floor 11** – trap density rises and enemies adopt a Disarm Stance capable
   of riposting, on top of all Floor 10 effects.
 * **Floor 12 – “Hunted”**
