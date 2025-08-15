@@ -30,7 +30,9 @@ except ModuleNotFoundError:  # pragma: no cover - textual not installed
         """
 
         def __init__(self, *args, **kwargs) -> None:  # pragma: no cover - simple guard
-            raise ModuleNotFoundError("`textual` is required to use DungeonApp")
+            raise ModuleNotFoundError(
+                "`textual` is required to use DungeonApp. Install it with `pip install textual`."
+            )
 
 
 __all__ = ["Renderer", "DungeonApp"]

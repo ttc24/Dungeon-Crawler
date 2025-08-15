@@ -30,6 +30,17 @@ pip install -r requirements.txt
 python3 -m dungeoncrawler
 ```
 
+### Optional Textual Interface
+
+The experimental graphical interface uses the third‑party
+[`textual`](https://textual.textualize.io/) framework.  It is not required for
+the standard terminal renderer, but you can install it separately to try the
+`DungeonApp` showcase:
+
+```bash
+pip install textual
+```
+
 Make sure the file is executable if you wish to launch it with `./dungeon_crawler.py`.
 
 ## Configuration
