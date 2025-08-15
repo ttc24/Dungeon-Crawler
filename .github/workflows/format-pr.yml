@@ -34,7 +34,7 @@ jobs:
       - name: Run formatters
         run: |
           black .
-          isort .
+          isort --profile black .
 
       - name: Create or update PR with changes
         uses: peter-evans/create-pull-request@v6
