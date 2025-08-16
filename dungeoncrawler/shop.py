@@ -49,6 +49,11 @@ def shop(
             if game.player.credits >= price:
                 game.player.collect_item(item)
                 game.player.credits -= price
+                # Remove the purchased item from the shop so it cannot be bought
+                # repeatedly during the same visit. Previously the item remained
+                # in ``game.shop_inventory`` allowing unlimited purchases of the
+                # same entry which is not the intended behaviour.
+                del game.shop_inventory[choice - 1]
                 output_func(_(f"You bought {item.name}."))
             else:
                 output_func(_("Not enough credits."))
