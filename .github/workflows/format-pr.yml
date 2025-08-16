@@ -42,8 +42,8 @@ jobs:
           title: ${{ github.event.pull_request.title }}
           body: ${{ github.event.pull_request.body }}
           author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
-          branch: ${{ github.event.pull_request.head.ref }}
-          base: ${{ github.event.pull_request.base.ref }}
+          branch: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          base: ${{ github.event.pull_request.base.ref || github.event.repository.default_branch }}
           push-to-fork: ${{ github.event.pull_request.head.repo.full_name }}
       - name: Create or update PR with changes (same repo)
         if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
@@ -53,5 +53,5 @@ jobs:
           title: ${{ github.event.pull_request.title }}
           body: ${{ github.event.pull_request.body }}
           author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
-          branch: ${{ github.event.pull_request.head.ref }}
-          base: ${{ github.event.pull_request.base.ref }}
+          branch: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          base: ${{ github.event.pull_request.base.ref || github.event.repository.default_branch }}
