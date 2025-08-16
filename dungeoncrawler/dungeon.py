@@ -616,13 +616,8 @@ class DungeonBase:
         breakdown = self.player.get_score_breakdown()
 
         self.renderer.show_message(_(f"Final Score: {breakdown['total']}"))
-        self.renderer.show_message(_("Score Breakdown:"))
-        self.renderer.show_message(_(f"  Level: {breakdown['level']}"))
-        self.renderer.show_message(_(f"  Inventory: {breakdown['inventory']}"))
-        self.renderer.show_message(_(f"  Credits: {breakdown['credits']}"))
-        for name, bonus in breakdown["style"].items():
-            label = name.replace("_", " ").title()
-            self.renderer.show_message(_(f"  {label}: {bonus}"))
+        for line in self.player.format_score_breakdown(breakdown):
+            self.renderer.show_message(line)
 
         records.append(
             {
@@ -1048,7 +1043,6 @@ class DungeonBase:
         self.renderer.show_message(
             _(f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'")
         )
-        self.renderer.show_message(_(f"Final Score: {self.player.get_score()}"))
         self.record_score(floor)
         self.stats_logger.finalize(self, self.player.cause_of_death or "Unknown")
         if os.path.exists(SAVE_FILE):
@@ -1244,14 +1238,19 @@ class DungeonBase:
                     return floor, False
                 self.renderer.show_message(_("You retire from the dungeon."))
             elif floor == 18:
-                keys = sum(1 for item in self.player.inventory if getattr(item, "name", "") == "Key")
+                keys = sum(
+                    1
+                    for item in self.player.inventory
+                    if getattr(item, "name", "") == "Key"
+                )
                 slots = self.floor_configs.get(18, {}).get("boss_slots", 1)
                 if keys < slots:
-                    proceed = input(_("Exit the dungeon or continue fighting? (y/n): ")).strip().lower()
+                    proceed = input(
+                        _("Exit the dungeon or continue fighting? (y/n): ")
+                    ).strip().lower()
                     if proceed != "y":
                         return floor, True
                 self.player.score_buff += keys * 100
-                self.renderer.show_message(_(f"Final Score: {self.player.get_score()}"))
                 self.record_score(floor)
                 if os.path.exists(SAVE_FILE):
                     try:
