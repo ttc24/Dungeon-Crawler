@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Any, TypedDict
 
 from .items import Item
 from .quests import EscortNPC, EscortQuest
-from .status_effects import add_status_effect
+from .status_effects import add_status_effect, clear_soul_tax
 
 # pylint: disable=too-few-public-methods
 
@@ -248,6 +248,8 @@ class ShrineEvent(BaseEvent):
         output_func(_("[V] Altar of Valor (+1 STR until next floor)"))
         output_func(_("[W] Altar of Wisdom (+1 INT until next floor)"))
         output_func(_("[P] Pray (60% boon / 40% curse)"))
+        if getattr(game.player, "_soul_tax_timers", []):
+            output_func(_("[D] Donate 50 credits to cleanse Soul Tax"))
         choice = input_func(_("Choice: ")).strip().lower()
         if choice == "v":
             game.player.temp_strength += 1
@@ -269,6 +271,13 @@ class ShrineEvent(BaseEvent):
             else:
                 add_status_effect(game.player, "cursed", 30)
                 output_func(_("A dark chill leaves you cursed."))
+        elif choice == "d" and getattr(game.player, "_soul_tax_timers", []):
+            if game.player.credits >= 50:
+                game.player.credits -= 50
+                clear_soul_tax(game.player)
+                output_func(_("Your donation lifts the soul tax."))
+            else:
+                output_func(_("You lack the credits to donate."))
         else:
             output_func(_("You leave the shrine undisturbed."))
 

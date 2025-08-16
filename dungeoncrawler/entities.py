@@ -316,10 +316,18 @@ class Player(Entity):
     def heal(self, amount: int) -> int:
         """Restore ``amount`` health adjusted by ``heal_multiplier``."""
 
+        from dungeoncrawler.status_effects import add_status_effect
+
         amount = int(amount * getattr(self, "heal_multiplier", 1))
-        healed = min(amount, self.max_health - self.health)
+        missing = self.max_health - self.health
+        healed = min(amount, missing)
+        overheal = amount - healed
         if healed > 0:
             self.health += healed
+        if getattr(self, "fester_mark_active", False) and overheal > amount * 0.5:
+            damage = max(1, int(overheal * 0.05))
+            add_status_effect(self, "fester_mark", 5)
+            self._fester_mark_damage = damage
         return healed
 
     def use_health_potion(self):

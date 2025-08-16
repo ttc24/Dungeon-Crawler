@@ -27,6 +27,8 @@ EFFECT_INFO = {
     "miasma_aura": "Healing halved.",
     "temporal_lag": "15% chance to repeat last action, wasting the turn.",
     "haste_dysphoria": "Speed bonuses beyond 25% invert to penalties.",
+    "fester_mark": "Overheal causes lingering damage.",
+    "soul_tax": "-1 attack per stack; +5% loot chance.",
 }
 
 # Multipliers applied to status effect durations based on enemy rarity.
@@ -52,6 +54,8 @@ DEBUFFS = {
     "miasma_aura",
     "temporal_lag",
     "haste_dysphoria",
+    "fester_mark",
+    "soul_tax",
 }
 
 
@@ -450,6 +454,67 @@ def _handle_haste_dysphoria(entity, effects, is_player, name):
     return False
 
 
+def _handle_fester_mark(entity, effects, is_player, name):
+    damage = getattr(entity, "_fester_mark_damage", 0)
+    if damage > 0:
+        entity.health -= damage
+        remaining = effects.get("fester_mark", 0) - 1
+        msg = _(f"Fester Mark -{damage} HP ({remaining} turns left).")
+        if is_player:
+            print(msg)
+        else:
+            print(_(f"The {name} {msg.lower()}"))
+    effects["fester_mark"] -= 1
+    if effects["fester_mark"] <= 0:
+        effects.pop("fester_mark", None)
+        entity._fester_mark_damage = 0
+        if is_player:
+            print(_("The mark fades."))
+        else:
+            print(_(f"The {name}'s mark fades."))
+    return False
+
+
+def _handle_soul_tax(entity, effects, is_player, name):
+    timers = getattr(entity, "_soul_tax_timers", [])
+    if not timers:
+        effects.pop("soul_tax", None)
+        return False
+    new_timers = []
+    state = getattr(entity, "_soul_tax_state", None)
+    for t in timers:
+        t -= 1
+        if t <= 0:
+            entity.attack_power += 1
+            if state is not None:
+                state.config.loot_mult = max(
+                    getattr(entity, "_soul_tax_base_loot", state.config.loot_mult),
+                    state.config.loot_mult - 0.05,
+                )
+        else:
+            new_timers.append(t)
+    entity._soul_tax_timers = new_timers
+    if new_timers:
+        effects["soul_tax"] = max(new_timers)
+    else:
+        effects.pop("soul_tax", None)
+    return False
+
+
+def clear_soul_tax(entity):
+    timers = getattr(entity, "_soul_tax_timers", [])
+    if not timers:
+        return
+    state = getattr(entity, "_soul_tax_state", None)
+    restored = len(timers)
+    entity.attack_power += restored
+    if state is not None:
+        state.config.loot_mult = getattr(entity, "_soul_tax_base_loot", state.config.loot_mult)
+    entity._soul_tax_timers = []
+    effects = getattr(entity, "status_effects", {})
+    effects.pop("soul_tax", None)
+
+
 STATUS_EFFECT_HANDLERS = {
     "poison": _handle_poison,
     "burn": _handle_burn,
@@ -470,6 +535,8 @@ STATUS_EFFECT_HANDLERS = {
     "miasma_aura": _handle_miasma_aura,
     "temporal_lag": _handle_temporal_lag,
     "haste_dysphoria": _handle_haste_dysphoria,
+    "fester_mark": _handle_fester_mark,
+    "soul_tax": _handle_soul_tax,
 }
 
 
