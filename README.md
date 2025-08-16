@@ -100,6 +100,14 @@ entries are written to `~/.dungeon_crawler` in your home directory.
 - Rack up the highest score on the in-game leaderboard. Runs can be ranked by
   score, deepest floor reached or fastest completion time.
 
+## Retiring & Scoring
+
+Upon reaching Floor 9 you may **retire** from the run to lock in your score or
+descend toward the final gauntlet. Choosing to retire records your current
+score to `~/.dungeon_crawler/scores.json` and deletes the active save file,
+returning you to the title screen. Continuing downward restores the save and
+applies the usual floor scaling.
+
 ## Features
 
 - Gradual character creation that unlocks classes, guilds and races as you

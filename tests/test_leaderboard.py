@@ -22,6 +22,7 @@ def test_record_score_persistence(tmp_path, monkeypatch):
     assert data[0]["seed"] == 1234
     assert data[0]["run_duration"] == 10
     assert "epitaph" in data[0]
+    assert "breakdown" in data[0]
 
 
 def test_view_leaderboard_display(tmp_path, monkeypatch, capsys):

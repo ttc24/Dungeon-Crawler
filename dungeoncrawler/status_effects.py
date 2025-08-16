@@ -79,6 +79,8 @@ def add_status_effect(entity, effect: str, duration: int, source=None, _reflecte
         setattr(entity, "status_effects", effects)
     rarity = getattr(entity, "rarity", "common")
     modifier = RARITY_STATUS_RESISTANCE.get(rarity, 1.0)
+    if rarity == "elite" and getattr(entity, "floor", 1) < 10:
+        modifier = 1.0
     duration = max(1, int(duration * modifier))
     effects[effect] = duration
     is_player = entity.__class__.__name__ == "Player"

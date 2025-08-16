@@ -7,6 +7,14 @@ At any time choose **8. Show Map** to display the dungeon grid. The map marks yo
 
 Progress is automatically saved whenever you clear a floor.
 
+Retiring & Scoring
+------------------
+Upon reaching the end of Floor 9 you may retire early to bank your score or
+descend toward the late-game debuffs. Retiring immediately records your current
+score and writes a breakdown to ``~/.dungeon_crawler/scores.json`` before
+returning you to the title screen and clearing the active save. Descending keeps
+the adventure going and applies standard floor scaling.
+
 Classes, Guilds and Races
 -------------------------
 Characters grow through three axes of customization.  A **class** supplies a

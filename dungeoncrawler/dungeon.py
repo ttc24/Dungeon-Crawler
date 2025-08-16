@@ -838,14 +838,19 @@ class DungeonBase:
         freshly saved state whenever a new floor is created.
         """
 
-        # Apply difficulty scaling when the player reaches the second tier of
-        # the dungeon.  This boosts enemy health and damage to keep later
-        # floors challenging.  Tests can disable this behaviour by enabling
-        # the ``debug`` flag in the configuration.
-        if floor >= 10 and not self._tier_two_scaled and not config.enable_debug:
-            config.enemy_hp_mult += 0.15
-            config.enemy_dmg_mult += 0.10
-            self._tier_two_scaled = True
+        # Compute per-floor enemy scaling.  Each floor adds a small bump to
+        # monster health and damage.  When the player enters the second tier of
+        # the dungeon (floor 10 and beyond) a one-time "hard band" further
+        # boosts difficulty.  The debug flag disables all automatic scaling to
+        # keep deterministic values for tests.
+        if not config.enable_debug:
+            config.enemy_hp_mult = 1 + 0.05 * (floor - 1)
+            config.enemy_dmg_mult = 1 + 0.04 * (floor - 1)
+            if floor >= 10:
+                config.enemy_hp_mult += 0.15
+                config.enemy_dmg_mult += 0.10
+                if not self._tier_two_scaled:
+                    self._tier_two_scaled = True
 
         # Apply high floor debuffs
         config.trap_chance = self._base_trap_chance
@@ -1227,9 +1232,9 @@ class DungeonBase:
         ):
             self.renderer.show_message(_("You reach the Sealed Gate."))
             if floor == 9:
-                prompt = _("Descend to the final floor or retire? (d/r): ")
-                proceed = input(prompt).strip().lower()
-                if proceed.startswith("d"):
+                prompt = _("Retire for score or Descend (r/d): ")
+                choice = input(prompt).strip().lower()
+                if choice.startswith("d"):
                     floor += 1
                     self.player.temp_strength = 0
                     self.player.temp_intelligence = 0
@@ -1237,6 +1242,13 @@ class DungeonBase:
                     self._foreshadow(floor)
                     return floor, False
                 self.renderer.show_message(_("You retire from the dungeon."))
+                self.record_score(floor)
+                if os.path.exists(SAVE_FILE):
+                    try:
+                        os.remove(SAVE_FILE)
+                    except OSError:
+                        logger.exception("Failed to remove save file %s", SAVE_FILE)
+                return floor, None
             elif floor == 18:
                 keys = sum(
                     1 for item in self.player.inventory if getattr(item, "name", "") == "Key"

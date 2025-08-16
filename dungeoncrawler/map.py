@@ -203,6 +203,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
         ai = IntentAI(**weights) if weights else None
         traits = game.enemy_traits.get(name)
         enemy = Enemy(name, health, attack, defense, credits, ability, ai, traits=traits)
+        enemy.floor = floor
         enemy.xp = max(5, (health + attack + defense) // 15)
 
         place(enemy)
@@ -227,6 +228,7 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
             ai=boss_ai,
             traits=game.boss_traits.get(name),
         )
+        boss.floor = floor
         place(boss)
         boss_drop = game.boss_loot.get(name, [])
         if boss_drop:
