@@ -94,6 +94,7 @@ def load_items() -> Tuple[List[Item], List[Item]]:
                 cfg.get("max_stacks", 1),
                 cfg.get("price", 0),
                 cfg.get("rarity", "common"),
+                cfg.get("combos_with"),
             )
         return Item(cfg["name"], cfg.get("description", ""))
 

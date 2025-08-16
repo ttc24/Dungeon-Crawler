@@ -18,3 +18,16 @@ def test_augment_stacking_rules():
     assert player.apply_augment(aug) is False
     assert player.attack_power == 14
     assert player.max_health == 90
+
+
+def test_augment_description_includes_combos():
+    aug = Augment(
+        "Battle Stim",
+        "Gain +2 attack, lose 5 max health",
+        attack_bonus=2,
+        health_penalty=5,
+        max_stacks=2,
+        combos_with=["Bleed", "Poison"],
+    )
+    desc = aug.describe()
+    assert "Combos with: Bleed, Poison" in desc

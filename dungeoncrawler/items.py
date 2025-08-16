@@ -61,3 +61,11 @@ class Augment(Item):
     max_stacks: int = 1
     price: int = 0
     rarity: str = "common"
+    combos_with: Optional[list[str]] = None
+
+    def describe(self) -> str:
+        base = self.description
+        if self.combos_with:
+            combo = ", ".join(self.combos_with)
+            base = f"{base} Combos with: {combo}"
+        return base

@@ -263,6 +263,8 @@ class Player(Entity):
         self.heal_multiplier = 1.0
         # Track lasting injuries that reduce max health
         self.wounds = 0
+        self._floor_wound_hp = 0
+        self._wound_history: list[int] = []
         self.base_max_health = 0
         # Temporary combat modifiers for the defend action
         self.guard_damage = False
@@ -325,15 +327,57 @@ class Player(Entity):
         if self.health > self.max_health:
             self.health = self.max_health
 
-    def add_wound(self, amount: int = 1) -> None:
-        """Apply ``amount`` wounds, permanently reducing max health."""
-        self.wounds += amount
+    def apply_wound(self, amount: int = 1) -> int:
+        """Apply ``amount`` wounds respecting soft caps.
+
+        Returns the number of wounds actually applied. When configuration
+        disables wound mechanics (soft cap ratio or window), behaviour mirrors
+        the original implementation.
+        """
+
+        hp = amount * 5
+        cap_ratio = getattr(config, "wounds_soft_cap_ratio", 0) or 0
+        window = getattr(config, "wounds_soft_cap_last_n_floors", None)
+        if cap_ratio and window:
+            history_sum = sum(self._wound_history[-(window - 1):]) if window > 1 else 0
+            recent = history_sum + self._floor_wound_hp
+            cap_hp = int(self.base_max_health * cap_ratio)
+            available = max(0, cap_hp - recent)
+            hp = min(hp, available)
+        wounds = hp // 5
+        if wounds <= 0:
+            return 0
+        self.wounds += wounds
         self.recalc_max_health()
+        self._floor_wound_hp += wounds * 5
+        return wounds
+
+    # Backwards compatibility
+    add_wound = apply_wound
 
     def cleanse_wounds(self) -> None:
         """Remove all wounds and restore max health."""
         self.wounds = 0
         self.recalc_max_health()
+
+    def decay_wounds(self) -> None:
+        """Refund a portion of wound damage after clearing a floor."""
+
+        window = getattr(config, "wounds_soft_cap_last_n_floors", None)
+        if window:
+            self._wound_history.append(self._floor_wound_hp)
+            if window <= 1:
+                self._wound_history = []
+            elif len(self._wound_history) > window - 1:
+                self._wound_history = self._wound_history[-(window - 1):]
+        self._floor_wound_hp = 0
+        decay = getattr(config, "wounds_decay_per_floor", 0) or 0
+        if decay and self.wounds:
+            refund_hp = int(self.wounds * 5 * decay)
+            removed = refund_hp // 5
+            if removed > 0:
+                self.wounds = max(0, self.wounds - removed)
+                self.recalc_max_health()
 
     def gain_max_health(self, amount: int) -> None:
         """Permanently increase max health, respecting wounds."""
