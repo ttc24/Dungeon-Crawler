@@ -16,6 +16,7 @@
     {"type": "Item", "name": "Entropy Vent Stone", "description": "Vents Entropic Debt stacks", "price": 25, "rarity": "uncommon"},
     {"type": "Item", "name": "Filter Mask", "description": "Negates one Miasma aura", "price": 20, "rarity": "common"},
     {"type": "Item", "name": "Air Filter", "description": "Blocks one Miasma aura", "price": 30, "rarity": "uncommon"},
+    {"type": "Item", "name": "Anchor", "description": "Clears Temporal Lag", "price": 30, "rarity": "uncommon"},
     {"type": "Trinket", "name": "Suppression Ring", "description": "Negates Mana Lock but may overheat", "price": 50, "rarity": "rare"}
   ],
   "rare": [

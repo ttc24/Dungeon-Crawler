@@ -105,7 +105,7 @@ retaining all previous debuffs.
 * **Floor 16 – “Time Weirdness”**
   - *Temporal Lag* – 15% chance your last action repeats on the next turn with a
     new target, refunding resources but wasting the turn. Taking short,
-    deliberate turns or using an Anchor consumable counters it.
+    deliberate turns or consuming an **Anchor** clears it.
   - *Haste Dysphoria* – Speed buffs invert into a penalty if total haste exceeds
     25%. Cap haste or purge to avoid the slowdown.
 * **Floor 17 – “Oaths & Curses”**
