@@ -1,5 +1,7 @@
 import random
 
+import pytest
+
 from dungeoncrawler.ai import IntentAI
 from dungeoncrawler.entities import Enemy
 
@@ -22,3 +24,8 @@ def test_intent_field_and_delayed_resolution():
     enemy.take_turn(player)
     assert "shield" in enemy.status_effects
     assert enemy.intent is None
+
+
+def test_intent_ai_requires_positive_weight():
+    with pytest.raises(ValueError):
+        IntentAI(0, 0, 0)
