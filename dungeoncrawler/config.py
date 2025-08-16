@@ -39,6 +39,9 @@ class Config:
     death_penalty: float = 0.15
     no_death_bonus: float = 0.10
     enable_debug: bool = False
+    wounds_soft_cap_last_n_floors: int | None = None
+    wounds_soft_cap_ratio: float = 0.0
+    wounds_decay_per_floor: float = 0.0
     extras: dict[str, Any] = field(default_factory=dict)
 
 
@@ -115,6 +118,21 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
                         raise ValueError(f"{key} must be a number, got {type(value).__name__}")
                     if float(value) < 0:
                         raise ValueError(f"{key} must be greater than or equal to 0, got {value}")
+                    value = float(value)
+                elif key == "wounds_soft_cap_last_n_floors":
+                    if value is None:
+                        value = None
+                    elif not isinstance(value, int):
+                        raise ValueError(f"{key} must be an integer, got {type(value).__name__}")
+                    elif value < 0:
+                        raise ValueError(f"{key} must be greater than or equal to 0, got {value}")
+                    else:
+                        value = int(value)
+                elif key in {"wounds_soft_cap_ratio", "wounds_decay_per_floor"}:
+                    if not isinstance(value, (int, float)):
+                        raise ValueError(f"{key} must be a number, got {type(value).__name__}")
+                    if not 0 <= float(value) <= 1:
+                        raise ValueError(f"{key} must be between 0 and 1, got {value}")
                     value = float(value)
                 setattr(cfg, key, value)
             else:

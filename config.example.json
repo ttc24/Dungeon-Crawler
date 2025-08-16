@@ -16,5 +16,8 @@
   "retire_bonus_per_floor": 0.08,
   "death_penalty": 0.15,
   "no_death_bonus": 0.10,
-  "enable_debug": false
+  "enable_debug": false,
+  "wounds_soft_cap_last_n_floors": 3,
+  "wounds_soft_cap_ratio": 0.30,
+  "wounds_decay_per_floor": 0.10
 }

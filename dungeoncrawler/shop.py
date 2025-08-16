@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 from .config import config
 from .constants import INVALID_KEY_MSG
-from .items import Armor, Item, Trinket, Weapon
+from .items import Armor, Item, Trinket, Weapon, Augment
 
 if TYPE_CHECKING:  # pragma: no cover - only for type hints
     from .dungeon import DungeonBase
@@ -30,7 +30,11 @@ def shop(
         else:
             base_price = 10
         price = int(base_price * config.loot_mult)
-        output_func(_(f"{i}. {item.name} - {price} Credits"))
+        name = item.name
+        if isinstance(item, Augment) and item.combos_with:
+            if set(item.combos_with) & set(game.player.status_effects):
+                name = f"[{name}]"
+        output_func(_(f"{i}. {name} - {price} Credits"))
     sell_option = len(game.shop_inventory) + 1
     exit_option = sell_option + 1
     output_func(_(f"{sell_option}. Sell Items"))
@@ -138,7 +142,11 @@ def show_inventory(
         equipped = ""
         if item == game.player.weapon or item == game.player.armor or item == game.player.trinket:
             equipped = " (Equipped)"
-        output_func(_(f"{i}. {item.name}{equipped} - {item.description}"))
+        name = item.name
+        if isinstance(item, Augment) and item.combos_with:
+            if set(item.combos_with) & set(game.player.status_effects):
+                name = f"[{name}]"
+        output_func(_(f"{i}. {name}{equipped} - {item.description}"))
 
     choice = input_func(_("Enter item number to equip weapon, or press Enter to go back: "))
     if choice.isdigit():

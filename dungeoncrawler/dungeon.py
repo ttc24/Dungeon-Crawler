@@ -1223,6 +1223,7 @@ class DungeonBase:
         state = self._make_state(floor)
         for hook in self.floor_hooks:
             if hook.on_objective_check(state, self.floor_def):
+                self.player.decay_wounds()
                 floor += 1
                 self.player.temp_strength = 0
                 self.player.temp_intelligence = 0
@@ -1240,6 +1241,7 @@ class DungeonBase:
                 prompt = _("Retire for score or Descend (r/d): ")
                 choice = input(prompt).strip().lower()
                 if choice.startswith("d"):
+                    self.player.decay_wounds()
                     floor += 1
                     self.player.temp_strength = 0
                     self.player.temp_intelligence = 0
@@ -1276,6 +1278,7 @@ class DungeonBase:
             else:
                 proceed = input(_("Would you like to descend to the next floor? (y/n): ")).lower()
                 if proceed == "y":
+                    self.player.decay_wounds()
                     floor += 1
                     # Reset temporary floor buffs
                     self.player.temp_strength = 0

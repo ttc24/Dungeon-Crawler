@@ -1,4 +1,5 @@
 {
+  "$schema": "../schemas/items.json",
   "shop": [
     {"type": "Item", "name": "Health Potion", "description": "Restores 20 health", "price": 10, "rarity": "common"},
     {"type": "Weapon", "name": "Sword", "description": "A sharp sword", "min_damage": 10, "max_damage": 15, "price": 40, "rarity": "common"},
@@ -21,7 +22,7 @@
     {"type": "Item", "name": "Smoke Bomb", "description": "Briefly hides you from the Spotlight", "price": 35, "rarity": "uncommon"},
     {"type": "Item", "name": "Rewrite", "description": "Clears Audience Fatigue stacks", "price": 25, "rarity": "common"},
     {"type": "Trinket", "name": "Suppression Ring", "description": "Negates Mana Lock but may overheat", "price": 50, "rarity": "rare"},
-    {"type": "Augment", "name": "Battle Stim", "description": "Gain +2 attack, lose 5 max health", "attack_bonus": 2, "health_penalty": 5, "max_stacks": 2, "price": 40, "rarity": "uncommon"}
+    {"type": "Augment", "name": "Battle Stim", "description": "Gain +2 attack, lose 5 max health", "attack_bonus": 2, "health_penalty": 5, "max_stacks": 2, "price": 40, "rarity": "uncommon", "combos_with": ["Bleed", "Poison"]}
   ],
   "rare": [
     {"type": "Weapon", "name": "Elven Longbow", "description": "Bow of unmatched accuracy.", "min_damage": 15, "max_damage": 25, "price": 0, "rarity": "epic"},
