@@ -3,7 +3,7 @@ import random
 from dungeoncrawler import map as dungeon_map
 from dungeoncrawler.data import load_floor_definitions
 from dungeoncrawler.dungeon import DungeonBase
-from dungeoncrawler.entities import Player, Companion
+from dungeoncrawler.entities import Companion, Player
 
 
 def test_generate_dungeon_without_companion(monkeypatch):
