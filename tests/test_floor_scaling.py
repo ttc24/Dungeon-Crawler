@@ -1,5 +1,3 @@
-from dungeoncrawler import map as dungeon_map
-from dungeoncrawler.config import config
 import pytest
 
 from dungeoncrawler import map as dungeon_map
