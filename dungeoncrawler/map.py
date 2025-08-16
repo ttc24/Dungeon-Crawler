@@ -114,14 +114,46 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     visited.add(start)
     path.append(start)
 
-    while len(visited) < (game.width * game.height) // 2:
-        direction = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])
-        nx, ny = x + direction[0], y + direction[1]
-        if 0 <= nx < game.width and 0 <= ny < game.height:
-            if (nx, ny) not in visited:
-                visited.add((nx, ny))
-                path.append((nx, ny))
+    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    failures = 0
+    target = (game.width * game.height) // 2
+    while len(visited) < target:
+        dx, dy = random.choice(directions)
+        nx, ny = x + dx, y + dy
+        if 0 <= nx < game.width and 0 <= ny < game.height and (nx, ny) not in visited:
+            visited.add((nx, ny))
+            path.append((nx, ny))
             x, y = nx, ny
+            failures = 0
+            continue
+        if 0 <= nx < game.width and 0 <= ny < game.height:
+            x, y = nx, ny
+        failures += 1
+        if failures >= 100:
+            frontier = [
+                (fx, fy)
+                for fx, fy in visited
+                if any(
+                    0 <= fx + dx < game.width
+                    and 0 <= fy + dy < game.height
+                    and (fx + dx, fy + dy) not in visited
+                    for dx, dy in directions
+                )
+            ]
+            if frontier:
+                idx = random.randrange(len(frontier))
+                x, y = frontier[idx]
+                order = list(range(len(directions)))
+                random.shuffle(order)
+                for i in order:
+                    dx, dy = directions[i]
+                    nx, ny = x + dx, y + dy
+                    if 0 <= nx < game.width and 0 <= ny < game.height and (nx, ny) not in visited:
+                        visited.add((nx, ny))
+                        path.append((nx, ny))
+                        x, y = nx, ny
+                        break
+            failures = 0
 
     for x, y in visited:
         game.rooms[y][x] = "Empty"
@@ -247,8 +279,8 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     # companion when options are available.
     if companion_options:
         place(random.choice(companion_options))
-    place_counts = game.default_place_counts.copy()
-    place_counts.update(cfg.get("places", {}))
+    place_counts = cfg.get("places", {}).copy()
+    place_counts.update(game.default_place_counts)
 
     # Bias trap and treasure placement according to configuration
     trap_base = place_counts.get("Trap", 0)

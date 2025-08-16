@@ -65,3 +65,33 @@ def test_generate_dungeon_scaling_and_spawn_features_floor2():
     assert events
     ev_obj, ev_x, ev_y = events[0]
     assert abs(px - ev_x) + abs(py - ev_y) <= 10
+
+
+def test_generate_dungeon_resilient_to_choice(monkeypatch):
+    """Dungeon generation should terminate even if random.choice is patched."""
+    random.seed(0)
+    load_floor_definitions()
+    dungeon = DungeonBase(1, 1)
+    dungeon.player = Player("Tester")
+
+    monkeypatch.setattr(dungeon_map.random, "choice", lambda seq: seq[0])
+    dungeon_map.generate_dungeon(dungeon, floor=1)
+
+    carved = sum(1 for row in dungeon.rooms for obj in row if obj is not None)
+    assert carved >= (dungeon.width * dungeon.height) // 2
+
+
+def test_default_place_counts_override_config(monkeypatch):
+    random.seed(0)
+    load_floor_definitions()
+    dungeon = DungeonBase(1, 1)
+    dungeon.player = Player("Tester")
+
+    monkeypatch.setattr(dungeon_map.config, "loot_mult", 2)
+    dungeon.default_place_counts = {"Treasure": 1}
+    dungeon.floor_configs[1].setdefault("places", {})["Treasure"] = 0
+
+    dungeon_map.generate_dungeon(dungeon, floor=1)
+
+    treasure = sum(1 for row in dungeon.rooms for obj in row if obj == "Treasure")
+    assert treasure == 2
