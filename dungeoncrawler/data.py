@@ -25,7 +25,7 @@ from .events import (
     ShrineGauntletEvent,
     TrapEvent,
 )
-from .items import Armor, Item, Trinket, Weapon
+from .items import Armor, Item, Trinket, Weapon, Augment
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
@@ -82,6 +82,16 @@ def load_items() -> Tuple[List[Item], List[Item]]:
                 cfg["name"],
                 cfg.get("description", ""),
                 cfg.get("effect"),
+                cfg.get("price", 0),
+                cfg.get("rarity", "common"),
+            )
+        if t == "Augment":
+            return Augment(
+                cfg["name"],
+                cfg.get("description", ""),
+                cfg.get("attack_bonus", 0),
+                cfg.get("health_penalty", 0),
+                cfg.get("max_stacks", 1),
                 cfg.get("price", 0),
                 cfg.get("rarity", "common"),
             )

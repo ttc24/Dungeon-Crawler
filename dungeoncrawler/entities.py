@@ -10,7 +10,7 @@ from pathlib import Path
 
 from .config import config
 from .constants import ANNOUNCER_LINES
-from .items import RARITY_MODIFIERS, Armor, Item, Trinket, Weapon
+from .items import RARITY_MODIFIERS, Armor, Item, Trinket, Weapon, Augment
 from .status_effects import (
     add_status_effect,
     adjust_skill_cost,
@@ -273,6 +273,8 @@ class Player(Entity):
         # Start as an untrained crawler. Specific classes can be chosen later
         # via ``choose_class``.
         self.choose_class(class_type, announce=False)
+        # Track applied augments and their stack counts
+        self.augments: dict[str, int] = {}
 
     def choose_class(self, class_type, announce=True):
         """Select a class and update core stats accordingly.
@@ -809,6 +811,26 @@ class Player(Entity):
             print(_(f"You equipped the {trinket.name}"))
         else:
             print(_("You don't have a valid trinket to equip."))
+
+    def apply_augment(self, augment: Augment) -> bool:
+        """Apply an augment to the player if stack limits allow.
+
+        Augments increase ``attack_power`` by ``attack_bonus`` while reducing
+        ``max_health`` by ``health_penalty``.  Additional copies stack up to
+        ``augment.max_stacks`` times. Returns ``True`` if applied.
+        """
+
+        stacks = self.augments.get(augment.name, 0)
+        if stacks >= augment.max_stacks:
+            print(_(f"You cannot apply another {augment.name}."))
+            return False
+        self.attack_power += augment.attack_bonus
+        self.base_max_health = max(1, self.base_max_health - augment.health_penalty)
+        self.recalc_max_health()
+        if self.health > self.max_health:
+            self.health = self.max_health
+        self.augments[augment.name] = stacks + 1
+        return True
 
     def get_score_breakdown(self):
         """Return a detailed score breakdown.

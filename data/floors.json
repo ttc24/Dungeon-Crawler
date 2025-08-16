@@ -341,6 +341,15 @@
       "Shade",
       "Giant Spider"
     ],
+    "enemy_pool": [
+      "Harpy",
+      "Harpy",
+      "Shade",
+      "Shade",
+      "Giant Spider",
+      "Giant Spider",
+      "Demon"
+    ],
     "bosses": [
       "Feral Juggernaut"
     ],
