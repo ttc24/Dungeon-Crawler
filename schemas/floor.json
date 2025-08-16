@@ -9,7 +9,8 @@
     "rule_mods",
     "objective",
     "spawns",
-    "ui"
+    "ui",
+    "hooks"
   ],
   "properties": {
     "id": {
