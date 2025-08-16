@@ -117,8 +117,9 @@ retaining all previous debuffs.
     stacks.
 * **Floor 18 – “Broadcast Finale”**
   - *Spotlight* – Entering a room pings your location on the floor map; elites
-    home in with +10% damage. A jammer or brief stealth breaks the ping.
+    home in with +10% damage. A **Signal Jammer** or **Smoke Bomb** breaks the
+    ping.
   - *Audience Fatigue* – Using the same ability three or more times in five
     turns applies −10% damage/healing for three turns, stacking to −40%. Rotate
-    skills or use a Rewrite consumable to clear it.
+    skills or use a **Rewrite** consumable to clear it.
 
