@@ -55,11 +55,25 @@ class IntentAI:
     }
 
     def __init__(self, aggressive=1, defensive=1, unpredictable=1):
+        """Create a new intent controller.
+
+        Parameters
+        ----------
+        aggressive, defensive, unpredictable:
+            Relative weights for selecting each intent. All weights must be
+            non-negative and at least one must be greater than zero.
+        """
+
         self.weights = {
             "aggressive": aggressive,
             "defensive": defensive,
             "unpredictable": unpredictable,
         }
+
+        if any(w < 0 for w in self.weights.values()):
+            raise ValueError("Intent weights must be non-negative")
+        if sum(self.weights.values()) == 0:
+            raise ValueError("At least one intent weight must be greater than zero")
 
     # ------------------------------------------------------------------
     def choose_intent(self, enemy, player):
