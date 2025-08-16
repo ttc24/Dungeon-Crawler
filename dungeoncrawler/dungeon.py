@@ -1243,6 +1243,22 @@ class DungeonBase:
                     self._foreshadow(floor)
                     return floor, False
                 self.renderer.show_message(_("You retire from the dungeon."))
+            elif floor == 18:
+                keys = sum(1 for item in self.player.inventory if getattr(item, "name", "") == "Key")
+                slots = self.floor_configs.get(18, {}).get("boss_slots", 1)
+                if keys < slots:
+                    proceed = input(_("Exit the dungeon or continue fighting? (y/n): ")).strip().lower()
+                    if proceed != "y":
+                        return floor, True
+                self.player.score_buff += keys * 100
+                self.renderer.show_message(_(f"Final Score: {self.player.get_score()}"))
+                self.record_score(floor)
+                if os.path.exists(SAVE_FILE):
+                    try:
+                        os.remove(SAVE_FILE)
+                    except OSError:
+                        logger.exception("Failed to remove save file %s", SAVE_FILE)
+                return floor, None
             else:
                 proceed = input(_("Would you like to descend to the next floor? (y/n): ")).lower()
                 if proceed == "y":

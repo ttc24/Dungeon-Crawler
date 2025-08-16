@@ -4,6 +4,7 @@ from types import SimpleNamespace
 
 from dungeoncrawler.entities import Player, Enemy
 from dungeoncrawler.hooks import floor17
+from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.status_effects import apply_status_effects
 from dungeoncrawler.events import ShrineEvent
 
@@ -63,3 +64,10 @@ def test_altar_donation_clears_soul_tax():
     assert player.attack_power == base_attack and not player._soul_tax_timers
     assert config.loot_mult == player._soul_tax_base_loot
     assert player.credits == 50
+
+
+def test_floor17_config_has_miniboss_sequence():
+    dungeon = DungeonBase(5, 5)
+    cfg = dungeon.floor_configs[17]
+    assert cfg["boss_slots"] == 3
+    assert cfg["boss_pool"].count("Gloom Shade") == 1

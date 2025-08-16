@@ -373,8 +373,11 @@
       "Warlock"
     ],
     "bosses": [
+      "Rat King",
+      "Bone Tyrant",
       "Gloom Shade"
     ],
+    "boss_slots": 3,
     "places": {
       "Trap": 9,
       "Treasure": 10,
@@ -397,6 +400,7 @@
     "bosses": [
       "Hex King"
     ],
+    "boss_slots": 5,
     "places": {
       "Trap": 10,
       "Treasure": 10,
