@@ -1,57 +1,108 @@
-name: Auto-format via PR
+name: Auto-format PR (Black + isort)
 
 on:
+  # Manual trigger if you ever want to run it on demand
   workflow_dispatch:
+  # Runs for every PR event, including forks (securely via pull_request_target)
   pull_request_target:
-    types: [opened, synchronize, reopened]
+    types: [opened, reopened, synchronize]
+    # Only run when Python code or relevant configs change
+    paths:
+      - "**/*.py"
+      - "pyproject.toml"
+      - ".isort.cfg"
+      - "setup.cfg"
+      - ".flake8"
+      - ".editorconfig"
 
 permissions:
   contents: write
   pull-requests: write
 
+# Prevent multiple format runs stomping each other on the same PR
 concurrency:
-  group: format-pr
+  group: auto-format-${{ github.event.pull_request.head.repo.full_name }}-${{ github.event.pull_request.head.ref }}
   cancel-in-progress: true
 
 jobs:
   format:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      # Checkout the PR *branch* from same-repo PRs
+      - name: Checkout PR branch (same repo)
+        if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+        uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
-      - uses: actions/setup-python@v5
+
+      # Checkout the contributor's fork branch for forked PRs
+      - name: Checkout PR branch (fork)
+        if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+        uses: actions/checkout@v4
         with:
-          python-version: '3.11'
-          cache: 'pip'
-          cache-dependency-path: |
-            requirements.txt
-            pyproject.toml
-      - run: python -m pip install --upgrade pip
-      - run: pip install ".[dev]"
-      - name: Run formatters
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+          # We'll set credentials manually if we need to push back to the fork
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install formatters (pinned)
+        run: |
+          python -m pip install --upgrade pip
+          pip install black==24.8.0 isort==5.13.2
+
+      - name: Show formatter versions
+        run: |
+          black --version
+          isort --version
+
+      - name: Run formatters (Black then isort)
         run: |
           black .
           isort --profile black .
-      - name: Create or update PR with changes (fork)
-        if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
-        uses: peter-evans/create-pull-request@v6
-        with:
-          commit-message: "Apply Black and isort formatting"
-          title: ${{ github.event.pull_request.title }}
-          body: ${{ github.event.pull_request.body }}
-          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
-          branch: ${{ github.event.pull_request.head.ref || github.ref_name }}
-          base: ${{ github.event.pull_request.base.ref || github.event.repository.default_branch }}
-          push-to-fork: ${{ github.event.pull_request.head.repo.full_name }}
-      - name: Create or update PR with changes (same repo)
-        if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
-        uses: peter-evans/create-pull-request@v6
-        with:
-          commit-message: "Apply Black and isort formatting"
-          title: ${{ github.event.pull_request.title }}
-          body: ${{ github.event.pull_request.body }}
-          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
-          branch: ${{ github.event.pull_request.head.ref || github.ref_name }}
-          base: ${{ github.event.pull_request.base.ref || github.event.repository.default_branch }}
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No formatting changes to commit."
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit changes
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Apply Black and isort formatting"
+
+      # Push back to the SAME BRANCH for same-repo PRs (no new PRs)
+      - name: Push changes (same repo)
+        if: steps.changes.outputs.changed == 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+
+      # Push back to the contributor's fork branch (requires a PAT)
+      # Create a repo secret named FORK_PUSH_TOKEN with a PAT that has `public_repo` (public) or `repo` (private) scope.
+      - name: Push changes (fork via token)
+        if: steps.changes.outputs.changed == 'true' && github.event.pull_request.head.repo.full_name != github.repository
+        env:
+          FORK_PUSH_TOKEN: ${{ secrets.FORK_PUSH_TOKEN }}
+        run: |
+          if [ -z "$FORK_PUSH_TOKEN" ]; then
+            echo "::warning::No FORK_PUSH_TOKEN set. Cannot push to fork; skipping push. Maintainers can set this secret to enable auto-push to forks."
+            exit 0
+          fi
+          git remote set-url origin https://$FORK_PUSH_TOKEN@github.com/${{ github.event.pull_request.head.repo.full_name }}.git
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
