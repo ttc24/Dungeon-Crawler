@@ -2,11 +2,7 @@ import random
 
 from dungeoncrawler import map as dungeon_map
 from dungeoncrawler.data import load_floor_definitions
-from dungeoncrawler.dungeon import (
-    BOSS_LOOT,
-    BOSS_TRAITS,
-    DungeonBase,
-)
+from dungeoncrawler.dungeon import BOSS_LOOT, BOSS_TRAITS, DungeonBase
 from dungeoncrawler.entities import Enemy, Player
 
 

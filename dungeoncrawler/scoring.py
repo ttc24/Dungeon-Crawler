@@ -9,7 +9,7 @@ containing the contribution of each component and the final total.  A helper
 """
 
 from dataclasses import dataclass
-from typing import Mapping, Any
+from typing import Any, Mapping
 
 from .config import config
 

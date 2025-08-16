@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 from .config import config
 from .constants import INVALID_KEY_MSG
-from .items import Armor, Item, Trinket, Weapon, Augment
+from .items import Armor, Augment, Item, Trinket, Weapon
 
 if TYPE_CHECKING:  # pragma: no cover - only for type hints
     from .dungeon import DungeonBase
