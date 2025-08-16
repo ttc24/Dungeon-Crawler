@@ -261,6 +261,9 @@ class Player(Entity):
         self.speed = 10
         self.vision = 5
         self.heal_multiplier = 1.0
+        # Track lasting injuries that reduce max health
+        self.wounds = 0
+        self.base_max_health = 0
         # Temporary combat modifiers for the defend action
         self.guard_damage = False
         self.guard_attack = False
@@ -290,7 +293,7 @@ class Player(Entity):
             self.max_health = stats.get("max_health", 100)
             self.attack_power = stats.get("attack_power", 10)
             self.class_abilities = cls.get("abilities", {})
-
+        self.base_max_health = self.max_health
         self.health = self.max_health
         if announce:
             print(_(f"Class selected: {self.class_type}."))
@@ -312,6 +315,27 @@ class Player(Entity):
 
     def has_item(self, name):
         return any(item.name == name for item in self.inventory)
+
+    def recalc_max_health(self):
+        self.max_health = max(1, self.base_max_health - self.wounds * 5)
+        if self.health > self.max_health:
+            self.health = self.max_health
+
+    def add_wound(self, amount: int = 1) -> None:
+        """Apply ``amount`` wounds, permanently reducing max health."""
+        self.wounds += amount
+        self.recalc_max_health()
+
+    def cleanse_wounds(self) -> None:
+        """Remove all wounds and restore max health."""
+        self.wounds = 0
+        self.recalc_max_health()
+
+    def gain_max_health(self, amount: int) -> None:
+        """Permanently increase max health, respecting wounds."""
+        self.base_max_health += amount
+        self.max_health += amount
+        self.health += amount
 
     def heal(self, amount: int) -> int:
         """Restore ``amount`` health adjusted by ``heal_multiplier``."""
@@ -698,8 +722,7 @@ class Player(Entity):
 
     def level_up(self):
         self.level += 1
-        self.max_health += 10
-        self.health = self.max_health
+        self.gain_max_health(10)
         self.attack_power += 3
         print(_(f"\nYou leveled up to level {self.level}!"))
         print(_(f"Max Health increased to {self.max_health}"))
@@ -717,8 +740,7 @@ class Player(Entity):
         self.guild = guild
         perks = GUILD_DEFS.get(guild, {})
         if "max_health" in perks:
-            self.max_health += perks["max_health"]
-            self.health += perks["max_health"]
+            self.gain_max_health(perks["max_health"])
         if "attack_power" in perks:
             self.attack_power += perks["attack_power"]
         if "cooldown_reduction" in perks:
@@ -749,8 +771,7 @@ class Player(Entity):
         self.race = race
         traits = RACE_DEFS.get(race, {})
         if "max_health" in traits:
-            self.max_health += traits["max_health"]
-            self.health += traits["max_health"]
+            self.gain_max_health(traits["max_health"])
         if "attack_power" in traits:
             self.attack_power += traits["attack_power"]
         self.racial_traits = traits.get("traits", [])

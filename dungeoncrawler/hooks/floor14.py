@@ -20,6 +20,15 @@ class Hooks(FloorHooks):
         if not player:
             return
         action = getattr(state.game, "last_action", None)
+        # Bitter cold chips away at the player each turn
+        player.take_damage(1)
+        if hasattr(state, "queue_message"):
+            state.queue_message("The cold bites you for 1 damage.")
+        # Slippery footing may waste move actions
+        if action == "move" and random.random() < 0.2:
+            if hasattr(state, "queue_message"):
+                state.queue_message("You slip on the icy floor!")
+            action = "wait"
         stacks = player.status_effects.get("entropic_debt", 0)
         if action in {"wait", "defend"}:
             # skipping or bracing repays two stacks

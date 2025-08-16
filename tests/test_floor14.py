@@ -11,10 +11,11 @@ def make_state(player):
     return state
 
 
-def test_debt_stacks_and_consumption():
+def test_debt_stacks_and_consumption(monkeypatch):
     player = Player("Hero")
     state = make_state(player)
     hook = floor14.Hooks()
+    monkeypatch.setattr("dungeoncrawler.hooks.floor14.random.random", lambda: 0.9)
     for _ in range(12):
         state.game.last_action = "move"
         hook.on_turn(state, None)
@@ -28,6 +29,27 @@ def test_debt_stacks_and_consumption():
     health = player.health
     apply_status_effects(player)
     assert player.health == health - 6
+
+
+def test_cold_tick_damage():
+    player = Player("Hero")
+    state = make_state(player)
+    hook = floor14.Hooks()
+    state.game.last_action = "wait"
+    start = player.health
+    hook.on_turn(state, None)
+    assert player.health == start - 1
+
+
+def test_slippery_movement(monkeypatch):
+    player = Player("Hero")
+    state = make_state(player)
+    hook = floor14.Hooks()
+    state.game.last_action = "move"
+    monkeypatch.setattr("dungeoncrawler.hooks.floor14.random.random", lambda: 0.05)
+    hook.on_turn(state, None)
+    assert any("slip" in msg for msg in state.log)
+    assert "entropic_debt" not in player.status_effects
 
 
 def test_totem_clears_and_spawns_add(monkeypatch):
