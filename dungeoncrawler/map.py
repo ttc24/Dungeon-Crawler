@@ -419,7 +419,10 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
             game.stairs_prompt_shown = True
         if game.player.has_item("Key"):
             game.queue_message(_("🎉 You unlocked the exit and escaped the dungeon!"))
-            game.queue_message(_(f"Final Score: {game.player.get_score()}"))
+            breakdown = game.player.get_score_breakdown()
+            game.queue_message(_(f"Final Score: {breakdown['total']}"))
+            for line in game.player.format_score_breakdown(breakdown):
+                game.queue_message(line)
             exit()
         else:
             game.queue_message(_("The exit is locked. You need a key!"))

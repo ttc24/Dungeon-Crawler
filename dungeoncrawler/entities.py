@@ -867,6 +867,20 @@ class Player(Entity):
         """Compatibility wrapper returning only the total score."""
         return self.get_score_breakdown()["total"]
 
+    def format_score_breakdown(self, breakdown=None):
+        """Return a list of human-readable score breakdown lines."""
+        breakdown = breakdown or self.get_score_breakdown()
+        lines = [
+            _('Score Breakdown:'),
+            _(f'  Level: {breakdown["level"]}'),
+            _(f'  Inventory: {breakdown["inventory"]}'),
+            _(f'  Credits: {breakdown["credits"]}'),
+        ]
+        for name, bonus in breakdown['style'].items():
+            label = name.replace('_', ' ').title()
+            lines.append(_(f'  {label}: {bonus}'))
+        return lines
+
 
 class Enemy(Entity):
     """Adversary encountered within the dungeon.
