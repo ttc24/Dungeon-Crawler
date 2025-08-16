@@ -34,6 +34,10 @@ class Config:
     enemy_hp_mult: float = 1.0
     enemy_dmg_mult: float = 1.0
     loot_mult: float = 1.0
+    retire_floor: int = 9
+    retire_bonus_per_floor: float = 0.08
+    death_penalty: float = 0.15
+    no_death_bonus: float = 0.10
     enable_debug: bool = False
     extras: dict[str, Any] = field(default_factory=dict)
 
@@ -96,6 +100,17 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
                     value = float(value)
                     key = "loot_mult" if key == "loot_multiplier" else key
                 elif key == "key_repeat_delay":
+                    if not isinstance(value, (int, float)):
+                        raise ValueError(f"{key} must be a number, got {type(value).__name__}")
+                    if float(value) < 0:
+                        raise ValueError(f"{key} must be greater than or equal to 0, got {value}")
+                    value = float(value)
+                elif key == "retire_floor":
+                    if not isinstance(value, int):
+                        raise ValueError(f"{key} must be an integer, got {type(value).__name__}")
+                    if value <= 0:
+                        raise ValueError(f"{key} must be greater than 0, got {value}")
+                elif key in {"retire_bonus_per_floor", "death_penalty", "no_death_bonus"}:
                     if not isinstance(value, (int, float)):
                         raise ValueError(f"{key} must be a number, got {type(value).__name__}")
                     if float(value) < 0:

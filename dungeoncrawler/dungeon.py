@@ -598,7 +598,7 @@ class DungeonBase:
             logger.exception("Failed to save run statistics to %s", RUN_FILE)
             self.renderer.show_message(_("Failed to update run statistics."))
 
-    def record_score(self, floor):
+    def record_score(self, floor, died: bool = False):
         """Persist the current run to the leaderboard file and display it."""
         # Update total run count used for first-run bonuses
         self.total_runs += 1
@@ -615,10 +615,13 @@ class DungeonBase:
         now = time.time()
         duration = now - self.run_start if self.run_start else 0
         epitaph = f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'"
-        breakdown = self.player.get_score_breakdown()
+        base_score = self.player.get_score()
+        from .scoring import compute_score_breakdown, format_score_breakdown
+
+        breakdown = compute_score_breakdown({"base": base_score, "floor": floor, "died": died})
 
         self.renderer.show_message(_(f"Final Score: {breakdown['total']}"))
-        for line in self.player.format_score_breakdown(breakdown):
+        for line in format_score_breakdown(breakdown):
             self.renderer.show_message(line)
 
         records.append(
@@ -1050,7 +1053,7 @@ class DungeonBase:
         self.renderer.show_message(
             _(f"Fell on Floor {floor} to '{self.player.cause_of_death or 'Unknown'}'")
         )
-        self.record_score(floor)
+        self.record_score(floor, died=True)
         self.stats_logger.finalize(self, self.player.cause_of_death or "Unknown")
         if os.path.exists(SAVE_FILE):
             try:

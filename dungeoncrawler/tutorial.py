@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from gettext import gettext as _
+from dataclasses import dataclass, field
 
 from .input.keys import Action, get_action
 from .ui.terminal import Renderer
@@ -53,10 +54,19 @@ def run(game_inst, input_func=input, renderer: Renderer | None = None) -> None:
     game_inst.tutorial_complete = True
 
 
-if __name__ == "__main__":  # pragma: no cover - convenience script
-    from .config import load_config
-    from .dungeon import DungeonBase
-    from .main import build_character
+@dataclass
+class Tip:
+    """A small snippet of instructional text tied to a floor."""
+
+    name: str
+    lines: list[str]
+    floor: int = 1
+
+
+BASIC_TIPS = [
+    Tip("movement", ["Use the movement keys to explore."], floor=1),
+    Tip("combat", ["Engage enemies to gain experience."], floor=2),
+]
 
 # ``LEGEND_TIP`` does not store lines directly to keep translations fresh.
 LEGEND_TIP = Tip("legend", [], floor=1)

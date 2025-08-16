@@ -457,9 +457,13 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
             game.stairs_prompt_shown = True
         if game.player.has_item("Key"):
             game.queue_message(_("🎉 You unlocked the exit and escaped the dungeon!"))
-            breakdown = game.player.get_score_breakdown()
+            from .scoring import compute_score_breakdown, format_score_breakdown
+
+            base_score = game.player.get_score()
+            floor = getattr(game, "current_floor", 0)
+            breakdown = compute_score_breakdown({"base": base_score, "floor": floor, "died": False})
             game.queue_message(_(f"Final Score: {breakdown['total']}"))
-            for line in game.player.format_score_breakdown(breakdown):
+            for line in format_score_breakdown(breakdown):
                 game.queue_message(line)
             exit()
         else:
