@@ -14,7 +14,9 @@ from .items import RARITY_MODIFIERS, Armor, Item, Trinket, Weapon
 from .status_effects import (
     add_status_effect,
     adjust_skill_cost,
-    apply_status_effects as apply_effects,
+)
+from .status_effects import apply_status_effects as apply_effects
+from .status_effects import (
     cleansing_fails,
     shield_block,
 )

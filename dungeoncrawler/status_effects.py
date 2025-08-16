@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from gettext import gettext as _
 import random
+from gettext import gettext as _
 
 EFFECT_INFO = {
     "poison": "Lose 3 HP/turn.",
