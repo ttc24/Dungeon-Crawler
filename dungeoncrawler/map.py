@@ -114,14 +114,49 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
     visited.add(start)
     path.append(start)
 
-    while len(visited) < (game.width * game.height) // 2:
-        direction = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])
-        nx, ny = x + direction[0], y + direction[1]
+    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    stuck = 0
+    target = (game.width * game.height) // 2
+    while len(visited) < target:
+        dx, dy = random.choice(directions)
+        nx, ny = x + dx, y + dy
         if 0 <= nx < game.width and 0 <= ny < game.height:
-            if (nx, ny) not in visited:
-                visited.add((nx, ny))
-                path.append((nx, ny))
             x, y = nx, ny
+            if (x, y) not in visited:
+                visited.add((x, y))
+                path.append((x, y))
+                stuck = 0
+            else:
+                stuck += 1
+        else:
+            stuck += 1
+        if stuck > 100:
+            frontier = [
+                (vx, vy)
+                for vx, vy in visited
+                if any(
+                    0 <= vx + dx < game.width
+                    and 0 <= vy + dy < game.height
+                    and (vx + dx, vy + dy) not in visited
+                    for dx, dy in directions
+                )
+            ]
+            if not frontier:
+                break
+            random.shuffle(frontier)
+            fx, fy = frontier[0]
+            for dx, dy in directions:
+                nx, ny = fx + dx, fy + dy
+                if (
+                    0 <= nx < game.width
+                    and 0 <= ny < game.height
+                    and (nx, ny) not in visited
+                ):
+                    x, y = nx, ny
+                    visited.add((x, y))
+                    path.append((x, y))
+                    break
+            stuck = 0
 
     for x, y in visited:
         game.rooms[y][x] = "Empty"
@@ -243,8 +278,8 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
 
     companion_options = load_companions()
     place(random.choice(companion_options))
-    place_counts = game.default_place_counts.copy()
-    place_counts.update(cfg.get("places", {}))
+    place_counts = cfg.get("places", {}).copy()
+    place_counts.update(game.default_place_counts)
 
     # Bias trap and treasure placement according to configuration
     trap_base = place_counts.get("Trap", 0)
