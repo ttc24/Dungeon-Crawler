@@ -65,7 +65,7 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
     if path.exists():
         try:
             data: Any = json.loads(path.read_text())
-        except json.JSONDecodeError:
+        except (OSError, json.JSONDecodeError):
             return cfg
         if not isinstance(data, dict):
             return cfg
