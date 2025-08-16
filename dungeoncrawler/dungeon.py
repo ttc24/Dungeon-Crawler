@@ -34,6 +34,8 @@ from .plugins import apply_enemy_plugins, apply_item_plugins
 from .quests import EscortNPC, EscortQuest, FetchQuest, HuntQuest
 from .rendering import Renderer, render_map_string
 from .stats_logger import StatsLogger
+from .tutorial import Tip, TipsManager
+from .ui.terminal import render_tips_panel
 
 logger = logging.getLogger(__name__)
 
