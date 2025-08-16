@@ -13,6 +13,8 @@ def test_shop_purchase():
     shop_module.shop(dungeon, input_func=lambda _: "1", output_func=lambda _msg: None)
     assert dungeon.player.credits == 10
     assert any(item.name == "Health Potion" for item in dungeon.player.inventory)
+    # purchased item should no longer be in the shop inventory
+    assert all(item.name != "Health Potion" for item in dungeon.shop_inventory)
 
 
 def test_sell_weapon():
