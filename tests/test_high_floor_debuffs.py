@@ -1,6 +1,9 @@
 from dungeoncrawler.config import config
 from dungeoncrawler.data import load_floor_definitions
 from dungeoncrawler.dungeon import DungeonBase
+from dungeoncrawler.config import config
+from dungeoncrawler.data import load_floor_definitions
+from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.entities import Player
 from dungeoncrawler.items import Item
 from dungeoncrawler.map import update_visibility
@@ -23,23 +26,31 @@ def test_floor_10_halves_healing(monkeypatch):
     game = DungeonBase(1, 1)
     game.player = Player("Hero")
     monkeypatch.setattr(DungeonBase, "save_game", lambda self, floor: None)
+    orig_hp, orig_dmg = config.enemy_hp_mult, config.enemy_dmg_mult
     game.generate_dungeon(10)
     game.player.health = game.player.max_health - 20
     game.player.inventory.append(Item("Health Potion", ""))
     game.player.use_health_potion()
-    assert game.player.health == game.player.max_health - 10
+    try:
+        assert game.player.health == game.player.max_health - 10
+    finally:
+        config.enemy_hp_mult = orig_hp
+        config.enemy_dmg_mult = orig_dmg
 
 
 def test_floor_11_trap_chance_increases(monkeypatch):
-    base = config.trap_chance
+    base_trap = config.trap_chance
+    orig_hp, orig_dmg = config.enemy_hp_mult, config.enemy_dmg_mult
     game = DungeonBase(1, 1)
     game.player = Player("Hero")
     monkeypatch.setattr(DungeonBase, "save_game", lambda self, floor: None)
     game.generate_dungeon(11)
     try:
-        assert config.trap_chance > base
+        assert config.trap_chance > base_trap
     finally:
-        config.trap_chance = base
+        config.trap_chance = base_trap
+        config.enemy_hp_mult = orig_hp
+        config.enemy_dmg_mult = orig_dmg
 
 
 def test_floor_10_visibility_reduced():
