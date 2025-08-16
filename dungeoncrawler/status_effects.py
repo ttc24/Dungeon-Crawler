@@ -31,6 +31,7 @@ EFFECT_INFO = {
     "soul_tax": "-1 attack per stack; +5% loot chance.",
     "spotlight_ping": "Enemies know your location.",
     "audience_fatigue": "Repeated ability use reduces damage and healing.",
+    "creeping_corruption": "Vision reduced; positive buffs suppressed.",
 }
 
 # Multipliers applied to status effect durations based on enemy rarity.
@@ -60,6 +61,7 @@ DEBUFFS = {
     "soul_tax",
     "spotlight_ping",
     "audience_fatigue",
+    "creeping_corruption",
 }
 
 
@@ -486,6 +488,32 @@ def _handle_spotlight_ping(entity, effects, is_player, name):
     return False
 
 
+def _handle_creeping_corruption(entity, effects, is_player, name):
+    if effects["creeping_corruption"] > 0:
+        if not getattr(entity, "_corruption_active", False):
+            entity._corruption_active = True
+            entity._corruption_prev_vision = getattr(entity, "vision", 0)
+            entity.vision = max(1, entity._corruption_prev_vision - 1)
+        effects["creeping_corruption"] -= 1
+        for buff in ("blessed", "inspire"):
+            effects.pop(buff, None)
+        msg = _("Corruption clouds your vision.")
+        if is_player:
+            print(msg)
+        else:
+            print(_(f"The {name} is engulfed in corruption."))
+    else:
+        if getattr(entity, "_corruption_active", False):
+            entity.vision = getattr(entity, "_corruption_prev_vision", entity.vision)
+            delattr(entity, "_corruption_active")
+        effects.pop("creeping_corruption", None)
+        if is_player:
+            print(_("The corruption recedes."))
+        else:
+            print(_(f"The {name}'s corruption fades."))
+    return False
+
+
 def _handle_audience_fatigue(entity, effects, is_player, name):
     """Decay Audience Fatigue stacks and update penalties."""
     timers = getattr(entity, "_audience_fatigue_timers", [])
@@ -573,6 +601,7 @@ STATUS_EFFECT_HANDLERS = {
     "soul_tax": _handle_soul_tax,
     "spotlight_ping": _handle_spotlight_ping,
     "audience_fatigue": _handle_audience_fatigue,
+    "creeping_corruption": _handle_creeping_corruption,
 }
 
 

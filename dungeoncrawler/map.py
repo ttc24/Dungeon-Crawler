@@ -313,8 +313,7 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
             if room.effect == "attack":
                 game.player.attack_power += 2
             elif room.effect == "heal":
-                game.player.max_health += 5
-                game.player.health += 5
+                game.player.gain_max_health(5)
             game.announce(_(f"{game.player.name} gains a companion!"))
         game.rooms[y][x] = None
     elif isinstance(room, Item):
@@ -393,6 +392,7 @@ def handle_room(game: "DungeonBase", x: int, y: int) -> None:
         game.room_names[y][x] = "Blacksmith Forge"
 
     elif room == "Sanctuary":
+        game.player.cleanse_wounds()
         game.player.health = game.player.max_health
         game.queue_message(_("A soothing warmth envelops you. Your wounds are fully healed."))
         game.rooms[y][x] = None

@@ -75,3 +75,25 @@ def test_broodling_fire_vulnerability():
     add_status_effect(broodling, "burn", 1)
     apply_status_effects(broodling)
     assert broodling.health == 12
+
+
+def test_creeping_corruption_spreads_and_debuffs():
+    game = DungeonBase(3, 3)
+    player = Player("Hero")
+    game.player = player
+    hook = floor15.Hooks()
+    state = game._make_state(15)
+    hook.on_floor_start(state, None)
+    player.status_effects["blessed"] = 1
+    hook.on_turn(state, None)
+    apply_status_effects(player)
+    assert player.vision == 4
+    assert "blessed" not in player.status_effects
+    # let remaining corruption fade before moving
+    apply_status_effects(player)
+    apply_status_effects(player)
+    player.vision = 5
+    player.x = 1
+    hook.on_turn(state, None)
+    apply_status_effects(player)
+    assert player.vision == 4
