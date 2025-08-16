@@ -8,5 +8,6 @@
     "type": "none"
   },
   "spawns": [],
-  "ui": {}
+  "ui": {},
+  "hooks": []
 }
