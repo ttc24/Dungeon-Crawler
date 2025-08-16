@@ -1,7 +1,5 @@
 from pathlib import Path
 
-import pytest
-
 from dungeoncrawler.config import Config, load_config
 
 
@@ -21,4 +19,3 @@ def test_load_config_handles_oserror(monkeypatch, tmp_path):
     monkeypatch.setattr(Path, "read_text", bad_read_text)
 
     assert load_config(cfg_file) == Config()
-

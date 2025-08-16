@@ -13,8 +13,4 @@ def test_generate_dungeon_without_companion(monkeypatch):
     game.player = Player("Tester")
     monkeypatch.setattr(dungeon_map, "load_companions", lambda: [])
     dungeon_map.generate_dungeon(game, floor=1)
-    assert all(
-        not isinstance(tile, Companion)
-        for row in game.rooms
-        for tile in row
-    )
+    assert all(not isinstance(tile, Companion) for row in game.rooms for tile in row)
