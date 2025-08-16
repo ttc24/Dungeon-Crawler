@@ -29,6 +29,8 @@ EFFECT_INFO = {
     "haste_dysphoria": "Speed bonuses beyond 25% invert to penalties.",
     "fester_mark": "Overheal causes lingering damage.",
     "soul_tax": "-1 attack per stack; +5% loot chance.",
+    "spotlight_ping": "Enemies know your location.",
+    "audience_fatigue": "Repeated ability use reduces damage and healing.",
 }
 
 # Multipliers applied to status effect durations based on enemy rarity.
@@ -56,6 +58,8 @@ DEBUFFS = {
     "haste_dysphoria",
     "fester_mark",
     "soul_tax",
+    "spotlight_ping",
+    "audience_fatigue",
 }
 
 
@@ -475,6 +479,36 @@ def _handle_fester_mark(entity, effects, is_player, name):
     return False
 
 
+def _handle_spotlight_ping(entity, effects, is_player, name):
+    """Spotlight ping persists until manually removed."""
+    # No automatic duration reduction; effect remains until cleared by items.
+    effects["spotlight_ping"] = effects.get("spotlight_ping", 1)
+    return False
+
+
+def _handle_audience_fatigue(entity, effects, is_player, name):
+    """Decay Audience Fatigue stacks and update penalties."""
+    timers = getattr(entity, "_audience_fatigue_timers", [])
+    if not timers:
+        effects.pop("audience_fatigue", None)
+        entity.__dict__.pop("_audience_fatigue_mult", None)
+        return False
+    new_timers = []
+    for t in timers:
+        t -= 1
+        if t > 0:
+            new_timers.append(t)
+    entity._audience_fatigue_timers = new_timers
+    if new_timers:
+        stacks = len(new_timers)
+        effects["audience_fatigue"] = stacks
+        entity._audience_fatigue_mult = 1 - 0.1 * stacks
+    else:
+        effects.pop("audience_fatigue", None)
+        entity.__dict__.pop("_audience_fatigue_mult", None)
+    return False
+
+
 def _handle_soul_tax(entity, effects, is_player, name):
     timers = getattr(entity, "_soul_tax_timers", [])
     if not timers:
@@ -537,6 +571,8 @@ STATUS_EFFECT_HANDLERS = {
     "haste_dysphoria": _handle_haste_dysphoria,
     "fester_mark": _handle_fester_mark,
     "soul_tax": _handle_soul_tax,
+    "spotlight_ping": _handle_spotlight_ping,
+    "audience_fatigue": _handle_audience_fatigue,
 }
 
 

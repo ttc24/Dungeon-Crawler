@@ -17,6 +17,9 @@
     {"type": "Item", "name": "Filter Mask", "description": "Negates one Miasma aura", "price": 20, "rarity": "common"},
     {"type": "Item", "name": "Air Filter", "description": "Blocks one Miasma aura", "price": 30, "rarity": "uncommon"},
     {"type": "Item", "name": "Anchor", "description": "Clears Temporal Lag", "price": 30, "rarity": "uncommon"},
+    {"type": "Item", "name": "Signal Jammer", "description": "Scrambles Spotlight pings", "price": 30, "rarity": "uncommon"},
+    {"type": "Item", "name": "Smoke Bomb", "description": "Briefly hides you from the Spotlight", "price": 35, "rarity": "uncommon"},
+    {"type": "Item", "name": "Rewrite", "description": "Clears Audience Fatigue stacks", "price": 25, "rarity": "common"},
     {"type": "Trinket", "name": "Suppression Ring", "description": "Negates Mana Lock but may overheat", "price": 50, "rarity": "rare"}
   ],
   "rare": [

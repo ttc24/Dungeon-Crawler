@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Floor 15 "Pestilence" hooks introducing Brood Bloom infections, Miasma Carrier aura, Broodling enemies and mitigation consumables.
 - Floor 16 "Time Weirdness" hooks introducing Temporal Lag, Haste Dysphoria and the Anchor consumable.
 - Floor 17 "Oaths & Curses" hooks introducing Fester Mark and Soul Tax with altar donations to cleanse.
+- Floor 18 "Broadcast Finale" hooks introducing Spotlight and Audience Fatigue mechanics with Signal Jammer, Smoke Bomb and Rewrite consumables.
 
 ## [0.9.0b1] - 2025-08-11
 ### Added
