@@ -46,7 +46,7 @@ class Hooks(FloorHooks):
                     timers.append(3)
                     player._audience_fatigue_timers = timers
                     player.status_effects["audience_fatigue"] = len(timers)
-        
+
     # Item hooks
     def use_jammer(self, state):
         player = state.player

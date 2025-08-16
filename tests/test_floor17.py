@@ -1,18 +1,18 @@
 from types import SimpleNamespace
 
-from types import SimpleNamespace
-
-from dungeoncrawler.entities import Player, Enemy
-from dungeoncrawler.hooks import floor17
 from dungeoncrawler.dungeon import DungeonBase
-from dungeoncrawler.status_effects import apply_status_effects
+from dungeoncrawler.entities import Enemy, Player
 from dungeoncrawler.events import ShrineEvent
+from dungeoncrawler.hooks import floor17
+from dungeoncrawler.status_effects import apply_status_effects
 
 
 def make_state(player, enemies=None, config=None):
     enemies = enemies or []
     game = SimpleNamespace(last_action=None, last_cost=0)
-    state = SimpleNamespace(player=player, enemies=enemies, game=game, config=config or SimpleNamespace(loot_mult=1.0))
+    state = SimpleNamespace(
+        player=player, enemies=enemies, game=game, config=config or SimpleNamespace(loot_mult=1.0)
+    )
     return state
 
 
@@ -59,7 +59,9 @@ def test_altar_donation_clears_soul_tax():
     hook.on_turn(state, None)
     player.credits = 100
     event = ShrineEvent()
-    game = SimpleNamespace(player=player, stats_logger=SimpleNamespace(record_reward=lambda: None), config=config)
+    game = SimpleNamespace(
+        player=player, stats_logger=SimpleNamespace(record_reward=lambda: None), config=config
+    )
     event.trigger(game, input_func=lambda *_: "d", output_func=lambda *a, **k: None)
     assert player.attack_power == base_attack and not player._soul_tax_timers
     assert config.loot_mult == player._soul_tax_base_loot

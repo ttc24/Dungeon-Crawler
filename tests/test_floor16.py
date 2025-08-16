@@ -1,6 +1,6 @@
 from types import SimpleNamespace
 
-from dungeoncrawler.entities import Player, Enemy
+from dungeoncrawler.entities import Enemy, Player
 from dungeoncrawler.hooks import floor16
 from dungeoncrawler.status_effects import apply_status_effects
 
