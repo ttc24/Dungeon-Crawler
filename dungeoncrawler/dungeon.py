@@ -1239,15 +1239,13 @@ class DungeonBase:
                 self.renderer.show_message(_("You retire from the dungeon."))
             elif floor == 18:
                 keys = sum(
-                    1
-                    for item in self.player.inventory
-                    if getattr(item, "name", "") == "Key"
+                    1 for item in self.player.inventory if getattr(item, "name", "") == "Key"
                 )
                 slots = self.floor_configs.get(18, {}).get("boss_slots", 1)
                 if keys < slots:
-                    proceed = input(
-                        _("Exit the dungeon or continue fighting? (y/n): ")
-                    ).strip().lower()
+                    proceed = (
+                        input(_("Exit the dungeon or continue fighting? (y/n): ")).strip().lower()
+                    )
                     if proceed != "y":
                         return floor, True
                 self.player.score_buff += keys * 100

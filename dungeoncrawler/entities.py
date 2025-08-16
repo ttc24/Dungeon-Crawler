@@ -10,7 +10,7 @@ from pathlib import Path
 
 from .config import config
 from .constants import ANNOUNCER_LINES
-from .items import RARITY_MODIFIERS, Armor, Item, Trinket, Weapon, Augment
+from .items import RARITY_MODIFIERS, Armor, Augment, Item, Trinket, Weapon
 from .status_effects import (
     add_status_effect,
     adjust_skill_cost,
@@ -871,14 +871,14 @@ class Player(Entity):
         """Return a list of human-readable score breakdown lines."""
         breakdown = breakdown or self.get_score_breakdown()
         lines = [
-            _('Score Breakdown:'),
+            _("Score Breakdown:"),
             _(f'  Level: {breakdown["level"]}'),
             _(f'  Inventory: {breakdown["inventory"]}'),
             _(f'  Credits: {breakdown["credits"]}'),
         ]
-        for name, bonus in breakdown['style'].items():
-            label = name.replace('_', ' ').title()
-            lines.append(_(f'  {label}: {bonus}'))
+        for name, bonus in breakdown["style"].items():
+            label = name.replace("_", " ").title()
+            lines.append(_(f"  {label}: {bonus}"))
         return lines
 
 

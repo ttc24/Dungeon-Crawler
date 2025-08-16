@@ -25,7 +25,7 @@ from .events import (
     ShrineGauntletEvent,
     TrapEvent,
 )
-from .items import Armor, Item, Trinket, Weapon, Augment
+from .items import Armor, Augment, Item, Trinket, Weapon
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 

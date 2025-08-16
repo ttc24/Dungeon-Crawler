@@ -1,13 +1,12 @@
 from types import SimpleNamespace
+from unittest.mock import patch
 
-from types import SimpleNamespace
+import dungeoncrawler.dungeon as dungeon_module
+from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.entities import Enemy, Player
 from dungeoncrawler.hooks import floor18
-from dungeoncrawler.status_effects import add_status_effect, apply_status_effects
-from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.items import Item
-import dungeoncrawler.dungeon as dungeon_module
-from unittest.mock import patch
+from dungeoncrawler.status_effects import add_status_effect, apply_status_effects
 
 
 def make_state(player, enemies=None):

@@ -1,5 +1,5 @@
 from dungeoncrawler.dungeon import DungeonBase
-from dungeoncrawler.entities import Player, Enemy, Companion, Item
+from dungeoncrawler.entities import Companion, Enemy, Item, Player
 from dungeoncrawler.hooks import floor15
 from dungeoncrawler.status_effects import add_status_effect, apply_status_effects
 
