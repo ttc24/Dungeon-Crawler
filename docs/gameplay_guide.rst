@@ -59,6 +59,20 @@ Aggressive telegraphs often precede a heavy attack that deals roughly
 suffer a 20% accuracy penalty but have a small chance to inflict double
 damage.
 
+Floor Descriptions
+------------------
+The dungeon grows more dangerous the deeper you travel.
+
+* **Floors 1–3** – Small layouts introducing core mechanics. The opening level
+  features water hazards, shifting walls and a merchant hub overseen by the Rat
+  King.
+* **Floors 4–6** – Medium sized caverns with added traps and broader enemy
+  variety.
+* **Floors 7–9** – Large maps with elite enemies and richer treasure preparing
+  you for the late game.
+* **Floors 10–18** – Each subsequent floor adds a persistent debuff described
+  below.
+
 High Floor Debuffs
 ------------------
 Beginning on Floor 10, the dungeon introduces persistent penalties that
@@ -122,4 +136,21 @@ retaining all previous debuffs.
   - *Audience Fatigue* – Using the same ability three or more times in five
     turns applies −10% damage/healing for three turns, stacking to −40%. Rotate
     skills or use a **Rewrite** consumable to clear it.
+
+Scoring
+-------
+Runs are ranked on a leaderboard using the following point values:
+
+* **Level** – 100 points per character level.
+* **Inventory** – 10 points for each item carried.
+* **Credits** – Each credit adds one point.
+* **Style bonuses** – Special feats such as finishing without damage or
+  hoarding at least 100 credits grant an extra 50 points each. Boss rush
+  modifiers may add further bonus points.
+
+Notes
+-----
+Progress saves whenever a floor is cleared and debuffs from higher levels
+stack with previous effects. Rotate abilities to avoid penalties like
+Audience Fatigue and manage resources carefully for the deeper floors.
 
