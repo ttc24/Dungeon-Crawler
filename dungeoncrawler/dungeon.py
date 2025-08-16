@@ -378,6 +378,7 @@ class DungeonBase:
         self.novice_luck_announced = False
         self.stairs_prompt_shown = False
         self.active_quest = None
+        self.last_action: str | None = None
         # Track guild trial completion when present
         self.completed_trials: set[str] = set()
         # Balance metrics logger and combat message buffer
@@ -1065,25 +1066,34 @@ class DungeonBase:
 
         if choice == "0":
             self.player.wait()
+            self.last_action = "wait"
         elif choice == "1":
             self.move_player("left")
+            self.last_action = "move"
         elif choice == "2":
             self.move_player("right")
+            self.last_action = "move"
         elif choice == "3":
             self.move_player("up")
+            self.last_action = "move"
         elif choice == "4":
             self.move_player("down")
+            self.last_action = "move"
         elif choice == "5":
             self.shop()
+            self.last_action = "other"
         elif choice == "6":
             self.show_inventory()
+            self.last_action = "other"
         elif choice == "7":
             self.renderer.show_message(_("Thanks for playing!"))
             return False
         elif choice == "8":
             self.view_map()
+            self.last_action = "other"
         elif choice == "9":
             self.view_leaderboard()
+            self.last_action = "other"
         elif config.enable_debug and choice.startswith(":god"):
             self.god_mode(choice)
         elif config.enable_debug and choice.startswith(":sim"):

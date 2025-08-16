@@ -365,6 +365,12 @@ class Player(Entity):
                 print(_("You steady your stomach."))
             else:
                 print(_("The anti-magic field suppresses the item!"))
+        elif name == "Entropy Vent Stone":
+            if not failed:
+                self.status_effects.pop("entropic_debt", None)
+                print(_("The stone dissipates your entropic debt."))
+            else:
+                print(_("The anti-magic field suppresses the item!"))
         else:
             print(_("Nothing happens."))
         self.inventory.remove(item)
@@ -450,12 +456,12 @@ class Player(Entity):
             effect = getattr(self.weapon, "effect", None)
             if effect:
                 duration = int(3 * RARITY_MODIFIERS.get(self.weapon.rarity, 1.0))
-                add_status_effect(enemy, effect, duration)
+                add_status_effect(enemy, effect, duration, source=self)
         if self.trinket:
             effect = getattr(self.trinket, "effect", None)
             if effect:
                 duration = int(2 * RARITY_MODIFIERS.get(self.trinket.rarity, 1.0))
-                add_status_effect(enemy, effect, duration)
+                add_status_effect(enemy, effect, duration, source=self)
 
     def process_enemy_defeat(self, enemy: Enemy) -> None:
         """Handle rewards for defeating ``enemy`` such as XP and credits."""

@@ -89,7 +89,8 @@ retaining all previous debuffs.
 * **Floor 14 – “Entropy”**
   - *Entropic Debt* – Each action adds a stack dealing 1% of max HP per turn, up
     to 10 stacks. Skipping or bracing consumes two stacks. Venting or draining
-    the debt into a nearby totem clears stacks but may spawn an add.
+    the debt into a nearby totem or using an **Entropy Vent Stone** clears
+    stacks but may spawn an add.
   - *Spiteful Reflection* – 20% chance to bounce any new debuff back to its
     applier, including the player. Use proxies, pets or throwables to avoid
     self-infliction.
