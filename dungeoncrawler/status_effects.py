@@ -25,6 +25,8 @@ EFFECT_INFO = {
     "spiteful_reflection": "20% chance to reflect debuffs.",
     "brood_bloom": "Spawns a broodling when it erupts.",
     "miasma_aura": "Healing halved.",
+    "temporal_lag": "15% chance to repeat last action, wasting the turn.",
+    "haste_dysphoria": "Speed bonuses beyond 25% invert to penalties.",
 }
 
 # Multipliers applied to status effect durations based on enemy rarity.
@@ -48,6 +50,8 @@ DEBUFFS = {
     "entropic_debt",
     "brood_bloom",
     "miasma_aura",
+    "temporal_lag",
+    "haste_dysphoria",
 }
 
 
@@ -121,6 +125,28 @@ def shield_block(entity, base_block: int) -> int:
     if "dull_wards" in effects:
         return int(base_block * 0.7)
     return base_block
+
+
+def temporal_lag_trigger(entity, state, action, resource_attr: str, cost: int) -> bool:
+    """Handle Temporal Lag, possibly repeating an action.
+
+    If the effect triggers, refund ``cost`` to ``resource_attr`` on ``entity`` and
+    queue the repeated action on a random target. Returns ``True`` if the turn
+    was consumed by lag.
+    """
+
+    effects = getattr(entity, "status_effects", {})
+    if "temporal_lag" not in effects or not action or action in {"wait", "defend"}:
+        return False
+    if random.random() >= 0.15:
+        return False
+    if cost:
+        setattr(entity, resource_attr, getattr(entity, resource_attr) + cost)
+    targets = [entity] + list(getattr(state, "enemies", []))
+    state.game.repeat_action = action
+    state.game.repeat_target = random.choice(targets) if targets else None
+    state.game.last_action = None
+    return True
 
 
 def _handle_poison(entity, effects, is_player, name):
@@ -409,6 +435,21 @@ def _handle_spiteful_reflection(entity, effects, is_player, name):
     return False
 
 
+def _handle_temporal_lag(entity, effects, is_player, name):
+    return False
+
+
+def _handle_haste_dysphoria(entity, effects, is_player, name):
+    base = getattr(entity, "_haste_dysphoria_base", None)
+    if base is None:
+        entity._haste_dysphoria_base = getattr(entity, "speed", 0)
+        return False
+    if getattr(entity, "speed", 0) > base * 1.25:
+        ratio = entity.speed / base - 1
+        entity.speed = max(1, int(base * (1 - ratio)))
+    return False
+
+
 STATUS_EFFECT_HANDLERS = {
     "poison": _handle_poison,
     "burn": _handle_burn,
@@ -427,6 +468,8 @@ STATUS_EFFECT_HANDLERS = {
     "spiteful_reflection": _handle_spiteful_reflection,
     "brood_bloom": _handle_brood_bloom,
     "miasma_aura": _handle_miasma_aura,
+    "temporal_lag": _handle_temporal_lag,
+    "haste_dysphoria": _handle_haste_dysphoria,
 }
 
 
