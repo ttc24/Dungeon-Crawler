@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from gettext import gettext as _
+import random
 
 EFFECT_INFO = {
     "poison": "Lose 3 HP/turn.",
@@ -18,6 +19,8 @@ EFFECT_INFO = {
     "blood_torrent": "Lose 1 HP per stack each turn.",
     "blood_scent": "Enemies can track you.",
     "compression_sickness": "Speed and accuracy reduced.",
+    "mana_lock": "Spell costs +50%. Cleanses may fail.",
+    "dull_wards": "Shields 30% weaker; crits can't pierce.",
 }
 
 # Multipliers applied to status effect durations based on enemy rarity.
@@ -58,6 +61,38 @@ def format_status_tags(effects: dict) -> str:
     """Return a compact string of status effect tags."""
 
     return " ".join(f"[{k.capitalize()}:{v}]" for k, v in effects.items())
+
+
+def adjust_skill_cost(entity, base_cost: int) -> int:
+    """Return stamina cost adjusted by ``mana_lock`` and suppression rings."""
+
+    effects = getattr(entity, "status_effects", {})
+    if "mana_lock" not in effects:
+        return base_cost
+    multiplier = 1.5
+    trinket = getattr(entity, "trinket", None)
+    if trinket and getattr(trinket, "name", "") == "Suppression Ring":
+        multiplier = 1.0
+        if random.random() < 0.25:
+            print(_("The Suppression Ring overheats and crumbles!"))
+            entity.trinket = None
+    return int(base_cost * multiplier)
+
+
+def cleansing_fails(entity) -> bool:
+    """Return ``True`` if cleanse or dispel attempts fizzle under Mana Lock."""
+
+    effects = getattr(entity, "status_effects", {})
+    return "mana_lock" in effects and random.random() < 0.25
+
+
+def shield_block(entity, base_block: int) -> int:
+    """Return shield value adjusted by ``dull_wards`` if present."""
+
+    effects = getattr(entity, "status_effects", {})
+    if "dull_wards" in effects:
+        return int(base_block * 0.7)
+    return base_block
 
 
 def _handle_poison(entity, effects, is_player, name):

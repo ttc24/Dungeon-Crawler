@@ -82,7 +82,7 @@ retaining all previous debuffs.
 * **Floor 13 – “Anti-Magic”**
   - *Mana Lock* – Spells cost 50% more resources and cleanse or dispel effects
     have a 25% chance to fail. Mundane kits and consumables are unaffected, and
-    ring suppression mitigates the effect at the risk of overheating.
+    a **Suppression Ring** can mitigate the effect at the risk of overheating.
   - *Hex of Dull Wards* – Shields and blocks are 30% less effective and critical
     hits cannot pierce them. Purifying or resetting wards, or opting for
     offense, counters it.

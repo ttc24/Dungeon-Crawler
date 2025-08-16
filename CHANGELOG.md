@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Entering floor 10 now increases enemy health and damage scaling unless debug mode is enabled.
 - Elite enemies resist negative status effects for longer, halving durations applied to them.
 - Floor 12 "Hunted" hooks introducing Blood Torrent and Compression Sickness along with counter consumables.
+- Floor 13 "Anti-Magic" hooks adding Mana Lock, Hex of Dull Wards and the Suppression Ring item.
 
 ## [0.9.0b1] - 2025-08-11
 ### Added
