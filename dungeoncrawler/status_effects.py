@@ -21,6 +21,8 @@ EFFECT_INFO = {
     "compression_sickness": "Speed and accuracy reduced.",
     "mana_lock": "Spell costs +50%. Cleanses may fail.",
     "dull_wards": "Shields 30% weaker; crits can't pierce.",
+    "entropic_debt": "Lose 1% max HP per stack each turn.",
+    "spiteful_reflection": "20% chance to reflect debuffs.",
 }
 
 # Multipliers applied to status effect durations based on enemy rarity.
@@ -31,7 +33,21 @@ RARITY_STATUS_RESISTANCE = {
 }
 
 
-def add_status_effect(entity, effect: str, duration: int) -> None:
+DEBUFFS = {
+    "poison",
+    "burn",
+    "bleed",
+    "freeze",
+    "stun",
+    "cursed",
+    "blood_torrent",
+    "blood_scent",
+    "compression_sickness",
+    "entropic_debt",
+}
+
+
+def add_status_effect(entity, effect: str, duration: int, source=None, _reflected=False) -> None:
     """Apply ``effect`` to ``entity`` and announce it."""
 
     # ``status_effects`` may not be defined on some lightweight objects used
@@ -55,6 +71,14 @@ def add_status_effect(entity, effect: str, duration: int) -> None:
         print(_(f"You are {tag} ({duration} turns). {desc}"))
     else:
         print(_(f"The {name} is {tag} ({duration} turns). {desc}"))
+    if (
+        source is not None
+        and not _reflected
+        and "spiteful_reflection" in effects
+        and effect in DEBUFFS
+        and random.random() < 0.2
+    ):
+        add_status_effect(source, effect, duration, _reflected=True)
 
 
 def format_status_tags(effects: dict) -> str:
@@ -323,6 +347,26 @@ def _handle_compression_sickness(entity, effects, is_player, name):
     return False
 
 
+def _handle_entropic_debt(entity, effects, is_player, name):
+    stacks = effects.get("entropic_debt", 0)
+    if stacks <= 0:
+        effects.pop("entropic_debt", None)
+        return False
+    max_hp = getattr(entity, "max_health", getattr(entity, "health", 0))
+    damage = max(1, int(max_hp * 0.01 * stacks))
+    entity.health -= damage
+    msg = _(f"Entropic Debt -{damage} HP ({stacks} stacks).")
+    if is_player:
+        print(msg)
+    else:
+        print(_(f"The {name} {msg.lower()}"))
+    return False
+
+
+def _handle_spiteful_reflection(entity, effects, is_player, name):
+    return False
+
+
 STATUS_EFFECT_HANDLERS = {
     "poison": _handle_poison,
     "burn": _handle_burn,
@@ -337,6 +381,8 @@ STATUS_EFFECT_HANDLERS = {
     "blood_torrent": _handle_blood_torrent,
     "blood_scent": _handle_blood_scent,
     "compression_sickness": _handle_compression_sickness,
+    "entropic_debt": _handle_entropic_debt,
+    "spiteful_reflection": _handle_spiteful_reflection,
 }
 
 

@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Elite enemies resist negative status effects for longer, halving durations applied to them.
 - Floor 12 "Hunted" hooks introducing Blood Torrent and Compression Sickness along with counter consumables.
 - Floor 13 "Anti-Magic" hooks adding Mana Lock, Hex of Dull Wards and the Suppression Ring item.
+- Floor 14 "Entropy" hooks introducing Entropic Debt, Spiteful Reflection and the Entropy Vent Stone item.
 
 ## [0.9.0b1] - 2025-08-11
 ### Added

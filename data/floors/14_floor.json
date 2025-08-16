@@ -1,12 +1,15 @@
 {
   "$schema": "../../schemas/floor.json",
   "id": "14",
-  "name": "Floor",
+  "name": "Entropy",
   "map": [],
   "rule_mods": {},
   "objective": {
     "type": "none"
   },
   "spawns": [],
-  "ui": {}
+  "ui": {},
+  "hooks": [
+    "dungeoncrawler.hooks.floor14"
+  ]
 }

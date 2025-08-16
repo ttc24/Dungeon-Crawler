@@ -164,6 +164,7 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
             enemy_turn(enemy, player, renderer, game.combat_log)
             game.stats_logger.record_damage(taken=before - player.health)
             game.stats_logger.record_turn()
+            game.last_action = "attack"
         elif choice == "2":
             enemy_before = enemy.health
             p_entity = CoreEntity(
@@ -197,12 +198,14 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
             enemy_turn(enemy, player, renderer, game.combat_log)
             game.stats_logger.record_damage(taken=before - player.health)
             game.stats_logger.record_turn()
+            game.last_action = "defend"
         elif choice == "3":
             player.use_health_potion()
             before = player.health
             enemy_turn(enemy, player, renderer, game.combat_log)
             game.stats_logger.record_damage(taken=before - player.health)
             game.stats_logger.record_turn()
+            game.last_action = "item"
         elif choice == "4":
             enemy_before = enemy.health
             skill_name = player.use_skill(enemy)
@@ -214,6 +217,7 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
             enemy_turn(enemy, player, renderer, game.combat_log)
             game.stats_logger.record_damage(taken=before - player.health)
             game.stats_logger.record_turn()
+            game.last_action = "skill"
         elif choice == "5":
             p_entity = CoreEntity(
                 player.name,
@@ -247,6 +251,7 @@ def battle(game: "DungeonBase", enemy: "Enemy", input_func=None) -> None:
             enemy_turn(enemy, player, renderer, game.combat_log)
             game.stats_logger.record_damage(taken=before - player.health)
             game.stats_logger.record_turn()
+            game.last_action = "flee"
         else:
             renderer.show_message(_(INVALID_KEY_MSG))
         player.decrement_cooldowns()
