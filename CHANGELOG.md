@@ -16,6 +16,8 @@ All notable changes to this project will be documented in this file.
 - Floor 16 "Time Weirdness" hooks introducing Temporal Lag, Haste Dysphoria and the Anchor consumable.
 - Floor 17 "Oaths & Curses" hooks introducing Fester Mark and Soul Tax with altar donations to cleanse.
 - Floor 18 "Broadcast Finale" hooks introducing Spotlight and Audience Fatigue mechanics with Signal Jammer, Smoke Bomb and Rewrite consumables.
+- Floor 17 now features two sequential mini-boss encounters with restorative boons between them before the Gloom Shade.
+- Floor 18's finale is a five-phase confrontation where players may exit early after any phase for a scaling score bonus.
 
 ## [0.9.0b1] - 2025-08-11
 ### Added

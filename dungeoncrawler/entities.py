@@ -270,6 +270,8 @@ class Player(Entity):
         # Floor-scoped temporary buffs
         self.temp_strength = 0
         self.temp_intelligence = 0
+        # Bonus score awarded for tackling optional challenges
+        self.score_buff = 0
         # Start as an untrained crawler. Specific classes can be chosen later
         # via ``choose_class``.
         self.choose_class(class_type, announce=False)
@@ -852,6 +854,9 @@ class Player(Entity):
             breakdown["style"]["no_damage"] = 50
         if self.credits >= 100:
             breakdown["style"]["rich"] = 50
+
+        if getattr(self, "score_buff", 0):
+            breakdown["style"]["boss_rush"] = self.score_buff
 
         total = breakdown["level"] + breakdown["inventory"] + breakdown["credits"]
         total += sum(breakdown["style"].values())
