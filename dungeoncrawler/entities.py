@@ -11,8 +11,13 @@ from pathlib import Path
 from .config import config
 from .constants import ANNOUNCER_LINES
 from .items import RARITY_MODIFIERS, Armor, Item, Trinket, Weapon
-from .status_effects import add_status_effect
-from .status_effects import apply_status_effects as apply_effects
+from .status_effects import (
+    add_status_effect,
+    adjust_skill_cost,
+    apply_status_effects as apply_effects,
+    cleansing_fails,
+    shield_block,
+)
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
@@ -343,16 +348,23 @@ class Player(Entity):
         if not item:
             print(_(f"You don't have a {name} to use."))
             return False
+        failed = cleansing_fails(self)
         if name == "Scent-mask Spray" or name == "Absorbent Gel":
-            self.status_effects.pop("blood_torrent", None)
-            self.status_effects.pop("blood_scent", None)
-            print(_("Your scent is masked."))
+            if not failed:
+                self.status_effects.pop("blood_torrent", None)
+                self.status_effects.pop("blood_scent", None)
+                print(_("Your scent is masked."))
+            else:
+                print(_("The anti-magic field suppresses the item!"))
         elif name == "Anti-Nausea Draught":
-            if "compression_sickness" in self.status_effects:
-                del self.status_effects["compression_sickness"]
-                self.speed = getattr(self, "_compression_prev_speed", self.speed)
-                setattr(self, "_compression_sickness_applied", False)
-            print(_("You steady your stomach."))
+            if not failed:
+                if "compression_sickness" in self.status_effects:
+                    del self.status_effects["compression_sickness"]
+                    self.speed = getattr(self, "_compression_prev_speed", self.speed)
+                    setattr(self, "_compression_sickness_applied", False)
+                print(_("You steady your stomach."))
+            else:
+                print(_("The anti-magic field suppresses the item!"))
         else:
             print(_("Nothing happens."))
         self.inventory.remove(item)
@@ -466,13 +478,16 @@ class Player(Entity):
         self.status_effects["guard"] = 1
         print(_("You brace yourself. Incoming damage reduced."))
 
-    def take_damage(self, damage, source=None):
+    def take_damage(self, damage, source=None, critical=False):
         if self.guard_damage:
             damage = int(damage * 0.6)
             self.guard_damage = False
-        if "shield" in self.status_effects:
-            damage = max(0, damage - 5)
-            print(_("Your shield absorbs 5 damage!"))
+        if "shield" in self.status_effects and (
+            not critical or "dull_wards" in self.status_effects
+        ):
+            block = shield_block(self, 5)
+            damage = max(0, damage - block)
+            print(_(f"Your shield absorbs {block} damage!"))
         if self.armor:
             damage = max(0, damage - self.armor.defense)
             damage = int(damage / RARITY_MODIFIERS.get(self.armor.rarity, 1.0))
@@ -655,11 +670,12 @@ class Player(Entity):
         if skill["cooldown"] > 0:
             print(_(f"{skill['name']} is on cooldown for {skill['cooldown']} more turn(s)."))
             return None
-        if self.stamina < skill["cost"]:
-            needed = skill["cost"] - self.stamina
+        cost = adjust_skill_cost(self, skill["cost"])
+        if self.stamina < cost:
+            needed = cost - self.stamina
             print(_(f"You're winded (need {needed} more STA)."))
             return None
-        self.stamina -= skill["cost"]
+        self.stamina -= cost
         skill["func"](enemy)
         skill["cooldown"] = skill["base_cooldown"]
         return skill["name"]
@@ -827,10 +843,13 @@ class Enemy(Entity):
     def is_alive(self):
         return self.health > 0
 
-    def take_damage(self, damage):
-        if "shield" in self.status_effects:
-            damage = max(0, damage - 5)
-            print(_(f"The {self.name}'s shield absorbs 5 damage!"))
+    def take_damage(self, damage, critical=False):
+        if "shield" in self.status_effects and (
+            not critical or "dull_wards" in self.status_effects
+        ):
+            block = shield_block(self, 5)
+            damage = max(0, damage - block)
+            print(_(f"The {self.name}'s shield absorbs {block} damage!"))
         if "armored" in self.traits:
             damage = max(0, damage - 3)
             print(_(f"The {self.name}'s armor softens the blow!"))
@@ -898,8 +917,10 @@ class Enemy(Entity):
             damage = int(damage * 1.5)
             print(_(f"The {self.name} goes berserk!"))
         if roll <= hit_chance:
+            critical = False
             if wild and roll >= 95:
                 damage *= 2
+                critical = True
                 print(_(f"The {self.name} lands a vicious critical!"))
             if self.ability == "lifesteal":
                 self.health += damage // 3
@@ -921,8 +942,8 @@ class Enemy(Entity):
                 add_status_effect(player, "freeze", dur)
             elif self.ability == "double_strike" and random.random() < 0.25:
                 print(_(f"The {self.name} strikes twice!"))
-                player.take_damage(damage, source=self.name)
-            player.take_damage(damage, source=self.name)
+                player.take_damage(damage, source=self.name, critical=critical)
+            player.take_damage(damage, source=self.name, critical=critical)
             if config.verbose_combat:
                 print(
                     _(
