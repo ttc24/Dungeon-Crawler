@@ -23,6 +23,8 @@ EFFECT_INFO = {
     "dull_wards": "Shields 30% weaker; crits can't pierce.",
     "entropic_debt": "Lose 1% max HP per stack each turn.",
     "spiteful_reflection": "20% chance to reflect debuffs.",
+    "brood_bloom": "Spawns a broodling when it erupts.",
+    "miasma_aura": "Healing halved.",
 }
 
 # Multipliers applied to status effect durations based on enemy rarity.
@@ -44,6 +46,8 @@ DEBUFFS = {
     "blood_scent",
     "compression_sickness",
     "entropic_debt",
+    "brood_bloom",
+    "miasma_aura",
 }
 
 
@@ -140,9 +144,13 @@ def _handle_poison(entity, effects, is_player, name):
 
 def _handle_burn(entity, effects, is_player, name):
     if effects["burn"] > 0:
-        entity.health -= 4
+        damage = 4
+        traits = getattr(entity, "traits", [])
+        if "fire_vulnerable" in traits:
+            damage *= 2
+        entity.health -= damage
         remaining = effects["burn"] - 1
-        msg = _(f"Burn -4 HP ({remaining} turns left).")
+        msg = _(f"Burn -{damage} HP ({remaining} turns left).")
         if is_player:
             print(msg)
         else:
@@ -347,6 +355,40 @@ def _handle_compression_sickness(entity, effects, is_player, name):
     return False
 
 
+def _handle_brood_bloom(entity, effects, is_player, name):
+    duration = effects.get("brood_bloom", 0)
+    if duration <= 0:
+        effects.pop("brood_bloom", None)
+        return False
+    effects["brood_bloom"] -= 1
+    if effects["brood_bloom"] <= 0:
+        callback = getattr(entity, "brood_spawn", None)
+        if callable(callback):
+            callback(entity)
+        prev = getattr(entity, "brood_bloom_stack", duration)
+        new_dur = prev // 2
+        if new_dur > 0:
+            effects["brood_bloom"] = new_dur
+            entity.brood_bloom_stack = new_dur
+        else:
+            effects.pop("brood_bloom", None)
+            entity.brood_bloom_stack = 0
+    return False
+
+
+def _handle_miasma_aura(entity, effects, is_player, name):
+    if not getattr(entity, "_miasma_active", False):
+        entity._miasma_active = True
+        entity._miasma_prev_heal = getattr(entity, "heal_multiplier", 1.0)
+        entity.heal_multiplier = entity._miasma_prev_heal * 0.5
+    effects["miasma_aura"] -= 1
+    if effects["miasma_aura"] <= 0:
+        entity.heal_multiplier = getattr(entity, "_miasma_prev_heal", 1.0)
+        entity._miasma_active = False
+        effects.pop("miasma_aura", None)
+    return False
+
+
 def _handle_entropic_debt(entity, effects, is_player, name):
     stacks = effects.get("entropic_debt", 0)
     if stacks <= 0:
@@ -383,6 +425,8 @@ STATUS_EFFECT_HANDLERS = {
     "compression_sickness": _handle_compression_sickness,
     "entropic_debt": _handle_entropic_debt,
     "spiteful_reflection": _handle_spiteful_reflection,
+    "brood_bloom": _handle_brood_bloom,
+    "miasma_aura": _handle_miasma_aura,
 }
 
 

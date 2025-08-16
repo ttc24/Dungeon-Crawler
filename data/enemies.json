@@ -385,5 +385,17 @@
     ],
     "ai": {},
     "traits": ["poisonous"]
+  },
+  {
+    "name": "Broodling",
+    "stats": [
+      20,
+      30,
+      5,
+      10,
+      1
+    ],
+    "ai": {},
+    "traits": ["fire_vulnerable"]
   }
 ]

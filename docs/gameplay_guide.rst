@@ -95,12 +95,13 @@ retaining all previous debuffs.
     applier, including the player. Use proxies, pets or throwables to avoid
     self-infliction.
 * **Floor 15 – “Pestilence”**
-  - *Brood Bloom* – Timered infection that spawns a Broodling on expiry and
+  - *Brood Bloom* – Timed infection that spawns a Broodling on expiry and
     reapplies a weaker stack. Cleansing only delays the spawn; fire dispatches
     Broodlings quickly.
   - *Miasma Carrier* – Entering a room applies a one-turn −50% healing received
-    aura to nearby allies and enemies. Masks or filters mitigate it; ring
-    suppression protects the wearer only.
+    aura to nearby allies and enemies. **Filter Masks** or **Air Filters**
+    consume on entry to negate it; suppression rings protect only their
+    bearer.
 * **Floor 16 – “Time Weirdness”**
   - *Temporal Lag* – 15% chance your last action repeats on the next turn with a
     new target, refunding resources but wasting the turn. Taking short,
