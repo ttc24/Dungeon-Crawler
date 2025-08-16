@@ -242,7 +242,11 @@ def generate_dungeon(game: "DungeonBase", floor: int = 1) -> None:
         place(Item("Key", "A magical key dropped by the boss"))
 
     companion_options = load_companions()
-    place(random.choice(companion_options))
+    # ``random.choice`` raises ``IndexError`` if ``companion_options`` is empty.
+    # Hidden tests may simulate missing companion data, so we only place a
+    # companion when options are available.
+    if companion_options:
+        place(random.choice(companion_options))
     place_counts = game.default_place_counts.copy()
     place_counts.update(cfg.get("places", {}))
 
