@@ -58,7 +58,35 @@ if __name__ == "__main__":  # pragma: no cover - convenience script
     from .dungeon import DungeonBase
     from .main import build_character
 
-    cfg = load_config()
-    demo_game = DungeonBase(cfg.screen_width, cfg.screen_height)
-    demo_game.player = build_character()
-    run(demo_game)
+# ``LEGEND_TIP`` does not store lines directly to keep translations fresh.
+LEGEND_TIP = Tip("legend", [], floor=1)
+
+DEFAULT_TIPS = BASIC_TIPS + [LEGEND_TIP]
+
+
+@dataclass
+class TipsManager:
+    """Manage display of contextual tips during the game."""
+
+    enabled: bool = True
+    seen: set[str] = field(default_factory=set)
+    auto_disabled_at: int | None = 2
+
+    def for_floor(self, floor: int) -> list[Tip]:
+        """Return unseen tips for ``floor`` respecting disable rules."""
+
+        if not self.enabled:
+            return []
+        if self.auto_disabled_at is not None and floor > self.auto_disabled_at:
+            self.enabled = False
+            return []
+        return [tip for tip in DEFAULT_TIPS if tip.floor == floor and tip.name not in self.seen]
+
+    def mark_seen(self, tip: Tip) -> None:
+        self.seen.add(tip.name)
+
+    def toggle(self) -> None:
+        self.enabled = not self.enabled
+        if self.enabled:
+            # Re-enabling tips disables further auto disabling.
+            self.auto_disabled_at = None
