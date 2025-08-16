@@ -45,3 +45,19 @@ class Trinket(Item):
     effect: Optional[str] = None
     price: int = 30
     rarity: str = "common"
+
+
+@dataclass
+class Augment(Item):
+    """Item that grants a bonus at a permanent cost.
+
+    Augments offer a risk-reward choice by increasing attack power while
+    reducing maximum health. Multiple copies of the same augment may stack up
+    to ``max_stacks`` times to amplify both the benefit and the drawback.
+    """
+
+    attack_bonus: int
+    health_penalty: int
+    max_stacks: int = 1
+    price: int = 0
+    rarity: str = "common"
