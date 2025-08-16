@@ -113,7 +113,8 @@ retaining all previous debuffs.
     the overheal each turn for five turns. Small, frequent heals or cleansing
     mitigate it.
   - *Soul Tax* – Each kill while taxed reduces your primary stat by one for 10
-    turns but increases loot chance. Donate at an altar to remove stacks.
+    turns but increases loot chance. Donate 50 credits at an altar to remove
+    stacks.
 * **Floor 18 – “Broadcast Finale”**
   - *Spotlight* – Entering a room pings your location on the floor map; elites
     home in with +10% damage. A jammer or brief stealth breaks the ping.
