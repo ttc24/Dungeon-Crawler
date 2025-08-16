@@ -192,4 +192,10 @@ class Renderer:
 
 
 # Public API
-__all__ = ["Renderer"]
+def render_tips_panel(lines: list[str]) -> str:
+    """Return a simple formatted tips panel string."""
+
+    return "\n".join(lines)
+
+
+__all__ = ["Renderer", "render_tips_panel"]

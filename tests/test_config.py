@@ -67,6 +67,10 @@ def test_new_keys_default(tmp_path):
     assert cfg.loot_mult == 1.0
     assert cfg.enemy_hp_mult == 1.0
     assert cfg.enemy_dmg_mult == 1.0
+    assert cfg.retire_floor == 9
+    assert cfg.retire_bonus_per_floor == 0.08
+    assert cfg.death_penalty == 0.15
+    assert cfg.no_death_bonus == 0.10
     assert cfg.verbose_combat is False
     assert cfg.slow_messages is False
     assert cfg.key_repeat_delay == 0.5
