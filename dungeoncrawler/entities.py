@@ -11,15 +11,9 @@ from pathlib import Path
 from .config import config
 from .constants import ANNOUNCER_LINES
 from .items import RARITY_MODIFIERS, Armor, Augment, Item, Trinket, Weapon
-from .status_effects import (
-    add_status_effect,
-    adjust_skill_cost,
-)
+from .status_effects import add_status_effect, adjust_skill_cost
 from .status_effects import apply_status_effects as apply_effects
-from .status_effects import (
-    cleansing_fails,
-    shield_block,
-)
+from .status_effects import cleansing_fails, shield_block
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
