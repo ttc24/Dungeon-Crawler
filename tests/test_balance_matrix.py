@@ -1,5 +1,5 @@
-import yaml
 import pytest
+import yaml
 
 from dungeoncrawler.sim import simulate
 
