@@ -3,21 +3,16 @@ from functools import lru_cache
 from pathlib import Path
 
 from .config import config
+from .paths import SAVE_DIR
 
 # Configuration-driven values
-# Base directory for all persistent data
-BASE_DIR = Path.home() / ".dungeon_crawler"
-BASE_DIR.mkdir(parents=True, exist_ok=True)
-
 # Save files remain in a subdirectory to keep things tidy
-SAVE_DIR = BASE_DIR / "saves"
-SAVE_DIR.mkdir(parents=True, exist_ok=True)
 SAVE_FILE = SAVE_DIR / config.save_file
 
-# Leaderboard is stored directly in ``~/.dungeon_crawler``
-SCORE_FILE = BASE_DIR / config.score_file
+# Leaderboard and run statistics are stored alongside saves
+SCORE_FILE = SAVE_DIR.parent / config.score_file
 # Track how many times the game has been run to provide "Novice's Luck".
-RUN_FILE = BASE_DIR / "run_stats.json"
+RUN_FILE = SAVE_DIR.parent / "run_stats.json"
 MAX_FLOORS = config.max_floors
 SCREEN_WIDTH = config.screen_width
 SCREEN_HEIGHT = config.screen_height

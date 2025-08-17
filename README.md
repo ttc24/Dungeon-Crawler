@@ -88,10 +88,12 @@ At any time you may choose **8. Show Map** to display a grid of the dungeon. The
 
 Progress is automatically saved whenever you clear a floor. On the next launch you will be asked if you want to continue.
 
-Save data is written to `~/.dungeon_crawler/saves/savegame.json`. The file is a
-JSON document containing the current floor and full player state including
-statistics, inventory, equipped weapon and companions. Save games and leaderboard
-entries are written to `~/.dungeon_crawler` in your home directory.
+Save data is written to an operating system specific directory
+(`AppData/Local` on Windows, `~/Library/Application Support` on macOS or
+`~/.local/share` on Linux). Within that location the game creates a
+`dungeon_crawler/saves/savegame.json` file containing the current floor and full
+player state including statistics, inventory, equipped weapon and companions.
+Leaderboard entries are stored alongside the save data.
 
 ## Objectives
 
@@ -103,8 +105,8 @@ entries are written to `~/.dungeon_crawler` in your home directory.
 ## Retiring & Scoring
 
 Upon reaching Floor 9 you may **retire** from the run to lock in your score or
-descend toward the final gauntlet. Choosing to retire records your current
-score to `~/.dungeon_crawler/scores.json` and deletes the active save file,
+descend toward the final gauntlet. Choosing to retire records your current score
+to `scores.json` in the data directory and deletes the active save file,
 returning you to the title screen. Continuing downward restores the save and
 applies the usual floor scaling.
 
