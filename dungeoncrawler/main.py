@@ -6,6 +6,8 @@ remembered across runs. Classes unlock on floor 1, guilds on floor 2 and
 races on floor 3.
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import logging
