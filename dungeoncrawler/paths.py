@@ -2,6 +2,7 @@ from __future__ import annotations
 
 """OS-specific paths for game data and configuration."""
 
+import logging
 import shutil
 from pathlib import Path
 
@@ -51,6 +52,6 @@ def migrate_legacy() -> None:
             LEGACY_DIR.rmdir()
         except OSError:
             pass
-    except Exception:
+    except Exception as exc:
         # Migration failures should not prevent the game from starting
-        pass
+        logging.exception("Legacy migration failed: %s", exc)
