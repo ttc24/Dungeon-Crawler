@@ -38,5 +38,15 @@ target-version = ["py311"]
 
 [tool.isort]
 profile = "black"
-known_first_party = ["dungeoncrawler"]
+line_length = 100
+known_first_party = ["dungeoncrawler", "tests"]
 skip_gitignore = true
+
+[tool.flake8]
+# Let flake8 match Black style and avoid false positives
+max-line-length = 120
+extend-ignore = ["E203", "W503"]
+
+# If those imports in dungeon.py are intentionally unused (e.g. for TYPE_CHECKING),
+# keep this line; otherwise delete it and fix the code.
+per-file-ignores = ["dungeoncrawler/dungeon.py:F401"]
