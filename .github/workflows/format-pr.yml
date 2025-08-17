@@ -1,12 +1,19 @@
-name: Auto-format PR (Black + isort)
+name: Auto-format (Black + isort)
 
 on:
-  # Manual trigger if you ever want to run it on demand
   workflow_dispatch:
-  # Runs for every PR event, including forks (securely via pull_request_target)
   pull_request_target:
     types: [opened, reopened, synchronize]
-    # Only run when Python code or relevant configs change
+    paths:
+      - "**/*.py"
+      - "pyproject.toml"
+      - "requirements-dev.txt"
+      - ".isort.cfg"
+      - "setup.cfg"
+      - ".flake8"
+      - ".editorconfig"
+  push:
+    branches: ["**"]            # or ["main"] if you prefer
     paths:
       - "**/*.py"
       - "pyproject.toml"
@@ -20,17 +27,14 @@ permissions:
   contents: write
   pull-requests: write
 
-# Prevent multiple format runs stomping each other on the same PR
-concurrency:
-  group: auto-format-${{ github.event.pull_request.head.repo.full_name }}-${{ github.event.pull_request.head.ref }}
-  cancel-in-progress: true
-
 jobs:
-  format:
+  format_pr:
+    if: ${{ github.event_name == 'pull_request_target' }}
     runs-on: ubuntu-latest
-
+    concurrency:
+      group: auto-format-pr-${{ github.event.pull_request.head.repo.full_name }}-${{ github.event.pull_request.head.ref }}
+      cancel-in-progress: true
     steps:
-      # Checkout the PR *branch* from same-repo PRs
       - name: Checkout PR branch (same repo)
         if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
         uses: actions/checkout@v4
@@ -38,7 +42,6 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
 
-      # Checkout the contributor's fork branch for forked PRs
       - name: Checkout PR branch (fork)
         if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
         uses: actions/checkout@v4
@@ -46,7 +49,6 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
-          # We'll set credentials manually if we need to push back to the fork
           persist-credentials: false
 
       - name: Set up Python
@@ -55,15 +57,10 @@ jobs:
           python-version: "3.11"
           cache: "pip"
 
-      - name: Install formatters (pinned from requirements-dev.txt)
+      - name: Install formatters (pinned)
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
-
-      - name: Show formatter versions
-        run: |
-          black --version
-          isort --version
 
       - name: Run formatters (isort then Black)
         run: |
@@ -75,7 +72,6 @@ jobs:
         run: |
           if git diff --quiet; then
             echo "changed=false" >> $GITHUB_OUTPUT
-            echo "No formatting changes to commit."
           else
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
@@ -88,14 +84,10 @@ jobs:
           git add -A
           git commit -m "Apply Black and isort formatting"
 
-      # Push back to the SAME BRANCH for same-repo PRs (no new PRs)
       - name: Push changes (same repo)
         if: steps.changes.outputs.changed == 'true' && github.event.pull_request.head.repo.full_name == github.repository
-        run: |
-          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+        run: git push origin HEAD:${{ github.event.pull_request.head.ref }}
 
-      # Push back to the contributor's fork branch (requires a PAT)
-      # Create a repo secret named FORK_PUSH_TOKEN with a PAT that has `public_repo` (public) or `repo` (private) scope.
       - name: Push changes (fork via token)
         if: steps.changes.outputs.changed == 'true' && github.event.pull_request.head.repo.full_name != github.repository
         env:
@@ -107,3 +99,47 @@ jobs:
           fi
           git remote set-url origin https://$FORK_PUSH_TOKEN@github.com/${{ github.event.pull_request.head.repo.full_name }}.git
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
+
+  format_push:
+    if: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    concurrency:
+      group: auto-format-push-${{ github.ref_name }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install formatters (pinned)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Run formatters (isort then Black)
+        run: |
+          isort --profile black .
+          black .
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Apply Black and isort formatting"
+          git push origin HEAD:${{ github.ref_name }}
