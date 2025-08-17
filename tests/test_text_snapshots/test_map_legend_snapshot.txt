@@ -1,0 +1,6 @@
+Legend:
+ @ - You
+ E - Exit
+ . - Floor
+ · - Discovered
+   - Unexplored

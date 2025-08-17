@@ -15,6 +15,7 @@ dev = [
   "pytest==8.4.1",
   "jsonschema==4.23.0",
   "hypothesis==6.112.0",
+  "pytest-regressions==2.8.2",
 ]
 
 [project.scripts]
