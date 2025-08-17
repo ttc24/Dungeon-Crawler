@@ -10,6 +10,7 @@ on:
     paths:
       - "**/*.py"
       - "pyproject.toml"
+      - "requirements-dev.txt"
       - ".isort.cfg"
       - "setup.cfg"
       - ".flake8"
@@ -54,20 +55,20 @@ jobs:
           python-version: "3.11"
           cache: "pip"
 
-      - name: Install formatters (pinned)
+      - name: Install formatters (pinned from requirements-dev.txt)
         run: |
           python -m pip install --upgrade pip
-          pip install black==24.8.0 isort==5.13.2
+          pip install -r requirements-dev.txt
 
       - name: Show formatter versions
         run: |
           black --version
           isort --version
 
-      - name: Run formatters (Black then isort)
+      - name: Run formatters (isort then Black)
         run: |
-          black .
           isort --profile black .
+          black .
 
       - name: Check for changes
         id: changes
@@ -101,7 +102,7 @@ jobs:
           FORK_PUSH_TOKEN: ${{ secrets.FORK_PUSH_TOKEN }}
         run: |
           if [ -z "$FORK_PUSH_TOKEN" ]; then
-            echo "::warning::No FORK_PUSH_TOKEN set. Cannot push to fork; skipping push. Maintainers can set this secret to enable auto-push to forks."
+            echo "::warning::No FORK_PUSH_TOKEN set. Cannot push to fork; skipping push."
             exit 0
           fi
           git remote set-url origin https://$FORK_PUSH_TOKEN@github.com/${{ github.event.pull_request.head.repo.full_name }}.git
