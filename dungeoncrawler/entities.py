@@ -11,15 +11,9 @@ from pathlib import Path
 from .config import config
 from .constants import ANNOUNCER_LINES
 from .items import RARITY_MODIFIERS, Armor, Augment, Item, Trinket, Weapon
-from .status_effects import (
-    add_status_effect,
-    adjust_skill_cost,
-)
+from .status_effects import add_status_effect, adjust_skill_cost
 from .status_effects import apply_status_effects as apply_effects
-from .status_effects import (
-    cleansing_fails,
-    shield_block,
-)
+from .status_effects import cleansing_fails, shield_block
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
@@ -339,7 +333,7 @@ class Player(Entity):
         cap_ratio = getattr(config, "wounds_soft_cap_ratio", 0) or 0
         window = getattr(config, "wounds_soft_cap_last_n_floors", None)
         if cap_ratio and window:
-            history_sum = sum(self._wound_history[-(window - 1):]) if window > 1 else 0
+            history_sum = sum(self._wound_history[-(window - 1) :]) if window > 1 else 0
             recent = history_sum + self._floor_wound_hp
             cap_hp = int(self.base_max_health * cap_ratio)
             available = max(0, cap_hp - recent)
@@ -369,7 +363,7 @@ class Player(Entity):
             if window <= 1:
                 self._wound_history = []
             elif len(self._wound_history) > window - 1:
-                self._wound_history = self._wound_history[-(window - 1):]
+                self._wound_history = self._wound_history[-(window - 1) :]
         self._floor_wound_hp = 0
         decay = getattr(config, "wounds_decay_per_floor", 0) or 0
         if decay and self.wounds:

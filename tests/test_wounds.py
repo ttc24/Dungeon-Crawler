@@ -1,6 +1,6 @@
 import dungeoncrawler.entities as entities
-from dungeoncrawler.entities import Player
 from dungeoncrawler.config import Config
+from dungeoncrawler.entities import Player
 
 
 def test_wounds_reduce_and_cleanse():

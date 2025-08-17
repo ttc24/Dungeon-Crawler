@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-import json
 
 import dungeoncrawler.data as data_module
 from dungeoncrawler.dungeon import DungeonBase

@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from gettext import gettext as _
 from dataclasses import dataclass, field
+from gettext import gettext as _
 
 from .input.keys import Action, get_action
 from .ui.terminal import Renderer
