@@ -1,62 +1,35 @@
 name: Auto-format (Black + isort)
 
 on:
-  workflow_dispatch:
-  pull_request_target:
+  pull_request:
     types: [opened, reopened, synchronize]
     paths:
       - "**/*.py"
       - "pyproject.toml"
-      - "requirements-dev.txt"
+      - "requirements*.txt"
       - ".isort.cfg"
       - "setup.cfg"
       - ".flake8"
       - ".editorconfig"
-  push:
-    branches: ["**"]
-    paths:
-      - "**/*.py"
-      - "pyproject.toml"
-      - "requirements-dev.txt"
-      - ".isort.cfg"
-      - "setup.cfg"
-      - ".flake8"
-      - ".editorconfig"
+  workflow_dispatch:
 
 permissions:
   contents: write
   pull-requests: write
 
 concurrency:
-  group: auto-format-${{ github.event_name }}-${{ github.ref || github.event.pull_request.head.ref }}
+  group: auto-format-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
   format:
+    if: ${{ github.actor != 'github-actions[bot]' }}
     runs-on: ubuntu-latest
-
     steps:
-      # Checkout the *right* branch
-      - name: Checkout for PR (same repo)
-        if: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository }}
+      - name: Checkout PR branch
         uses: actions/checkout@v5
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          fetch-depth: 0
-
-      - name: Checkout for PR (fork)
-        if: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository }}
-        uses: actions/checkout@v5
-        with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Checkout for push
-        if: ${{ github.event_name == 'push' }}
-        uses: actions/checkout@v5
-        with:
+          ref: ${{ github.head_ref }}
           fetch-depth: 0
 
       - name: Set up Python
@@ -68,23 +41,15 @@ jobs:
       - name: Install formatters (pinned)
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
-
-      # Rebase so our formatting commit sits on the latest remote tip
-      - name: Rebase onto remote tip
-        shell: bash
-        run: |
-          BRANCH="${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.ref || github.ref_name }}"
-          git fetch origin "${BRANCH}" --depth=1 || true
-          git pull --rebase origin "${BRANCH}" || true
+          pip install isort==6.0.1 black==25.1.0
 
       - name: Run formatters (isort then Black)
         run: |
           isort --profile black .
           black .
 
-      - name: Check for changes
-        id: changes
+      - name: Detect changes
+        id: diff
         run: |
           if git diff --quiet; then
             echo "changed=false" >> $GITHUB_OUTPUT
@@ -92,14 +57,20 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit & push
-        if: steps.changes.outputs.changed == 'true'
-        shell: bash
-        run: |
-          BRANCH="${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.ref || github.ref_name }}"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "Apply Black and isort formatting"
-          # Try normal push; if remote moved again, rebase and push
-          git push origin HEAD:"${BRANCH}" || (git pull --rebase origin "${BRANCH}" && git push origin HEAD:"${BRANCH}")
+      - name: Commit formatting (same-repo PRs)
+        if: ${{ steps.diff.outputs.changed == 'true' && github.event.pull_request.head.repo.full_name == github.repository }}
+        uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: "Apply Black + isort formatting"
+          commit_author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+
+      - name: Create patch for forks
+        if: ${{ steps.diff.outputs.changed == 'true' && github.event.pull_request.head.repo.full_name != github.repository }}
+        run: git diff > formatting.patch
+
+      - name: Upload patch artifact (fork PRs)
+        if: ${{ steps.diff.outputs.changed == 'true' && github.event.pull_request.head.repo.full_name != github.repository }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: formatting.patch
+          path: formatting.patch
