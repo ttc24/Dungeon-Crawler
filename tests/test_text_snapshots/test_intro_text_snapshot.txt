@@ -1,0 +1,3 @@
+Welcome to Dungeon Crawler!
+Guide your hero through procedurally generated floors filled with monsters,
+treasure, and meaningful character choices.

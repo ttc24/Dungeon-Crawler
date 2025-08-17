@@ -21,6 +21,16 @@ from .i18n import set_language
 logger = logging.getLogger(__name__)
 
 
+def get_intro_text() -> str:
+    """Return the introductory blurb shown when launching the game."""
+
+    return _(
+        "Welcome to Dungeon Crawler!\n"
+        "Guide your hero through procedurally generated floors filled with monsters,\n"
+        "treasure, and meaningful character choices."
+    )
+
+
 def _load_unlocks():
     unlocks = {"class": False, "guild": False, "race": False}
     max_floor = 0
