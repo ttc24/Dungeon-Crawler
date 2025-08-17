@@ -13,7 +13,7 @@ on:
       - ".flake8"
       - ".editorconfig"
   push:
-    branches: ["**"]            # or ["main"] if you prefer
+    branches: ["**"]
     paths:
       - "**/*.py"
       - "pyproject.toml"
@@ -27,29 +27,37 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: auto-format-${{ github.event_name }}-${{ github.ref || github.event.pull_request.head.ref }}
+  cancel-in-progress: true
+
 jobs:
-  format_pr:
-    if: ${{ github.event_name == 'pull_request_target' }}
+  format:
     runs-on: ubuntu-latest
-    concurrency:
-      group: auto-format-pr-${{ github.event.pull_request.head.repo.full_name }}-${{ github.event.pull_request.head.ref }}
-      cancel-in-progress: true
+
     steps:
-      - name: Checkout PR branch (same repo)
-        if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+      # Checkout the *right* branch
+      - name: Checkout for PR (same repo)
+        if: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository }}
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
 
-      - name: Checkout PR branch (fork)
-        if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+      - name: Checkout for PR (fork)
+        if: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository }}
         uses: actions/checkout@v4
         with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
           persist-credentials: false
+
+      - name: Checkout for push
+        if: ${{ github.event_name == 'push' }}
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -62,64 +70,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
 
-      - name: Run formatters (isort then Black)
+      # Rebase so our formatting commit sits on the latest remote tip
+      - name: Rebase onto remote tip
+        shell: bash
         run: |
-          isort --profile black .
-          black .
-
-      - name: Check for changes
-        id: changes
-        run: |
-          if git diff --quiet; then
-            echo "changed=false" >> $GITHUB_OUTPUT
-          else
-            echo "changed=true" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Commit changes
-        if: steps.changes.outputs.changed == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "Apply Black and isort formatting"
-
-      - name: Push changes (same repo)
-        if: steps.changes.outputs.changed == 'true' && github.event.pull_request.head.repo.full_name == github.repository
-        run: git push origin HEAD:${{ github.event.pull_request.head.ref }}
-
-      - name: Push changes (fork via token)
-        if: steps.changes.outputs.changed == 'true' && github.event.pull_request.head.repo.full_name != github.repository
-        env:
-          FORK_PUSH_TOKEN: ${{ secrets.FORK_PUSH_TOKEN }}
-        run: |
-          if [ -z "$FORK_PUSH_TOKEN" ]; then
-            echo "::warning::No FORK_PUSH_TOKEN set. Cannot push to fork; skipping push."
-            exit 0
-          fi
-          git remote set-url origin https://$FORK_PUSH_TOKEN@github.com/${{ github.event.pull_request.head.repo.full_name }}.git
-          git push origin HEAD:${{ github.event.pull_request.head.ref }}
-
-  format_push:
-    if: ${{ github.event_name == 'push' }}
-    runs-on: ubuntu-latest
-    concurrency:
-      group: auto-format-push-${{ github.ref_name }}
-      cancel-in-progress: true
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-
-      - name: Install formatters (pinned)
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
+          BRANCH="${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.ref || github.ref_name }}"
+          git fetch origin "${BRANCH}" --depth=1 || true
+          git pull --rebase origin "${BRANCH}" || true
 
       - name: Run formatters (isort then Black)
         run: |
@@ -135,11 +92,14 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit and push
+      - name: Commit & push
         if: steps.changes.outputs.changed == 'true'
+        shell: bash
         run: |
+          BRANCH="${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.ref || github.ref_name }}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           git commit -m "Apply Black and isort formatting"
-          git push origin HEAD:${{ github.ref_name }}
+          # Try normal push; if remote moved again, rebase and push
+          git push origin HEAD:"${BRANCH}" || (git pull --rebase origin "${BRANCH}" && git push origin HEAD:"${BRANCH}")
