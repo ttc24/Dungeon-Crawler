@@ -1,0 +1,7 @@
+# Include runtime deps so devs get everything with one install
+-r requirements.txt
+
+black==24.8.0
+isort==5.13.2
+flake8==7.1.1
+pytest==8.4.1
