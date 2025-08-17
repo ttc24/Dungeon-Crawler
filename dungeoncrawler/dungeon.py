@@ -16,14 +16,7 @@ from . import map as map_module
 from . import shop as shop_module
 from .combat_log import CombatLog
 from .config import config
-from .constants import (
-    ANNOUNCER_LINES,
-    INVALID_KEY_MSG,
-    RIDDLES,
-    RUN_FILE,
-    SAVE_FILE,
-    SCORE_FILE,
-)
+from .constants import ANNOUNCER_LINES, INVALID_KEY_MSG, RIDDLES, RUN_FILE, SAVE_FILE, SCORE_FILE
 from .core import GameState
 from .core.map import GameMap
 from .data import FloorDefinition, load_items
