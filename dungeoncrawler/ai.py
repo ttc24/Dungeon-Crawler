@@ -1,6 +1,9 @@
 import json
+import logging
 import random
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 
 class AggressiveAI:
@@ -133,8 +136,8 @@ try:
                     "unpredictable": f"{_name} shifts unpredictably.",
                 },
             )
-except FileNotFoundError:
-    pass
+except (FileNotFoundError, json.JSONDecodeError) as _exc:
+    logger.warning("Telegraph data could not be loaded from %s: %s", _floors_path, _exc)
 
 
 # Default archetype weights for enemies that use IntentAI
