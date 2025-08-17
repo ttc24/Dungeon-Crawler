@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import argparse
 import random
+from dataclasses import dataclass
 from typing import Dict, Mapping
 
 from .core.combat import resolve_enemy_turn, resolve_player_action
 from .core.entity import Entity
 from .dungeon import ENEMY_STATS
+from .entities import CLASS_DEFS
 
 
 def simulate_battles(
@@ -38,6 +40,11 @@ def simulate_battles(
     """
 
     rng = random.Random(seed)
+    if seed is not None:
+        state = random.getstate()
+        random.seed(seed)
+    else:
+        state = None
     if enemy_name not in ENEMY_STATS:
         raise KeyError(f"Unknown enemy: {enemy_name}")
     hp_min, hp_max, atk_min, atk_max, defense = ENEMY_STATS[enemy_name]
@@ -70,7 +77,68 @@ def simulate_battles(
             total_turns += turns
     winrate = wins / runs if runs else 0
     avg_turns = total_turns / wins if wins else 0
+    if state is not None:
+        random.setstate(state)
     return {"winrate": winrate, "avg_turns": avg_turns}
+
+
+@dataclass
+class SimulationResult:
+    """Aggregate outcome of a batch of simulated encounters.
+
+    Attributes
+    ----------
+    win_rate:
+        Proportion of battles the player won. Expressed as a float between
+        0 and 1.
+    """
+
+    win_rate: float
+
+
+def simulate(
+    player_class: str,
+    enemy_kind: str,
+    floor: int,
+    runs: int,
+    *,
+    seed: int | None = 0,
+) -> SimulationResult:
+    """Simulate a series of encounters for balance checks.
+
+    Parameters
+    ----------
+    player_class:
+        Name of the player class as defined in ``CLASS_DEFS``.
+    enemy_kind:
+        Enemy archetype to battle against.
+    floor:
+        Dungeon floor number. Currently unused but accepted for future
+        expansion so the function signature matches the specification.
+    runs:
+        Number of simulated encounters to perform.
+    seed:
+        Optional random seed to ensure deterministic results. Defaults to 0 to
+        make automated tests reproducible.
+
+    Returns
+    -------
+    :class:`SimulationResult`
+        Object containing the win rate for the simulated matchup.
+    """
+
+    cls = CLASS_DEFS.get(player_class)
+    if cls is None:
+        raise KeyError(f"Unknown player class: {player_class}")
+
+    base_stats = cls["stats"]
+    player_stats = {
+        "health": base_stats.get("max_health", 30),
+        "attack": base_stats.get("attack_power", 8),
+        "speed": 10,
+    }
+    stats = simulate_battles(enemy_kind, runs, seed=seed, player_stats=player_stats)
+    return SimulationResult(win_rate=stats["winrate"])
 
 
 def main() -> None:
