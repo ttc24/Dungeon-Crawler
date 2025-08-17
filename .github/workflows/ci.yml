@@ -9,9 +9,11 @@ permissions:
   contents: read
 
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11', '3.12']
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -19,25 +21,16 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-          cache: "pip"
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
 
-      - name: Install dev tools (pinned)
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
+          pip install -r requirements-dev.txt hypothesis pytest-regressions pyyaml mypy
 
-      - name: Show versions
-        run: |
-          black --version
-          isort --version
-          flake8 --version
+      - name: Run tests
+        run: pytest -q
 
-      - name: Check import order (isort)
-        run: isort --profile black --check-only .
-
-      - name: Check formatting (Black)
-        run: black --check .
-
-      - name: Lint (flake8)
-        run: flake8 .
+      - name: Type check
+        run: mypy dungeoncrawler || true

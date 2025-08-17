@@ -20,7 +20,7 @@ dev = [
 
 [project.scripts]
 dungeon-crawler = "dungeoncrawler.main:main"
-dungeoncrawler = "dungeoncrawler.main:main"
+dungeoncrawler = "dungeoncrawler.__main__:main"
 
 [build-system]
 requires = ["setuptools>=61.0"]
