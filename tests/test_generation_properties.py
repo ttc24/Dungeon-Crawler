@@ -1,16 +1,19 @@
 from collections import deque
 
-from hypothesis import given, settings, strategies as st
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 from dungeoncrawler import map as dungeon_map
+from dungeoncrawler.data import load_floor_definitions
 from dungeoncrawler.dungeon import DungeonBase
 from dungeoncrawler.entities import Enemy, Player
 from dungeoncrawler.events import BaseEvent
-from dungeoncrawler.data import load_floor_definitions
 
 
 @settings(deadline=None)
-@given(seed=st.integers(min_value=0, max_value=2**32 - 1), floor=st.integers(min_value=1, max_value=18))
+@given(
+    seed=st.integers(min_value=0, max_value=2**32 - 1), floor=st.integers(min_value=1, max_value=18)
+)
 def test_generation_properties(seed, floor):
     load_floor_definitions()
     dungeon = DungeonBase(1, 1, seed=seed)
@@ -32,10 +35,7 @@ def test_generation_properties(seed, floor):
                     queue.append((nx, ny))
 
     carved = {
-        (x, y)
-        for y in range(height)
-        for x in range(width)
-        if dungeon.rooms[y][x] is not None
+        (x, y) for y in range(height) for x in range(width) if dungeon.rooms[y][x] is not None
     }
     assert visited == carved
     assert dungeon.exit_coords in visited
@@ -49,13 +49,9 @@ def test_generation_properties(seed, floor):
     expected_bosses = dungeon.floor_configs[floor].get("boss_slots", 1)
     assert len(bosses) == expected_bosses
 
-    events = [
-        obj for row in dungeon.rooms for obj in row if isinstance(obj, BaseEvent)
-    ]
+    events = [obj for row in dungeon.rooms for obj in row if isinstance(obj, BaseEvent)]
     expected_events = 2 if floor == 1 else 1
     assert len(events) == expected_events
 
-    total_xp = sum(
-        obj.xp for row in dungeon.rooms for obj in row if isinstance(obj, Enemy)
-    )
+    total_xp = sum(obj.xp for row in dungeon.rooms for obj in row if isinstance(obj, Enemy))
     assert total_xp <= dungeon.width * dungeon.height * 2
