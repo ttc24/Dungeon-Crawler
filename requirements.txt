@@ -1,7 +1,9 @@
-black==25.1.0
-flake8==7.3.0
-isort==6.0.1
-jsonschema==4.23.0
-pytest==8.4.1
-rich==13.7.1
-textual==0.64.0
+# Runtime dependencies for Dungeon-Crawler
+
+# If you’re validating config/save data with jsonschema, keep this:
+jsonschema>=4.23.0,<5
+
+# Optional UI:
+# If you want to try the experimental Textual interface, install it separately:
+#   pip install textual
+# (Only add 'rich' here if you import it directly in your code.)
