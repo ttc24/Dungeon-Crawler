@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
@@ -29,6 +30,8 @@ from .items import Armor, Augment, Item, Trinket, Weapon
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
+logger = logging.getLogger(__name__)
+
 EVENT_CLASS_MAP = {
     cls.__name__: cls
     for cls in [
@@ -53,8 +56,12 @@ EVENT_CLASS_MAP = {
 def load_items() -> Tuple[List[Item], List[Item]]:
     """Load shop and rare loot items from ``items.json``."""
     path = DATA_DIR / "items.json"
-    with open(path, encoding="utf-8") as f:
-        data = json.load(f)
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError) as exc:
+        logger.warning("Failed to load %s: %s", path, exc)
+        return [], []
 
     def make(cfg: Dict) -> Item:
         t = cfg.get("type")
