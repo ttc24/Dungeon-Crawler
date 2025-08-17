@@ -297,9 +297,12 @@ class DungeonBase:
     shop interactions.
     """
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, seed: int | None = None):
         self.width = width
         self.height = height
+        self.random = random.Random(seed)
+        map_module.random = self.random
+        self.seed = seed
         self.rooms = [[None for __ in range(width)] for __ in range(height)]
         self.room_names = [
             [self.generate_room_name() for __ in range(width)] for __ in range(height)
@@ -359,7 +362,6 @@ class DungeonBase:
                 cfg.setdefault(f"{name}_rate", weight)
         # Tracking for leaderboard entries
         self.run_start = None
-        self.seed = None
         # Persistent run statistics including unlocked character options
         self.run_stats = {
             "total_runs": 0,
@@ -408,7 +410,7 @@ class DungeonBase:
         return text
 
     def announce(self, msg):
-        self.queue_message(_(f"[Announcer] {random.choice(ANNOUNCER_LINES)} {msg}"))
+        self.queue_message(_(f"[Announcer] {self.random.choice(ANNOUNCER_LINES)} {msg}"))
 
     def _make_state(self, floor: int) -> GameState:
         """Construct a :class:`GameState` snapshot for hooks."""
@@ -831,7 +833,7 @@ class DungeonBase:
         if room_type in names:
             return names[room_type]
 
-        return f"{random.choice(ROOM_NAME_ADJECTIVES)} {random.choice(ROOM_NAME_NOUNS)}"
+        return f"{self.random.choice(ROOM_NAME_ADJECTIVES)} {self.random.choice(ROOM_NAME_NOUNS)}"
 
     def generate_dungeon(self, floor=1):
         """Generate the dungeon layout for ``floor`` and persist progress.
@@ -889,8 +891,8 @@ class DungeonBase:
         ]
         if not empty:
             return
-        qtype = random.choice(["fetch", "hunt", "escort"])
-        random.shuffle(empty)
+        qtype = self.random.choice(["fetch", "hunt", "escort"])
+        self.random.shuffle(empty)
         if qtype == "fetch":
             item = Item("Ancient Relic", "A quest item")
             candidates = [
@@ -905,14 +907,14 @@ class DungeonBase:
                 flavor=_("A whisper speaks of a hidden cache."),
             )
         elif qtype == "hunt":
-            name = random.choice(list(self.enemy_stats.keys()))
+            name = self.random.choice(list(self.enemy_stats.keys()))
             hp_min, hp_max, atk_min, atk_max, defense = self.enemy_stats[name]
             enemy = Enemy(
                 name,
                 hp_max + floor * 2,
                 atk_max + floor * 2,
                 defense + floor // 2,
-                random.randint(30, 60),
+                self.random.randint(30, 60),
                 traits=self.enemy_traits.get(name),
             )
             enemy.xp = max(5, (enemy.health + enemy.attack_power + enemy.defense) // 15)
@@ -993,8 +995,8 @@ class DungeonBase:
         if self.player is None:
             raise ValueError("Player must be created before starting the game.")
         # Begin a new run with a fresh seed and timestamp
-        self.seed = random.randrange(2**32)
-        random.seed(self.seed)
+        self.seed = self.random.randrange(2**32)
+        self.random.seed(self.seed)
         self.run_start = time.time()
         self.renderer.show_message(_("Welcome to Dungeon Crawler!"))
         while self.player.is_alive() and floor <= 18:
@@ -1327,17 +1329,17 @@ class DungeonBase:
         combat_module.battle(self, enemy)
 
     def audience_gift(self):
-        if random.random() < 0.1:
+        if self.random.random() < 0.1:
             self.renderer.show_message(
                 _("A package falls from above! It's a gift from the audience.")
             )
-            if random.random() < 0.5:
+            if self.random.random() < 0.5:
                 item = Item("Health Potion", "Restores 20 health")
                 self.player.collect_item(item)
                 self.renderer.show_message(_(f"You received a {item.name}."))
                 self.announce(f"{self.player.name} gains a helpful item!")
             else:
-                damage = random.randint(5, 15)
+                damage = self.random.randint(5, 15)
                 self.player.take_damage(damage, source="Audience Gift")
                 self.renderer.show_message(_(f"Uh-oh! It explodes and deals {damage} damage."))
                 self.announce("The crowd loves a good prank!")
@@ -1358,7 +1360,7 @@ class DungeonBase:
         base = self.shop_items[:1]
         pool = self.shop_items[1:]
         k = min(max(0, count - len(base)), len(pool))
-        self.shop_inventory = base + random.sample(pool, k)
+        self.shop_inventory = base + self.random.sample(pool, k)
 
     def get_sale_price(self, item):
         return shop_module.get_sale_price(item)
@@ -1371,7 +1373,7 @@ class DungeonBase:
 
     def riddle_challenge(self):
         """Present the player with a riddle for a potential reward."""
-        riddle, answer = random.choice(self.riddles)
+        riddle, answer = self.random.choice(self.riddles)
         print(_("A sage poses a riddle:\n") + riddle)
         response = input(_("Answer: ")).strip().lower()
         if response == answer:
@@ -1400,7 +1402,7 @@ class DungeonBase:
 
             # Fall back to the unweighted list if weights produced an empty pool
             pool = weighted_events or events
-            event_cls = random.choice(pool)
+            event_cls = self.random.choice(pool)
             event = event_cls()
             event.trigger(self)
 
@@ -1408,7 +1410,7 @@ class DungeonBase:
         """Select and trigger one signature event from the curated pool."""
         if not self.signature_events:
             return
-        event_cls = random.choice(self.signature_events)
+        event_cls = self.random.choice(self.signature_events)
         event_cls().trigger(self)
 
     # Floor-specific events keep gameplay varied without hardcoding logic in
@@ -1423,7 +1425,7 @@ class DungeonBase:
             print(_("A traveling merchant sets up shop."))
             self.restock_shop()
             self.shop()
-            self.next_shop_floor = floor + random.randint(2, 3)
+            self.next_shop_floor = floor + self.random.randint(2, 3)
 
         events = {
             1: self._floor_one_event,
