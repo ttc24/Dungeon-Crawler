@@ -13,7 +13,7 @@ dev = [
   "flake8==7.3.0",
   "isort==6.0.1",
   "pytest==8.4.1",
-  "jsonschema==4.23.0",
+  "jsonschema==4.25.0",
   "hypothesis==6.112.0",
   "pytest-regressions==2.8.2",
 ]
