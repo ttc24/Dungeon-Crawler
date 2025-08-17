@@ -2,9 +2,10 @@ from __future__ import annotations
 
 """OS-specific paths for game data and configuration."""
 
-from pathlib import Path
 import shutil
-from platformdirs import user_data_path, user_config_path
+from pathlib import Path
+
+from platformdirs import user_config_path, user_data_path
 
 APP_NAME = "dungeon_crawler"
 

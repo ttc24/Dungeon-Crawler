@@ -11,7 +11,7 @@ import json
 import logging
 from gettext import gettext as _
 
-from . import tutorial, paths
+from . import paths, tutorial
 from .config import Config, load_config, settings_menu
 from .constants import RUN_FILE
 from .dungeon import DungeonBase
