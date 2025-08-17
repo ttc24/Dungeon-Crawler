@@ -11,7 +11,7 @@ import json
 import logging
 from gettext import gettext as _
 
-from . import tutorial
+from . import tutorial, paths
 from .config import Config, load_config, settings_menu
 from .constants import RUN_FILE
 from .dungeon import DungeonBase
@@ -169,6 +169,9 @@ def main(argv=None, input_func=input, output_func=print, cfg: Config | None = No
         Pre-loaded configuration.  When ``None`` the configuration is loaded
         from ``config.json`` automatically.
     """
+
+    paths.ensure_dirs()
+    paths.migrate_legacy()
 
     parser = argparse.ArgumentParser()
     parser.add_argument(

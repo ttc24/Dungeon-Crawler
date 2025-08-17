@@ -293,7 +293,9 @@ class DungeonBase:
     def __init__(self, width, height, seed: int | None = None):
         self.width = width
         self.height = height
-        self.random = random.Random(seed)
+        if seed is not None:
+            random.seed(seed)
+        self.random = random
         map_module.random = self.random
         self.seed = seed
         self.rooms = [[None for __ in range(width)] for __ in range(height)]

@@ -2,6 +2,7 @@
 
 # If you’re validating config/save data with jsonschema, keep this:
 jsonschema>=4.23.0,<5
+platformdirs>=4.2.2
 
 # Optional UI:
 # If you want to try the experimental Textual interface, install it separately:
