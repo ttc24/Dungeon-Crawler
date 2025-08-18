@@ -1,0 +1,33 @@
+{
+  "$schema": "../schemas/items.json",
+  "shop": [
+    {"type": "Item", "name": "Health Potion", "description": "Restores 20 health", "price": 10, "rarity": "common"},
+    {"type": "Weapon", "name": "Sword", "description": "A sharp sword", "min_damage": 10, "max_damage": 15, "price": 40, "rarity": "common"},
+    {"type": "Weapon", "name": "Axe", "description": "A heavy axe", "min_damage": 12, "max_damage": 18, "price": 65, "rarity": "uncommon"},
+    {"type": "Weapon", "name": "Dagger", "description": "A quick dagger", "min_damage": 8, "max_damage": 12, "price": 35, "rarity": "common"},
+    {"type": "Weapon", "name": "Warhammer", "description": "Crushes armor and bone", "min_damage": 14, "max_damage": 22, "price": 85, "rarity": "rare"},
+    {"type": "Weapon", "name": "Rapier", "description": "A slender, piercing blade", "min_damage": 9, "max_damage": 17, "price": 50, "rarity": "uncommon"},
+    {"type": "Weapon", "name": "Flame Blade", "description": "Glows with searing heat", "min_damage": 13, "max_damage": 20, "price": 95, "rarity": "rare"},
+    {"type": "Weapon", "name": "Crossbow", "description": "Ranged attack with bolts", "min_damage": 11, "max_damage": 19, "price": 60, "rarity": "uncommon"},
+    {"type": "Armor", "name": "Leather Armor", "description": "Basic protection", "defense": 2, "price": 30, "rarity": "common"},
+    {"type": "Trinket", "name": "Lucky Charm", "description": "A charm that brings luck", "effect": "blessed", "price": 25, "rarity": "rare"},
+    {"type": "Item", "name": "Scent-mask Spray", "description": "Masks blood scent, clearing Blood Torrent", "price": 15, "rarity": "common"},
+    {"type": "Item", "name": "Absorbent Gel", "description": "Soaks and removes Blood Torrent", "price": 20, "rarity": "uncommon"},
+    {"type": "Item", "name": "Anti-Nausea Draught", "description": "Removes Compression Sickness", "price": 15, "rarity": "common"},
+    {"type": "Item", "name": "Entropy Vent Stone", "description": "Vents Entropic Debt stacks", "price": 25, "rarity": "uncommon"},
+    {"type": "Item", "name": "Filter Mask", "description": "Negates one Miasma aura", "price": 20, "rarity": "common"},
+    {"type": "Item", "name": "Air Filter", "description": "Blocks one Miasma aura", "price": 30, "rarity": "uncommon"},
+    {"type": "Item", "name": "Anchor", "description": "Clears Temporal Lag", "price": 30, "rarity": "uncommon"},
+    {"type": "Item", "name": "Signal Jammer", "description": "Scrambles Spotlight pings", "price": 30, "rarity": "uncommon"},
+    {"type": "Item", "name": "Smoke Bomb", "description": "Briefly hides you from the Spotlight", "price": 35, "rarity": "uncommon"},
+    {"type": "Item", "name": "Rewrite", "description": "Clears Audience Fatigue stacks", "price": 25, "rarity": "common"},
+    {"type": "Trinket", "name": "Suppression Ring", "description": "Negates Mana Lock but may overheat", "price": 50, "rarity": "rare"},
+    {"type": "Augment", "name": "Battle Stim", "description": "Gain +2 attack, lose 5 max health", "attack_bonus": 2, "health_penalty": 5, "max_stacks": 2, "price": 40, "rarity": "uncommon", "combos_with": ["Bleed", "Poison"]}
+  ],
+  "rare": [
+    {"type": "Weapon", "name": "Elven Longbow", "description": "Bow of unmatched accuracy.", "min_damage": 15, "max_damage": 25, "price": 0, "rarity": "epic"},
+    {"type": "Item", "name": "Blessed Charm", "description": "Said to bring good fortune.", "rarity": "rare"},
+    {"type": "Weapon", "name": "Dwarven Waraxe", "description": "Forged in the deep halls.", "min_damage": 12, "max_damage": 20, "price": 0, "rarity": "epic"},
+    {"type": "Item", "name": "Shadow Cloak", "description": "Grants an air of mystery", "rarity": "rare"}
+  ]
+}

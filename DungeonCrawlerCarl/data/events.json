@@ -1,0 +1,15 @@
+{
+  "fountain": {
+    "uses": 2,
+    "bless_chance": 0.3,
+    "curse_chance": 0.1
+  },
+  "shrine": {
+    "prayer_boon_chance": 0.6
+  },
+  "trap": {
+    "detect_base": 0.3,
+    "disarm_cost": 15,
+    "bleed_chance": 0.3
+  }
+}

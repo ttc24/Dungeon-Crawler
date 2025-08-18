@@ -1,0 +1,15 @@
+{
+  "$schema": "../../schemas/floor.json",
+  "id": "13",
+  "name": "Anti-Magic",
+  "map": [],
+  "rule_mods": {},
+  "objective": {
+    "type": "none"
+  },
+  "spawns": [],
+  "ui": {},
+  "hooks": [
+    "dungeoncrawler.hooks.floor13"
+  ]
+}

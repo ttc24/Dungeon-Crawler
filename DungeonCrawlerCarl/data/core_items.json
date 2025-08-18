@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "name": "potion",
+      "rarity": "common",
+      "potion_heal": 20
+    },
+    {
+      "name": "elixir",
+      "rarity": "rare",
+      "potion_heal": 50
+    }
+  ]
+}

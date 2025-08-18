@@ -1,0 +1,412 @@
+{
+  "1": {
+    "size": [
+      8,
+      8
+    ],
+    "enemies": [
+      "Goblin",
+      "Skeleton",
+      "Bandit"
+    ],
+    "bosses": [
+      "Rat King"
+    ],
+    "places": {
+      "Trap": 2,
+      "Treasure": 2,
+      "Enchantment": 1,
+      "Sanctuary": 1,
+      "Blacksmith": 1
+    },
+    "fountain_rate": 1.0,
+    "cache_rate": 1.0
+  },
+  "2": {
+    "size": [
+      9,
+      9
+    ],
+    "enemies": [
+      "Orc",
+      "Cultist",
+      "Ghoul",
+      "Bandit"
+    ],
+    "bosses": [
+      "Inferno Golem"
+    ],
+    "places": {
+      "Trap": 3,
+      "Treasure": 3,
+      "Enchantment": 1,
+      "Sanctuary": 1,
+      "Blacksmith": 1
+    }
+  },
+  "3": {
+    "size": [
+      10,
+      10
+    ],
+    "enemies": [
+      "Vampire",
+      "Warlock",
+      "Wraith",
+      "Werewolf"
+    ],
+    "bosses": [
+      "Shadow Reaver"
+    ],
+    "places": {
+      "Trap": 3,
+      "Treasure": 4,
+      "Enchantment": 2,
+      "Sanctuary": 2,
+      "Blacksmith": 1
+    }
+  },
+  "4": {
+    "size": [
+      11,
+      11
+    ],
+    "enemies": [
+      "Basilisk",
+      "Gargoyle",
+      "Troll",
+      "Lich"
+    ],
+    "bosses": [
+      "Void Serpent"
+    ],
+    "places": {
+      "Trap": 4,
+      "Treasure": 4,
+      "Enchantment": 2,
+      "Sanctuary": 2,
+      "Blacksmith": 1
+    }
+  },
+  "5": {
+    "size": [
+      12,
+      12
+    ],
+    "enemies": [
+      "Phoenix",
+      "Hydra",
+      "Revenant",
+      "Beholder"
+    ],
+    "bosses": [
+      "Grave Monarch"
+    ],
+    "places": {
+      "Trap": 4,
+      "Treasure": 5,
+      "Enchantment": 2,
+      "Sanctuary": 2,
+      "Blacksmith": 1
+    }
+  },
+  "6": {
+    "size": [
+      13,
+      13
+    ],
+    "enemies": [
+      "Minotaur",
+      "Demon",
+      "Harpy",
+      "Shade"
+    ],
+    "bosses": [
+      "Frost Warden"
+    ],
+    "places": {
+      "Trap": 5,
+      "Treasure": 5,
+      "Enchantment": 2,
+      "Sanctuary": 2,
+      "Blacksmith": 1
+    }
+  },
+  "7": {
+    "size": [
+      14,
+      14
+    ],
+    "enemies": [
+      "Giant Spider",
+      "Slime King",
+      "Zombie",
+      "Gargoyle"
+    ],
+    "bosses": [
+      "Ember Lord"
+    ],
+    "places": {
+      "Trap": 5,
+      "Treasure": 6,
+      "Enchantment": 2,
+      "Sanctuary": 2,
+      "Blacksmith": 1
+    }
+  },
+  "8": {
+    "size": [
+      15,
+      15
+    ],
+    "enemies": [
+      "Dark Knight",
+      "Cyclops",
+      "Basilisk",
+      "Werewolf"
+    ],
+    "bosses": [
+      "Glacier Fiend"
+    ],
+    "places": {
+      "Trap": 5,
+      "Treasure": 6,
+      "Enchantment": 3,
+      "Sanctuary": 2,
+      "Blacksmith": 1
+    }
+  },
+  "9": {
+    "size": [
+      15,
+      15
+    ],
+    "enemies": [
+      "Hydra",
+      "Beholder",
+      "Revenant",
+      "Warlock"
+    ],
+    "bosses": [
+      "Storm Reaper"
+    ],
+    "places": {
+      "Trap": 6,
+      "Treasure": 6,
+      "Enchantment": 3,
+      "Sanctuary": 2,
+      "Blacksmith": 1
+    }
+  },
+  "10": {
+    "size": [
+      15,
+      15
+    ],
+    "enemies": [
+      "Phoenix",
+      "Dark Knight",
+      "Cyclops",
+      "Minotaur"
+    ],
+    "bosses": [
+      "Doom Bringer"
+    ],
+    "places": {
+      "Trap": 6,
+      "Treasure": 7,
+      "Enchantment": 3,
+      "Sanctuary": 3,
+      "Blacksmith": 1
+    }
+  },
+  "11": {
+    "size": [
+      15,
+      15
+    ],
+    "enemies": [
+      "Astral Dragon",
+      "Demon",
+      "Harpy",
+      "Shade"
+    ],
+    "bosses": [
+      "Arcane Sentinel"
+    ],
+    "places": {
+      "Trap": 7,
+      "Treasure": 7,
+      "Enchantment": 3,
+      "Sanctuary": 3,
+      "Blacksmith": 1
+    }
+  },
+  "12": {
+    "size": [
+      15,
+      15
+    ],
+    "enemies": [
+      "Giant Spider",
+      "Slime King",
+      "Zombie",
+      "Warlock"
+    ],
+    "bosses": [
+      "Blight Matron"
+    ],
+    "places": {
+      "Trap": 7,
+      "Treasure": 8,
+      "Enchantment": 4,
+      "Sanctuary": 3,
+      "Blacksmith": 1
+    }
+  },
+  "13": {
+    "size": [
+      15,
+      15
+    ],
+    "enemies": [
+      "Basilisk",
+      "Gargoyle",
+      "Troll",
+      "Lich"
+    ],
+    "bosses": [
+      "Chaos Djinn"
+    ],
+    "places": {
+      "Trap": 8,
+      "Treasure": 8,
+      "Enchantment": 4,
+      "Sanctuary": 3,
+      "Blacksmith": 1
+    }
+  },
+  "14": {
+    "size": [
+      15,
+      15
+    ],
+    "enemies": [
+      "Hydra",
+      "Beholder",
+      "Revenant",
+      "Dark Knight"
+    ],
+    "bosses": [
+      "Dread Colossus"
+    ],
+    "places": {
+      "Trap": 8,
+      "Treasure": 9,
+      "Enchantment": 4,
+      "Sanctuary": 3,
+      "Blacksmith": 1
+    }
+  },
+  "15": {
+    "size": [
+      15,
+      15
+    ],
+    "enemies": [
+      "Cyclops",
+      "Astral Dragon",
+      "Phoenix",
+      "Minotaur"
+    ],
+    "bosses": [
+      "Ethereal Harvester"
+    ],
+    "places": {
+      "Trap": 9,
+      "Treasure": 9,
+      "Enchantment": 5,
+      "Sanctuary": 3,
+      "Blacksmith": 1
+    }
+  },
+  "16": {
+    "size": [
+      15,
+      15
+    ],
+    "enemies": [
+      "Demon",
+      "Harpy",
+      "Shade",
+      "Giant Spider"
+    ],
+    "enemy_pool": [
+      "Harpy",
+      "Harpy",
+      "Shade",
+      "Shade",
+      "Giant Spider",
+      "Giant Spider",
+      "Demon"
+    ],
+    "bosses": [
+      "Feral Juggernaut"
+    ],
+    "places": {
+      "Trap": 9,
+      "Treasure": 10,
+      "Enchantment": 5,
+      "Sanctuary": 3,
+      "Blacksmith": 1
+    }
+  },
+  "17": {
+    "size": [
+      15,
+      15
+    ],
+    "enemies": [
+      "Slime King",
+      "Zombie",
+      "Gargoyle",
+      "Warlock"
+    ],
+    "bosses": [
+      "Rat King",
+      "Bone Tyrant",
+      "Gloom Shade"
+    ],
+    "boss_slots": 3,
+    "places": {
+      "Trap": 9,
+      "Treasure": 10,
+      "Enchantment": 5,
+      "Sanctuary": 4,
+      "Blacksmith": 1
+    }
+  },
+  "18": {
+    "size": [
+      15,
+      15
+    ],
+    "enemies": [
+      "Hydra",
+      "Beholder",
+      "Astral Dragon",
+      "Dark Knight"
+    ],
+    "bosses": [
+      "Hex King"
+    ],
+    "boss_slots": 5,
+    "places": {
+      "Trap": 10,
+      "Treasure": 10,
+      "Enchantment": 6,
+      "Sanctuary": 4,
+      "Blacksmith": 1
+    }
+  }
+}

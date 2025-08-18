@@ -1,0 +1,5 @@
+[gd_resource type="ConfigFile" version=5]
+
+[application]
+config/name="DungeonCrawlerCarl"
+

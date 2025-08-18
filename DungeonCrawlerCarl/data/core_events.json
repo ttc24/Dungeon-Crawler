@@ -1,0 +1,13 @@
+{
+  "fountain": {
+    "rarity": "common",
+    "uses": 2,
+    "bless_chance": 0.3,
+    "curse_chance": 0.1
+  },
+  "locked_cache": {
+    "rarity": "rare",
+    "loot": "credits",
+    "key_name": "cache_key"
+  }
+}
